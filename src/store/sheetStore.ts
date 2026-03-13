@@ -1,0 +1,200 @@
+import { create } from "zustand";
+import type {
+  ParsedSheet,
+  HealthReport,
+  Row,
+  CellChange,
+  QuarantinedRow,
+  ProcessingStage,
+} from "@/types/sheet";
+import type { RuleConfig } from "@/types/rules";
+import { parseFile } from "@/lib/engine/parsers";
+import { generateHealthReport } from "@/lib/engine/healthReport";
+import { runEngine, undoRule, type EngineResult } from "@/lib/engine/ruleEngine";
+import { ALL_RULES } from "@/lib/engine/rules";
+import { FREE_RULES } from "@/config/plans";
+
+interface SheetState {
+  // Stage
+  stage: ProcessingStage;
+  error: string | null;
+
+  // Parsed data
+  parsedSheet: ParsedSheet | null;
+  healthReport: HealthReport | null;
+
+  // Cleaning config
+  ruleConfigs: RuleConfig[];
+  isPro: boolean;
+
+  // Engine results
+  engineResult: EngineResult | null;
+  cleanedRows: Row[];
+  allChanges: CellChange[];
+  allQuarantined: QuarantinedRow[];
+  engineErrors: { ruleId: string; error: string }[];
+
+  // Actions
+  importFile: (file: File) => Promise<void>;
+  setStage: (stage: ProcessingStage) => void;
+  setError: (error: string | null) => void;
+  toggleRule: (ruleId: string) => void;
+  updateRuleOptions: (ruleId: string, options: Record<string, unknown>) => void;
+  runCleaning: () => void;
+  undoRule: (ruleId: string) => void;
+  resetAll: () => void;
+  setIsPro: (isPro: boolean) => void;
+  loadDemoData: () => void;
+  getDemoCSV: () => string;
+}
+
+const DEFAULT_RULE_CONFIGS: RuleConfig[] = ALL_RULES.map((rule) => ({
+  ruleId: rule.id,
+  enabled: false,
+  options: {},
+}));
+
+const DEMO_ROWS: Row[] = [
+  { Name: "  John Smith  ", Email: "JOHN@EXAMPLE.COM", Phone: "(555) 123-4567", Date: "01/15/2024", Amount: "$1,234.56", Company: "Acme Inc" },
+  { Name: "jane doe", Email: "jane@example.com", Phone: "555.987.6543", Date: "2024-02-20", Amount: "€2.345,67", Company: "acme inc" },
+  { Name: "John Smith", Email: "JOHN@EXAMPLE.COM", Phone: "(555) 123-4567", Date: "01/15/2024", Amount: "$1,234.56", Company: "Acme Inc" },
+  { Name: "Bob Johnson", Email: "bob@invalid", Phone: "not-a-phone", Date: "March 5, 2024", Amount: "3456", Company: "<b>TechCorp</b>" },
+  { Name: "", Email: "", Phone: "", Date: "", Amount: "", Company: "" },
+  { Name: "Alice Brown ", Email: "  Alice.Brown@Example.COM  ", Phone: "+1-555-111-2222", Date: "2024/04/10", Amount: "£789.00", Company: "Tech Corp" },
+  { Name: "Charlie Wilson", Email: "charlie@example.com", Phone: "5551234567", Date: "15-05-2024", Amount: "1.234,00", Company: "Acme Inc." },
+];
+const DEMO_HEADERS = ["Name", "Email", "Phone", "Date", "Amount", "Company"];
+
+export const useSheetStore = create<SheetState>((set, get) => ({
+  stage: "idle",
+  error: null,
+  parsedSheet: null,
+  healthReport: null,
+  ruleConfigs: DEFAULT_RULE_CONFIGS,
+  isPro: false,
+  engineResult: null,
+  cleanedRows: [],
+  allChanges: [],
+  allQuarantined: [],
+  engineErrors: [],
+
+  importFile: async (file: File) => {
+    try {
+      set({ stage: "parsing", error: null });
+      const parsed = await parseFile(file);
+      set({ parsedSheet: parsed, stage: "health-check" });
+      const report = generateHealthReport(parsed.rows, parsed.headers);
+      set({ healthReport: report, stage: "configuring" });
+    } catch (err) {
+      set({
+        error: err instanceof Error ? err.message : "Failed to parse file",
+        stage: "idle",
+      });
+    }
+  },
+
+  setStage: (stage) => set({ stage }),
+  setError: (error) => set({ error }),
+
+  toggleRule: (ruleId: string) => {
+    const { ruleConfigs, isPro } = get();
+    if (!isPro && !FREE_RULES.includes(ruleId)) return;
+    set({
+      ruleConfigs: ruleConfigs.map((rc) =>
+        rc.ruleId === ruleId ? { ...rc, enabled: !rc.enabled } : rc
+      ),
+    });
+  },
+
+  updateRuleOptions: (ruleId, options) => {
+    const { ruleConfigs } = get();
+    set({
+      ruleConfigs: ruleConfigs.map((rc) =>
+        rc.ruleId === ruleId ? { ...rc, options: { ...rc.options, ...options } } : rc
+      ),
+    });
+  },
+
+  runCleaning: () => {
+    const { parsedSheet, ruleConfigs } = get();
+    if (!parsedSheet) return;
+
+    set({ stage: "cleaning" });
+
+    const result = runEngine(parsedSheet.rows, ruleConfigs);
+
+    set({
+      engineResult: result,
+      cleanedRows: result.cleanedRows,
+      allChanges: result.allChanges,
+      allQuarantined: result.allQuarantined,
+      engineErrors: result.errors,
+      stage: "previewing",
+    });
+  },
+
+  undoRule: (ruleId: string) => {
+    const { parsedSheet, ruleConfigs } = get();
+    if (!parsedSheet) return;
+
+    // Disable the rule and re-run
+    const updatedConfigs = ruleConfigs.map((rc) =>
+      rc.ruleId === ruleId ? { ...rc, enabled: false } : rc
+    );
+
+    const result = undoRule(parsedSheet.rows, updatedConfigs, ruleId);
+
+    set({
+      ruleConfigs: updatedConfigs,
+      engineResult: result,
+      cleanedRows: result.cleanedRows,
+      allChanges: result.allChanges,
+      allQuarantined: result.allQuarantined,
+      engineErrors: result.errors,
+    });
+  },
+
+  resetAll: () => {
+    set({
+      stage: "idle",
+      error: null,
+      parsedSheet: null,
+      healthReport: null,
+      ruleConfigs: DEFAULT_RULE_CONFIGS,
+      engineResult: null,
+      cleanedRows: [],
+      allChanges: [],
+      allQuarantined: [],
+      engineErrors: [],
+    });
+  },
+
+  setIsPro: (isPro) => set({ isPro }),
+
+  loadDemoData: () => {
+    const parsed: ParsedSheet = {
+      fileName: "demo-messy-data.csv",
+      fileSize: 512,
+      headers: DEMO_HEADERS,
+      rows: DEMO_ROWS,
+      rowCount: DEMO_ROWS.length,
+      columnCount: DEMO_HEADERS.length,
+      delimiter: ",",
+      encoding: "UTF-8",
+    };
+    const report = generateHealthReport(DEMO_ROWS, DEMO_HEADERS);
+    set({ parsedSheet: parsed, healthReport: report, stage: "configuring", error: null });
+  },
+
+  getDemoCSV: () => {
+    const lines = [DEMO_HEADERS.join(",")];
+    for (const row of DEMO_ROWS) {
+      const values = DEMO_HEADERS.map((h) => {
+        const val = String(row[h] ?? "");
+        return val.includes(",") || val.includes('"') ? `"${val.replace(/"/g, '""')}"` : val;
+      });
+      lines.push(values.join(","));
+    }
+    return lines.join("\n");
+  },
+}));
