@@ -102,10 +102,10 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
   const headers = parsedSheet?.headers ?? [];
 
   return (
-    <div className="space-y-6">
+    <section aria-labelledby="rules-heading" className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 id="rules-heading" className="text-lg font-semibold text-gray-900">
             Cleaning Rules
           </h3>
           <p className="text-sm text-gray-500 mt-0.5">
@@ -195,12 +195,13 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
       <button
         onClick={onRunCleaning}
         disabled={enabledCount === 0}
-        className="w-full px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+        aria-label={enabledCount === 0 ? "Select at least one rule to proceed" : `Apply ${enabledCount} cleaning rules and preview results`}
+        className="w-full px-4 py-3 bg-teal-600 text-white rounded-lg hover:bg-teal-700 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
       >
         {enabledCount === 0
           ? "Select at least one rule"
           : `Apply ${enabledCount} Rule${enabledCount > 1 ? "s" : ""} & Preview`}
       </button>
-    </div>
+    </section>
   );
 }

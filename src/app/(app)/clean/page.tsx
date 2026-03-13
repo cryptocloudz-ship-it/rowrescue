@@ -115,10 +115,13 @@ export default function CleanPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-teal-600 focus:text-white focus:rounded">
+        Skip to main content
+      </a>
       <header className="bg-white border-b">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <a href="/" className="text-xl font-bold text-teal-600">
+            <a href="/" className="text-xl font-bold text-teal-600" aria-label="TidySheet home">
               TidySheet
             </a>
             {stage !== "idle" && (
@@ -148,7 +151,7 @@ export default function CleanPage() {
         </div>
       </header>
 
-      <main className="max-w-6xl mx-auto px-4 py-8">
+      <main id="main-content" className="max-w-6xl mx-auto px-4 py-8">
         {/* STAGE: Upload */}
         {(stage === "idle" || stage === "parsing") && (
           <div className="flex flex-col items-center gap-8">
@@ -185,8 +188,8 @@ export default function CleanPage() {
 
         {/* STAGE: Cleaning (brief spinner) */}
         {stage === "cleaning" && (
-          <div className="text-center py-20">
-            <div className="inline-block w-8 h-8 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" />
+          <div className="text-center py-20" role="status" aria-live="polite">
+            <div className="inline-block w-8 h-8 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" aria-hidden="true" />
             <p className="mt-4 text-gray-600">Applying rules...</p>
           </div>
         )}

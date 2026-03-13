@@ -82,20 +82,21 @@ export function ExportPanel() {
   };
 
   return (
-    <div className="space-y-4">
+    <section aria-labelledby="export-heading" className="space-y-4">
       <div>
-        <h3 className="text-lg font-semibold text-gray-900">Export</h3>
+        <h3 id="export-heading" className="text-lg font-semibold text-gray-900">Export</h3>
         <p className="text-sm text-gray-500 mt-0.5">
           All exports are generated 100% in your browser.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="group" aria-label="Export options">
         <button
           onClick={handleExportCSV}
-          className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors text-left"
+          aria-label={`Download cleaned CSV with ${cleanedRows.length} rows`}
+          className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors text-left focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
         >
-          <Download className="w-5 h-5 text-teal-600" />
+          <Download className="w-5 h-5 text-teal-600" aria-hidden="true" />
           <div>
             <p className="font-medium text-gray-900 text-sm">Cleaned CSV</p>
             <p className="text-xs text-gray-500">
@@ -107,9 +108,10 @@ export function ExportPanel() {
         <button
           onClick={handleExportXLSX}
           disabled={!isPro}
-          className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed"
+          aria-label={isPro ? `Download Excel file with ${cleanedRows.length} rows` : "Excel export requires Pro plan"}
+          className="flex items-center gap-3 p-4 border rounded-lg hover:bg-gray-50 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
         >
-          <FileSpreadsheet className="w-5 h-5 text-teal-600" />
+          <FileSpreadsheet className="w-5 h-5 text-teal-600" aria-hidden="true" />
           <div>
             <p className="font-medium text-gray-900 text-sm">
               Excel (.xlsx){" "}
@@ -176,6 +178,6 @@ export function ExportPanel() {
           to remove it.
         </p>
       )}
-    </div>
+    </section>
   );
 }

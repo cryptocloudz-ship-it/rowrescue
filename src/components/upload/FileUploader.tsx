@@ -62,13 +62,17 @@ export function FileUploader() {
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div
+        role="button"
+        tabIndex={0}
+        aria-label="Upload a CSV, TSV, or XLSX file. Drag and drop or click to browse."
         onDrop={onDrop}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onClick={() => fileInputRef.current?.click()}
+        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInputRef.current?.click(); } }}
         className={`
           border-2 border-dashed rounded-xl p-12 text-center cursor-pointer
-          transition-all duration-200
+          transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:ring-offset-2
           ${isDragging
             ? "border-teal-500 bg-teal-50"
             : "border-gray-300 hover:border-teal-400 hover:bg-gray-50"
@@ -81,6 +85,7 @@ export function FileUploader() {
           accept={ACCEPTED_TYPES.join(",")}
           onChange={onFileSelect}
           className="hidden"
+          aria-label="Select file to upload"
         />
 
         <div className="flex flex-col items-center gap-4">
@@ -105,8 +110,8 @@ export function FileUploader() {
       </div>
 
       {error && (
-        <div className="mt-4 flex items-center gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">
-          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+        <div role="alert" className="mt-4 flex items-center gap-2 text-red-600 bg-red-50 border border-red-200 rounded-lg p-3 text-sm">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" aria-hidden="true" />
           <span>{error}</span>
         </div>
       )}
