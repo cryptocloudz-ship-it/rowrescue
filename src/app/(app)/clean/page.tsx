@@ -18,7 +18,12 @@ import {
   Settings2,
   Eye,
   Download,
+  Lock,
+  ShieldAlert,
+  Activity,
 } from "lucide-react";
+import Link from "next/link";
+import { WelcomeModal } from "@/components/ui/WelcomeModal";
 
 const STAGES = [
   { id: "idle", label: "Upload", icon: FileUp },
@@ -32,7 +37,7 @@ function StageIndicator({ currentStage }: { currentStage: string }) {
   const currentIndex = STAGES.findIndex((s) => s.id === currentStage);
 
   return (
-    <div className="flex items-center gap-2 overflow-x-auto pb-2">
+    <div className="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
       {STAGES.map((stage, i) => {
         const Icon = stage.icon;
         const isComplete = i < currentIndex;
@@ -42,16 +47,16 @@ function StageIndicator({ currentStage }: { currentStage: string }) {
           <div key={stage.id} className="flex items-center gap-2">
             {i > 0 && (
               <div
-                className={`w-8 h-px ${
-                  isComplete ? "bg-teal-400" : "bg-gray-200"
+                className={`w-8 h-[2px] rounded-full transition-colors duration-500 ${
+                  isComplete ? "bg-primary shadow-[0_0_8px_rgba(13,242,223,0.5)]" : "bg-slate-800"
                 }`}
               />
             )}
             <div
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap
-                ${isComplete ? "bg-teal-100 text-teal-700" : ""}
-                ${isCurrent ? "bg-teal-600 text-white" : ""}
-                ${!isComplete && !isCurrent ? "bg-gray-100 text-gray-400" : ""}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all duration-300
+                ${isComplete ? "bg-primary/20 text-primary border border-primary/30 shadow-[inset_0_0_10px_rgba(13,242,223,0.1)]" : ""}
+                ${isCurrent ? "bg-primary text-background-dark neon-glow scale-105" : ""}
+                ${!isComplete && !isCurrent ? "bg-slate-800/50 text-slate-400 border border-slate-700/50" : ""}
               `}
             >
               {isComplete ? (
@@ -77,6 +82,8 @@ export default function CleanPage() {
     allChanges,
     allQuarantined,
     engineResult,
+    rowLimitHit,
+    totalRowCount,
     setStage,
     runCleaning,
     resetAll,
@@ -114,62 +121,83 @@ export default function CleanPage() {
       : stage;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-teal-600 focus:text-white focus:rounded">
+    <div className="min-h-screen bg-background-dark text-slate-100 font-display relative overflow-x-hidden">
+      <div className="absolute top-[-20%] right-[-10%] w-[600px] h-[600px] bg-primary/10 blur-[150px] rounded-full pointer-events-none -z-10" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[600px] h-[600px] bg-indigo-500/10 blur-[150px] rounded-full pointer-events-none -z-10" />
+
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:p-3 focus:bg-primary focus:text-background-dark focus:rounded font-bold">
         Skip to main content
       </a>
-      <header className="bg-white border-b">
+      
+      <header className="glass-header sticky top-0 z-50 border-b border-primary/10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <a href="/" className="text-xl font-bold text-teal-600" aria-label="TidySheet home">
-              TidySheet
-            </a>
+          <div className="flex items-center gap-4">
+            <Link href="/" className="flex items-center gap-2 group" aria-label="RowRescue home">
+              <div className="size-8 bg-primary rounded-lg flex items-center justify-center neon-glow group-hover:scale-105 transition-transform">
+                <Activity className="size-5 text-background-dark font-bold" />
+              </div>
+              <span className="text-xl font-bold text-primary tracking-tight neon-text-glow">
+                RowRescue
+              </span>
+            </Link>
             {stage !== "idle" && (
               <button
                 onClick={resetAll}
-                className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-slate-400 hover:text-primary bg-slate-800/50 hover:bg-slate-800 rounded-lg transition-colors border border-transparent hover:border-primary/30"
               >
                 <ArrowLeft className="w-4 h-4" />
                 New file
               </button>
             )}
           </div>
-          <div className="flex items-center gap-4">
-            <StageIndicator currentStage={mappedStage} />
+          <div className="flex items-center gap-6">
+            <div className="hidden md:block">
+              <StageIndicator currentStage={mappedStage} />
+            </div>
             <SignedIn>
-              <UserButton />
+               <div className="relative z-10 p-0.5 rounded-full border border-primary/30">
+                  <UserButton />
+               </div>
             </SignedIn>
             <SignedOut>
-              <a
+              <Link
                 href="/sign-in"
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="text-sm font-bold text-slate-300 hover:text-primary transition-colors"
               >
                 Sign in
-              </a>
+              </Link>
             </SignedOut>
           </div>
         </div>
       </header>
 
-      <main id="main-content" className="max-w-6xl mx-auto px-4 py-8">
+      <div className="md:hidden px-4 py-3 border-b border-primary/10 bg-background-dark/50">
+         <StageIndicator currentStage={mappedStage} />
+      </div>
+
+      <main id="main-content" className="max-w-6xl mx-auto px-4 py-8 relative z-10">
+        <WelcomeModal />
+        
         {/* STAGE: Upload */}
         {(stage === "idle" || stage === "parsing") && (
-          <div className="flex flex-col items-center gap-8">
+          <div className="flex flex-col items-center gap-8 mt-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="text-center">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-4xl sm:text-5xl font-extrabold text-slate-100 tracking-tight">
                 Clean your spreadsheet
               </h1>
-              <p className="text-gray-500 mt-2">
-                Upload a CSV or Excel file. Everything runs in your browser.
+              <p className="text-lg text-slate-400 mt-4 font-medium">
+                Upload a CSV or Excel file. Everything securely parses in your browser.
               </p>
             </div>
-            <FileUploader />
+            <div className="w-full max-w-3xl">
+              <FileUploader />
+            </div>
           </div>
         )}
 
         {/* STAGE: Health Check */}
         {stage === "health-check" && parsedSheet && healthReport && (
-          <div className="max-w-2xl mx-auto space-y-6">
+          <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <StatsBar sheet={parsedSheet} />
             <HealthReportPanel
               report={healthReport}
@@ -180,17 +208,52 @@ export default function CleanPage() {
 
         {/* STAGE: Configure Rules */}
         {stage === "configuring" && parsedSheet && (
-          <div className="max-w-2xl mx-auto space-y-6">
+          <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <StatsBar sheet={parsedSheet} />
+            {rowLimitHit && (
+              <div className="p-5 glass-panel border border-amber-500/30 rounded-xl shadow-[0_0_30px_rgba(245,158,11,0.1)] relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-2xl rounded-full" />
+                <div className="flex items-start gap-4 relative z-10">
+                  <div className="p-2.5 bg-amber-500/20 border border-amber-500/30 rounded-xl text-amber-400 flex-shrink-0 mt-0.5">
+                    <ShieldAlert className="w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="text-lg font-bold text-amber-100">
+                      Row Limit Reached: Cleaning first {parsedSheet.rowCount.toLocaleString()} rows
+                    </h4>
+                    <p className="text-sm text-amber-200/70 mt-2 mb-4 leading-relaxed font-medium">
+                      Your file has {totalRowCount.toLocaleString()} rows, but the Free plan only processes up to 5,000 rows per file. Upgrade to Pro to clean the entire dataset at once (up to Unlimited rows).
+                    </p>
+                    <Link
+                      href="/pricing"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-bold rounded-xl hover:bg-amber-400 transition-colors shadow-lg shadow-amber-500/20"
+                    >
+                      <Lock className="w-4 h-4" />
+                      Unlock Full Processing — €12/mo
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
             <RuleConfigurator onRunCleaning={runCleaning} />
           </div>
         )}
 
-        {/* STAGE: Cleaning (brief spinner) */}
+        {/* STAGE: Cleaning (Skeleton Loader) */}
         {stage === "cleaning" && (
-          <div className="text-center py-20" role="status" aria-live="polite">
-            <div className="inline-block w-8 h-8 border-2 border-teal-600 border-t-transparent rounded-full animate-spin" aria-hidden="true" />
-            <p className="mt-4 text-gray-600">Applying rules...</p>
+          <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in zoom-in-95 duration-500" role="status" aria-live="polite">
+            <div className="h-28 glass-panel border border-primary/10 rounded-2xl animate-pulse relative overflow-hidden">
+               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent w-[200%] animate-[shimmer_2s_infinite]" />
+            </div>
+            <div className="h-96 glass-panel border border-primary/10 rounded-2xl animate-pulse relative overflow-hidden">
+               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent w-[200%] animate-[shimmer_2s_infinite]" />
+            </div>
+            <div className="flex justify-center pt-6">
+              <div className="flex items-center gap-3 text-primary font-bold glass-panel border border-primary/30 px-8 py-4 rounded-xl shadow-[0_0_20px_rgba(13,242,223,0.1)]">
+                <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                Applying intelligent cleaning rules...
+              </div>
+            </div>
           </div>
         )}
 
@@ -198,60 +261,70 @@ export default function CleanPage() {
         {(stage === "previewing" || stage === "exporting") &&
           parsedSheet &&
           engineResult && (
-            <div className="space-y-6">
+            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto">
               <StatsBar sheet={parsedSheet} />
 
               {/* Summary stats */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <StatCard
                   label="Cells changed"
                   value={allChanges.filter((c) => c.changeType === "changed").length}
-                  color="text-green-600"
+                  color="text-emerald-400"
+                  borderColor="border-emerald-500/30"
+                  bg="bg-emerald-500/5"
                 />
                 <StatCard
                   label="Rows removed"
                   value={
                     parsedSheet.rowCount - cleanedRows.length
                   }
-                  color="text-red-600"
+                  color="text-rose-400"
+                  borderColor="border-rose-500/30"
+                  bg="bg-rose-500/5"
                 />
                 <StatCard
                   label="Rows flagged"
                   value={allQuarantined.length}
-                  color="text-amber-600"
+                  color="text-amber-400"
+                  borderColor="border-amber-500/30"
+                  bg="bg-amber-500/5"
                 />
                 <StatCard
                   label="Rules applied"
                   value={engineResult.stats.rulesApplied}
-                  color="text-teal-600"
+                  color="text-primary neon-text-glow"
+                  borderColor="border-primary/30"
+                  bg="bg-primary/5"
                 />
               </div>
 
-              <PreviewGrid
-                originalRows={parsedSheet.rows}
-                cleanedRows={cleanedRows}
-                headers={
-                  cleanedRows.length > 0
-                    ? Object.keys(cleanedRows[0])
-                    : parsedSheet.headers
-                }
-                changes={allChanges}
-              />
+              <div className="glass-panel border border-primary/10 rounded-2xl overflow-hidden shadow-2xl">
+                <PreviewGrid
+                  originalRows={parsedSheet.rows}
+                  cleanedRows={cleanedRows}
+                  headers={
+                    cleanedRows.length > 0
+                      ? Object.keys(cleanedRows[0])
+                      : parsedSheet.headers
+                  }
+                  changes={allChanges}
+                />
+              </div>
 
-              <div ref={exportRef}>
+              <div ref={exportRef} className="pt-4">
                 <ExportPanel />
               </div>
 
-              <div className="flex justify-center gap-3 pt-4">
+              <div className="flex justify-center gap-4 pt-8 pb-12 border-t border-primary/10 mt-8">
                 <button
                   onClick={() => setStage("configuring")}
-                  className="px-4 py-2 text-sm border rounded-lg text-gray-600 hover:bg-gray-50"
+                  className="px-6 py-3 text-sm font-bold glass-panel rounded-xl text-slate-300 hover:text-primary hover:border-primary/50 transition-colors border border-primary/20"
                 >
                   ← Back to Rules
                 </button>
                 <button
                   onClick={resetAll}
-                  className="px-4 py-2 text-sm border rounded-lg text-gray-600 hover:bg-gray-50"
+                  className="px-6 py-3 text-sm font-bold bg-slate-800 text-slate-300 rounded-xl hover:bg-slate-700 transition-colors border border-slate-700"
                 >
                   Start Over
                 </button>
@@ -267,17 +340,24 @@ function StatCard({
   label,
   value,
   color,
+  borderColor,
+  bg
 }: {
   label: string;
   value: number;
   color: string;
+  borderColor: string;
+  bg: string;
 }) {
   return (
-    <div className="bg-white rounded-lg border p-4">
-      <p className={`text-2xl font-bold ${color} font-mono`}>
-        {value.toLocaleString()}
-      </p>
-      <p className="text-xs text-gray-500 mt-1">{label}</p>
+    <div className={`glass-panel border ${borderColor} rounded-2xl p-6 relative overflow-hidden group`}>
+      <div className={`absolute inset-0 ${bg} opacity-50 group-hover:opacity-100 transition-opacity`} />
+      <div className="relative z-10">
+         <p className={`text-4xl font-extrabold ${color} font-mono tracking-tight`}>
+         {value.toLocaleString()}
+         </p>
+         <p className="text-sm font-bold text-slate-400 mt-2 uppercase tracking-widest">{label}</p>
+      </div>
     </div>
   );
 }

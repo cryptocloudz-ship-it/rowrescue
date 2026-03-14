@@ -1,5 +1,5 @@
 /**
- * Database record types for TidySheet.
+ * Database record types for RowRescue.
  * The Drizzle ORM schema (source of truth for migrations) is in ./drizzle.ts.
  * These interfaces are used for type-safe query results and API responses.
  */

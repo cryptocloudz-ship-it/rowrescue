@@ -1,4 +1,4 @@
-/** Core data types for TidySheet's client-side processing engine */
+/** Core data types for RowRescue's client-side processing engine */
 
 export type CellValue = string | number | boolean | null;
 

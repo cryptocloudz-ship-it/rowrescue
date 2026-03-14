@@ -25,7 +25,7 @@ export class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log to console only — no external services (privacy-first)
-    console.error("TidySheet error boundary caught:", error.message);
+    console.error("RowRescue error boundary caught:", error.message);
     console.error("Component stack:", errorInfo.componentStack);
   }
 

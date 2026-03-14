@@ -1,4 +1,4 @@
-# TidySheet — Terms of Service
+# RowRescue — Terms of Service
 
 > **Warning**
 > This document is a template. Have it reviewed by qualified legal counsel before use.
@@ -10,13 +10,13 @@
 
 ## 1. Introduction
 
-These Terms of Service ("Terms") govern your access to and use of the TidySheet web application ("Service"), operated by [Company Name], a company registered in Ireland ("Company", "we", "us", or "our").
+These Terms of Service ("Terms") govern your access to and use of the RowRescue web application ("Service"), operated by [Company Name], a company registered in Ireland ("Company", "we", "us", or "our").
 
 By accessing or using the Service, you agree to be bound by these Terms. If you do not agree, you must not use the Service.
 
 ## 2. Description of Service
 
-TidySheet is a privacy-first CSV cleaning and transformation web application. All file processing occurs entirely within your web browser (client-side). **No file contents are transmitted to, processed by, or stored on our servers.** The Service provides tools for cleaning, transforming, and validating CSV data locally on your device.
+RowRescue is a privacy-first CSV cleaning and transformation web application. All file processing occurs entirely within your web browser (client-side). **No file contents are transmitted to, processed by, or stored on our servers.** The Service provides tools for cleaning, transforming, and validating CSV data locally on your device.
 
 ## 3. Accounts
 
@@ -36,7 +36,7 @@ We reserve the right to suspend or terminate your account at any time if you bre
 
 ### 4.1 Local Processing
 
-All file processing performed by the Service occurs exclusively in your browser. Your file contents never leave your device as a result of using TidySheet's core functionality.
+All file processing performed by the Service occurs exclusively in your browser. Your file contents never leave your device as a result of using RowRescue's core functionality.
 
 ### 4.2 User Responsibility
 
@@ -71,7 +71,7 @@ You may cancel your subscription at any time through your account settings. Canc
 
 ## 6. Acceptable Use
 
-Your use of the Service is subject to the TidySheet Acceptable Use Policy, which is incorporated into these Terms by reference. You agree not to use the Service for any purpose that is unlawful or prohibited by these Terms or the Acceptable Use Policy.
+Your use of the Service is subject to the RowRescue Acceptable Use Policy, which is incorporated into these Terms by reference. You agree not to use the Service for any purpose that is unlawful or prohibited by these Terms or the Acceptable Use Policy.
 
 ## 7. Intellectual Property
 

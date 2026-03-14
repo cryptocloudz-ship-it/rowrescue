@@ -27,8 +27,8 @@ export const PLANS: Record<string, PlanDefinition> = {
     id: "pro",
     name: "Pro",
     description: "Full power for professionals.",
-    priceMonthly: 900, // €9.00
-    priceYearly: 7900, // €79.00
+    priceMonthly: 1200, // €12.00
+    priceYearly: 9900, // €99.00
     stripePriceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID,
     stripePriceIdYearly: process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID,
     limits: {

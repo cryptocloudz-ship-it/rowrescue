@@ -1,17 +1,24 @@
 import { NextRequest, NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe";
+import { db } from "@/db";
+import { users } from "@/db/drizzle";
+import { eq } from "drizzle-orm";
+import { PLANS } from "@/config/plans";
+import type Stripe from "stripe";
 
-/**
- * POST /api/stripe/webhook
- *
- * Handles Stripe webhook events for subscription lifecycle.
- * In production, verify signature with Stripe SDK and update Neon DB.
- *
- * Events handled:
- * - checkout.session.completed → Create/update subscription record
- * - customer.subscription.updated → Update plan/status
- * - customer.subscription.deleted → Downgrade to free
- * - invoice.payment_failed → Mark as past_due
- */
+function priceIdToPlan(priceId: string): "pro" | "team" | null {
+  for (const [planId, plan] of Object.entries(PLANS)) {
+    if (planId === "free") continue;
+    if (
+      plan.stripePriceIdMonthly === priceId ||
+      plan.stripePriceIdYearly === priceId
+    ) {
+      return planId as "pro" | "team";
+    }
+  }
+  return null;
+}
+
 export async function POST(request: NextRequest) {
   const body = await request.text();
   const signature = request.headers.get("stripe-signature");
@@ -20,88 +27,113 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Missing signature" }, { status: 400 });
   }
 
-  // In production, verify with Stripe SDK:
-  // const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
-  // const event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
-
-  // MVP: Parse the event for structure
-  let event: { type: string; data: { object: Record<string, unknown> } };
+  let event: Stripe.Event;
   try {
-    event = JSON.parse(body);
-  } catch {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    event = stripe.webhooks.constructEvent(
+      body,
+      signature,
+      process.env.STRIPE_WEBHOOK_SECRET!
+    );
+  } catch (err) {
+    console.error("[Stripe] Webhook signature verification failed:", err);
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   switch (event.type) {
     case "checkout.session.completed": {
-      const session = event.data.object;
-      const customerId = session.customer as string;
-      const subscriptionId = session.subscription as string;
-      const customerEmail = session.customer_email as string;
+      const session = event.data.object as Stripe.Checkout.Session;
+      const clerkUserId = session.metadata?.clerkUserId;
 
-      // TODO: Upsert user in Neon
-      // await db.query(`
-      //   UPDATE users
-      //   SET stripe_customer_id = $1,
-      //       stripe_subscription_id = $2,
-      //       plan = 'pro',
-      //       subscription_status = 'active'
-      //   WHERE email = $3
-      // `, [customerId, subscriptionId, customerEmail]);
+      if (!clerkUserId || !session.subscription) break;
+
+      const subscription = await stripe.subscriptions.retrieve(
+        session.subscription as string
+      );
+      const item = subscription.items.data[0];
+      const priceId = item?.price.id;
+      const plan = priceIdToPlan(priceId) ?? "pro";
+      const periodEnd = item?.current_period_end;
+
+      await db
+        .update(users)
+        .set({
+          stripeCustomerId: session.customer as string,
+          stripeSubscriptionId: subscription.id,
+          plan,
+          subscriptionStatus: "active",
+          currentPeriodEnd: periodEnd ? new Date(periodEnd * 1000) : null,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.id, clerkUserId));
 
       console.log(
-        `[Stripe] checkout.session.completed: ${customerEmail}, sub=${subscriptionId}`
+        `[Stripe] checkout.session.completed: user=${clerkUserId}, plan=${plan}`
       );
       break;
     }
 
     case "customer.subscription.updated": {
-      const subscription = event.data.object;
-      const subId = subscription.id as string;
-      const status = subscription.status as string;
-      const periodEnd = subscription.current_period_end as number;
+      const subscription = event.data.object as Stripe.Subscription;
+      const status = subscription.status;
+      const updatedItem = subscription.items.data[0];
+      const updatedPeriodEnd = updatedItem?.current_period_end;
+      const mappedStatus =
+        status === "active" ||
+        status === "past_due" ||
+        status === "canceled" ||
+        status === "trialing" ||
+        status === "incomplete"
+          ? status
+          : null;
 
-      // TODO: Update subscription in Neon
-      // await db.query(`
-      //   UPDATE users
-      //   SET subscription_status = $1,
-      //       current_period_end = to_timestamp($2)
-      //   WHERE stripe_subscription_id = $3
-      // `, [status, periodEnd, subId]);
+      if (mappedStatus) {
+        await db
+          .update(users)
+          .set({
+            subscriptionStatus: mappedStatus,
+            currentPeriodEnd: updatedPeriodEnd
+              ? new Date(updatedPeriodEnd * 1000)
+              : null,
+            updatedAt: new Date(),
+          })
+          .where(eq(users.stripeSubscriptionId, subscription.id));
+      }
 
       console.log(
-        `[Stripe] subscription.updated: sub=${subId}, status=${status}, end=${periodEnd}`
+        `[Stripe] subscription.updated: sub=${subscription.id}, status=${status}`
       );
       break;
     }
 
     case "customer.subscription.deleted": {
-      const subscription = event.data.object;
-      const subId = subscription.id as string;
+      const subscription = event.data.object as Stripe.Subscription;
 
-      // TODO: Downgrade user to free
-      // await db.query(`
-      //   UPDATE users
-      //   SET plan = 'free',
-      //       subscription_status = 'canceled',
-      //       stripe_subscription_id = NULL
-      //   WHERE stripe_subscription_id = $1
-      // `, [subId]);
+      await db
+        .update(users)
+        .set({
+          plan: "free",
+          subscriptionStatus: "canceled",
+          stripeSubscriptionId: null,
+          currentPeriodEnd: null,
+          updatedAt: new Date(),
+        })
+        .where(eq(users.stripeSubscriptionId, subscription.id));
 
-      console.log(`[Stripe] subscription.deleted: sub=${subId}`);
+      console.log(`[Stripe] subscription.deleted: sub=${subscription.id}`);
       break;
     }
 
     case "invoice.payment_failed": {
-      const invoice = event.data.object;
+      const invoice = event.data.object as Stripe.Invoice;
       const customerId = invoice.customer as string;
 
-      // TODO: Mark as past_due
-      // await db.query(`
-      //   UPDATE users
-      //   SET subscription_status = 'past_due'
-      //   WHERE stripe_customer_id = $1
-      // `, [customerId]);
+      await db
+        .update(users)
+        .set({
+          subscriptionStatus: "past_due",
+          updatedAt: new Date(),
+        })
+        .where(eq(users.stripeCustomerId, customerId));
 
       console.log(
         `[Stripe] invoice.payment_failed: customer=${customerId}`

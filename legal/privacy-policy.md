@@ -1,4 +1,4 @@
-# TidySheet — Privacy Policy
+# RowRescue — Privacy Policy
 
 > **Warning**
 > This document is a template. Have it reviewed by qualified legal counsel before use.
@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-[Company Name] ("Company", "we", "us", or "our"), a company registered in Ireland, operates the TidySheet web application ("Service"). This Privacy Policy explains how we collect, use, disclose, and safeguard your personal data when you use the Service.
+[Company Name] ("Company", "we", "us", or "our"), a company registered in Ireland, operates the RowRescue web application ("Service"). This Privacy Policy explains how we collect, use, disclose, and safeguard your personal data when you use the Service.
 
 We are committed to protecting your privacy and processing your personal data in accordance with the General Data Protection Regulation (EU) 2016/679 ("GDPR"), the Data Protection Acts 1988–2018 (Ireland), and other applicable data protection legislation.
 
@@ -27,7 +27,7 @@ Email: [privacy email]
 
 ## 3. Our Privacy-First Architecture
 
-TidySheet is designed as a privacy-first application. **All CSV file processing occurs entirely within your web browser (client-side).** Your file contents are never transmitted to, processed by, or stored on our servers. We have no technical ability to access the contents of files you process using the Service.
+RowRescue is designed as a privacy-first application. **All CSV file processing occurs entirely within your web browser (client-side).** Your file contents are never transmitted to, processed by, or stored on our servers. We have no technical ability to access the contents of files you process using the Service.
 
 ## 4. What We Collect
 

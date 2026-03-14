@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
+import { CookieConsent } from "@/components/ui/CookieConsent";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TidySheet — Clean Messy CSVs in Seconds",
+  title: "RowRescue — Clean Messy CSVs in Seconds",
   description:
     "Remove duplicates, fix formatting, normalize dates, validate emails — all without uploading your data. Privacy-first spreadsheet cleaning, 100% client-side.",
   keywords: [
@@ -24,6 +25,18 @@ export const metadata: Metadata = {
     "fix messy CSV",
     "deduplicate excel online",
   ],
+  openGraph: {
+    title: "RowRescue — Clean Messy CSVs in Seconds",
+    description: "Privacy-first spreadsheet cleaning. 100% client-side data processing.",
+    url: "https://rowrescue.app",
+    siteName: "RowRescue",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "RowRescue — Clean Messy CSVs in Seconds",
+    description: "Privacy-first spreadsheet cleaning. 100% client-side data processing.",
+  },
 };
 
 export default function RootLayout({
@@ -33,11 +46,12 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className="dark">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
+          <CookieConsent />
         </body>
       </html>
     </ClerkProvider>

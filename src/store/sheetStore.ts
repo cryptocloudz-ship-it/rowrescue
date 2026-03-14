@@ -14,6 +14,8 @@ import { runEngine, undoRule, type EngineResult } from "@/lib/engine/ruleEngine"
 import { ALL_RULES } from "@/lib/engine/rules";
 import { FREE_RULES } from "@/config/plans";
 
+const FREE_ROW_LIMIT = 5_000;
+
 interface SheetState {
   // Stage
   stage: ProcessingStage;
@@ -22,6 +24,10 @@ interface SheetState {
   // Parsed data
   parsedSheet: ParsedSheet | null;
   healthReport: HealthReport | null;
+
+  // Row limit tracking
+  rowLimitHit: boolean;
+  totalRowCount: number;
 
   // Cleaning config
   ruleConfigs: RuleConfig[];
@@ -70,6 +76,8 @@ export const useSheetStore = create<SheetState>((set, get) => ({
   error: null,
   parsedSheet: null,
   healthReport: null,
+  rowLimitHit: false,
+  totalRowCount: 0,
   ruleConfigs: DEFAULT_RULE_CONFIGS,
   isPro: false,
   engineResult: null,
@@ -80,8 +88,20 @@ export const useSheetStore = create<SheetState>((set, get) => ({
 
   importFile: async (file: File) => {
     try {
-      set({ stage: "parsing", error: null });
+      set({ stage: "parsing", error: null, rowLimitHit: false, totalRowCount: 0 });
       const parsed = await parseFile(file);
+      const { isPro } = get();
+      const totalRows = parsed.rows.length;
+
+      // Soft-cap: truncate to free limit but keep going
+      if (!isPro && totalRows > FREE_ROW_LIMIT) {
+        parsed.rows = parsed.rows.slice(0, FREE_ROW_LIMIT);
+        parsed.rowCount = FREE_ROW_LIMIT;
+        set({ rowLimitHit: true, totalRowCount: totalRows });
+      } else {
+        set({ totalRowCount: totalRows });
+      }
+
       set({ parsedSheet: parsed, stage: "health-check" });
       const report = generateHealthReport(parsed.rows, parsed.headers);
       set({ healthReport: report, stage: "configuring" });
@@ -160,6 +180,8 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       error: null,
       parsedSheet: null,
       healthReport: null,
+      rowLimitHit: false,
+      totalRowCount: 0,
       ruleConfigs: DEFAULT_RULE_CONFIGS,
       engineResult: null,
       cleanedRows: [],

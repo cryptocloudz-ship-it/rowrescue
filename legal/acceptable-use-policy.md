@@ -1,4 +1,4 @@
-# TidySheet — Acceptable Use Policy
+# RowRescue — Acceptable Use Policy
 
 > **Warning**
 > This document is a template. Have it reviewed by qualified legal counsel before use.
@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-This Acceptable Use Policy ("AUP") governs your use of the TidySheet web application ("Service"), operated by [Company Name] ("Company", "we", "us", or "our"). This AUP is incorporated into and forms part of the TidySheet Terms of Service.
+This Acceptable Use Policy ("AUP") governs your use of the RowRescue web application ("Service"), operated by [Company Name] ("Company", "we", "us", or "our"). This AUP is incorporated into and forms part of the RowRescue Terms of Service.
 
 By using the Service, you agree to comply with this AUP. Violation of this AUP may result in suspension or termination of your account.
 
@@ -53,7 +53,7 @@ You shall not use the Service to:
 
 - Use the Service to create, distribute, or facilitate phishing campaigns, scams, or other deceptive practices;
 - Misrepresent the source, identity, or content of information transmitted through or in connection with the Service;
-- Use TidySheet's name, branding, or reputation in a misleading manner.
+- Use RowRescue's name, branding, or reputation in a misleading manner.
 
 ### 3.6 Intellectual Property Infringement
 
@@ -62,7 +62,7 @@ You shall not use the Service to:
 
 ## 4. Data Processing Responsibilities
 
-While TidySheet processes CSV files entirely client-side and does not access your file contents, you remain responsible for:
+While RowRescue processes CSV files entirely client-side and does not access your file contents, you remain responsible for:
 
 - Ensuring you have the legal authority to process any personal data contained in files you use with the Service;
 - Complying with applicable data protection laws (including the GDPR) when processing personal data;

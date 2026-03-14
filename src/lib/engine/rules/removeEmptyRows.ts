@@ -2,8 +2,7 @@ import type { Row, CleanResult, CellChange } from "@/types/sheet";
 import type { RuleOptions } from "@/types/rules";
 
 export function removeEmptyRows(
-  rows: Row[],
-  _options: RuleOptions = {}
+  rows: Row[]
 ): CleanResult {
   const changes: CellChange[] = [];
   const now = Date.now();

@@ -2,8 +2,7 @@ import type { Row, CleanResult } from "@/types/sheet";
 import type { RuleOptions } from "@/types/rules";
 
 export function removeEmptyColumns(
-  rows: Row[],
-  _options: RuleOptions = {}
+  rows: Row[]
 ): CleanResult {
   if (rows.length === 0) {
     return { rows: [], changes: [], quarantined: [], stats: { rowsAffected: 0, cellsChanged: 0, rowsRemoved: 0, rowsQuarantined: 0 } };

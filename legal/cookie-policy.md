@@ -1,4 +1,4 @@
-# TidySheet — Cookie Policy
+# RowRescue — Cookie Policy
 
 > **Warning**
 > This document is a template. Have it reviewed by qualified legal counsel before use.
@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-This Cookie Policy explains how [Company Name] ("Company", "we", "us", or "our") uses cookies and similar technologies on the TidySheet web application ("Service"). It should be read alongside our Privacy Policy.
+This Cookie Policy explains how [Company Name] ("Company", "we", "us", or "our") uses cookies and similar technologies on the RowRescue web application ("Service"). It should be read alongside our Privacy Policy.
 
 ## 2. What Are Cookies?
 
@@ -24,8 +24,8 @@ These cookies are essential for the operation of the Service. They cannot be dis
 
 | Cookie / Storage Key | Provider | Purpose | Duration | Type |
 |---|---|---|---|---|
-| Session token | TidySheet | Authenticates your session after login | Session / 30 days (if "remember me" selected) | First-party, HTTP-only |
-| CSRF token | TidySheet | Protects against cross-site request forgery attacks | Session | First-party, HTTP-only |
+| Session token | RowRescue | Authenticates your session after login | Session / 30 days (if "remember me" selected) | First-party, HTTP-only |
+| CSRF token | RowRescue | Protects against cross-site request forgery attacks | Session | First-party, HTTP-only |
 
 **Legal basis:** These cookies are exempt from consent requirements under the ePrivacy Directive (2002/58/EC) as they are strictly necessary for the provision of the Service.
 

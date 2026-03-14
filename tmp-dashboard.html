@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RowRescue Premium Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0df2df",
+                        "background-light": "#f5f8f8",
+                        "background-dark": "#0B0F19",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(13, 242, 223, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(13, 242, 223, 0.1);
+        }
+        .glass-header {
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(13, 242, 223, 0.15);
+        }
+        .neon-glow {
+            box-shadow: 0 0 15px rgba(13, 242, 223, 0.3);
+        }
+        .neon-text-glow {
+            text-shadow: 0 0 8px rgba(13, 242, 223, 0.5);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<!-- Left Sidebar Navigation -->
+<aside class="w-64 glass-panel border-r border-primary/10 flex flex-col p-6 gap-8">
+<div class="flex items-center gap-3">
+<div class="size-8 bg-primary rounded-lg flex items-center justify-center neon-glow">
+<span class="material-symbols-outlined text-background-dark font-bold">analytics</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight text-primary neon-text-glow">RowRescue</h2>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">folder_open</span>
+<span class="font-medium text-slate-400 group-hover:text-primary">Files</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">auto_fix</span>
+<span class="font-medium text-slate-400 group-hover:text-primary">Automations</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">key</span>
+<span class="font-medium text-slate-400 group-hover:text-primary">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-primary/5 transition-colors group" href="#">
+<span class="material-symbols-outlined text-slate-400 group-hover:text-primary">payments</span>
+<span class="font-medium text-slate-400 group-hover:text-primary">Billing</span>
+</a>
+</nav>
+<div class="mt-auto glass-panel p-4 rounded-xl border border-primary/10">
+<div class="flex items-center gap-3 mb-3">
+<div class="size-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-xs font-bold uppercase tracking-widest text-primary/80">Premium Plan</span>
+</div>
+<p class="text-xs text-slate-400 leading-relaxed">You have saved <span class="text-primary font-bold">1.2TB</span> of bandwidth this month.</p>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-y-auto">
+<!-- Header -->
+<header class="glass-header sticky top-0 z-50 px-8 py-4 flex items-center justify-between">
+<div class="w-96">
+<div class="relative group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-primary transition-colors">search</span>
+<input class="w-full bg-primary/5 border border-primary/10 rounded-xl py-2 pl-10 pr-4 focus:outline-none focus:ring-1 focus:ring-primary focus:bg-primary/10 transition-all text-sm" placeholder="Search rescued files..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 size-2 bg-primary rounded-full border-2 border-background-dark"></span>
+</button>
+<button class="text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="flex items-center gap-3 pl-6 border-l border-primary/10">
+<div class="text-right">
+<p class="text-sm font-bold">Alex Thorne</p>
+<p class="text-xs text-primary/70">Administrator</p>
+</div>
+<div class="relative">
+<img alt="Profile" class="size-10 rounded-full border border-primary/30 p-0.5" data-alt="User profile avatar of Alex" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9U_WQjvWZg5gGyTu_zlHQYSPnM1mwbVrEPuH5XeSLLY9FKmwE6MFSLIkXCG8pnN9AAlduxKcEGb6Z1xNAse177jTFw3O6uHDWj6ZtfWEMSoBrrDrwxltNfbfARKzwjlxWIoChqVRsCBaF2mxopUzVEy2k3TJL9TQeTx8G6uwZzwWGIU-V2QEcBfxd-d8319ItcPMcn1AnCsRMOANJHjDC0a1tjrGzc-QdSB2WFyj5ucQmx9BMAi1xYa7kHjGUMLR7NKHbIHYWYw8"/>
+<div class="absolute bottom-0 right-0 size-3 bg-primary rounded-full border-2 border-background-dark neon-glow"></div>
+</div>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<!-- Hero Section -->
+<section>
+<div class="mb-6">
+<h1 class="text-4xl font-bold tracking-tight text-slate-100 mb-2">Welcome back, Alex</h1>
+<p class="text-slate-400">Your privacy-first CSV cleaning workspace is ready for action.</p>
+</div>
+<div class="relative overflow-hidden rounded-xl border-2 border-dashed border-primary/30 bg-gradient-to-br from-emerald-500/5 to-primary/5 group cursor-pointer hover:border-primary/60 transition-all">
+<div class="flex flex-col items-center justify-center py-16 px-6 text-center">
+<div class="size-20 bg-primary/10 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-primary text-4xl neon-text-glow">cloud_upload</span>
+</div>
+<h3 class="text-xl font-bold text-slate-100 mb-2">Upload CSV to Rescue</h3>
+<p class="text-slate-400 max-w-md mx-auto mb-6">
+                                Drag and drop your files here or click to browse. Supports .csv, .xlsx, and .json up to 500MB.
+                            </p>
+<button class="bg-primary text-background-dark font-bold px-8 py-3 rounded-xl hover:brightness-110 transition-all neon-glow flex items-center gap-2">
+<span class="material-symbols-outlined font-bold">add</span>
+                                Select Files
+                            </button>
+</div>
+</div>
+</section>
+<!-- Stat Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="glass-panel p-6 rounded-xl border border-primary/10 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<p class="text-slate-400 text-sm font-medium">Rows Rescued</p>
+<span class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg text-sm">trending_up</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold text-slate-100">124,502</p>
+<p class="text-emerald-400 text-xs font-bold">+12.4%</p>
+</div>
+<div class="h-8 w-full mt-2 flex items-end gap-1">
+<div class="bg-primary/20 hover:bg-primary w-full h-1/2 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-2/3 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-1/3 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-3/4 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-1/2 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-5/6 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-full rounded-sm transition-all"></div>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-xl border border-primary/10 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<p class="text-slate-400 text-sm font-medium">Data Quality Score</p>
+<span class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg text-sm">verified_user</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold text-slate-100">98.2%</p>
+<p class="text-emerald-400 text-xs font-bold">+0.4%</p>
+</div>
+<div class="h-8 w-full mt-2 flex items-end gap-1">
+<div class="bg-primary/20 hover:bg-primary w-full h-5/6 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-4/6 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-5/6 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-full rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-5/6 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-full rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-full rounded-sm transition-all"></div>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-xl border border-primary/10 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<p class="text-slate-400 text-sm font-medium">Storage Saved</p>
+<span class="material-symbols-outlined text-primary bg-primary/10 p-1.5 rounded-lg text-sm">hard_drive</span>
+</div>
+<div class="flex items-baseline gap-2">
+<p class="text-3xl font-bold text-slate-100">4.2GB</p>
+<p class="text-rose-400 text-xs font-bold">-5%</p>
+</div>
+<div class="h-8 w-full mt-2 flex items-end gap-1">
+<div class="bg-primary/20 hover:bg-primary w-full h-1/2 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-1/3 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-1/4 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-1/2 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-2/3 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-1/2 rounded-sm transition-all"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-1/3 rounded-sm transition-all"></div>
+</div>
+</div>
+</div>
+<!-- Recent Rescues Table -->
+<section class="glass-panel rounded-xl border border-primary/10 overflow-hidden">
+<div class="px-6 py-4 border-b border-primary/10 flex justify-between items-center bg-primary/5">
+<h2 class="text-lg font-bold text-slate-100">Recent Rescues</h2>
+<button class="text-primary text-sm font-bold hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead class="text-xs uppercase text-slate-500 font-bold border-b border-primary/10">
+<tr>
+<th class="px-6 py-4">Filename</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4 text-center">Rows Saved</th>
+<th class="px-6 py-4">Date</th>
+<th class="px-6 py-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-primary/5">
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="font-medium text-slate-200">sales_data_q3.csv</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Cleaned</span>
+</td>
+<td class="px-6 py-4 text-center text-slate-300">45,210</td>
+<td class="px-6 py-4 text-slate-400 text-sm">2 mins ago</td>
+<td class="px-6 py-4 text-right">
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined text-xl">download</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="font-medium text-slate-200">raw_leads_2024.xlsx</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2 text-amber-400">
+<div class="size-1.5 rounded-full bg-amber-400 animate-pulse"></div>
+<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-amber-500/20 border border-amber-500/30">Processing</span>
+</div>
+</td>
+<td class="px-6 py-4 text-center text-slate-300">12,800</td>
+<td class="px-6 py-4 text-slate-400 text-sm">15 mins ago</td>
+<td class="px-6 py-4 text-right">
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-600 cursor-not-allowed">
+<span class="material-symbols-outlined text-xl">hourglass_empty</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="font-medium text-slate-200">user_feedback_v2.csv</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Cleaned</span>
+</td>
+<td class="px-6 py-4 text-center text-slate-300">102,450</td>
+<td class="px-6 py-4 text-slate-400 text-sm">2 hours ago</td>
+<td class="px-6 py-4 text-right">
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined text-xl">download</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">description</span>
+<span class="font-medium text-slate-200">marketing_spend.json</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Cleaned</span>
+</td>
+<td class="px-6 py-4 text-center text-slate-300">5,432</td>
+<td class="px-6 py-4 text-slate-400 text-sm">Yesterday</td>
+<td class="px-6 py-4 text-right">
+<button class="size-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-primary hover:bg-primary/10 transition-all">
+<span class="material-symbols-outlined text-xl">download</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</div>
+</main>
+</div>
+</body></html>

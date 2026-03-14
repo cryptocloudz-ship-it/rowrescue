@@ -1,4 +1,4 @@
--- TidySheet Initial Schema
+-- RowRescue Initial Schema
 -- Neon Postgres
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

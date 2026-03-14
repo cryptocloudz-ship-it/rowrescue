@@ -1,4 +1,4 @@
-# TidySheet — Data Processing Addendum
+# RowRescue — Data Processing Addendum
 
 > **Warning**
 > This document is a template. Have it reviewed by qualified legal counsel before use.
@@ -10,11 +10,11 @@
 
 ## 1. Introduction
 
-This Data Processing Addendum ("DPA") forms part of the agreement between the customer subscribing to a TidySheet Team plan ("Controller", "Customer", "you") and [Company Name], a company registered in Ireland ("Processor", "we", "us", or "our"), collectively the "Parties".
+This Data Processing Addendum ("DPA") forms part of the agreement between the customer subscribing to a RowRescue Team plan ("Controller", "Customer", "you") and [Company Name], a company registered in Ireland ("Processor", "we", "us", or "our"), collectively the "Parties".
 
-This DPA applies to the extent that the Processor processes personal data on behalf of the Controller in connection with the provision of the TidySheet Service, and such processing is subject to the General Data Protection Regulation (EU) 2016/679 ("GDPR") or other applicable European data protection legislation.
+This DPA applies to the extent that the Processor processes personal data on behalf of the Controller in connection with the provision of the RowRescue Service, and such processing is subject to the General Data Protection Regulation (EU) 2016/679 ("GDPR") or other applicable European data protection legislation.
 
-This DPA supplements and is incorporated into the TidySheet Terms of Service.
+This DPA supplements and is incorporated into the RowRescue Terms of Service.
 
 ## 2. Definitions
 
@@ -29,7 +29,7 @@ This DPA supplements and is incorporated into the TidySheet Terms of Service.
 
 ### 3.1 Architecture Note
 
-TidySheet's core CSV processing functionality operates entirely client-side (in the user's browser). The Processor does not have access to, and does not process, the contents of files handled by the Service. This DPA governs the limited personal data that the Processor does process on behalf of the Controller in connection with the Team plan.
+RowRescue's core CSV processing functionality operates entirely client-side (in the user's browser). The Processor does not have access to, and does not process, the contents of files handled by the Service. This DPA governs the limited personal data that the Processor does process on behalf of the Controller in connection with the Team plan.
 
 ### 3.2 Categories of Data Subjects
 
@@ -43,12 +43,12 @@ TidySheet's core CSV processing functionality operates entirely client-side (in 
 
 ### 3.4 Purpose of Processing
 
-- Providing and operating the TidySheet Team plan, including user authentication, team member management, and audit logging;
+- Providing and operating the RowRescue Team plan, including user authentication, team member management, and audit logging;
 - Billing administration for the Team subscription.
 
 ### 3.5 Duration of Processing
 
-Processing continues for the duration of the Controller's Team subscription plus the applicable retention periods set out in the TidySheet Privacy Policy, unless otherwise instructed by the Controller.
+Processing continues for the duration of the Controller's Team subscription plus the applicable retention periods set out in the RowRescue Privacy Policy, unless otherwise instructed by the Controller.
 
 ## 4. Controller Obligations
 
@@ -174,7 +174,7 @@ The Processor shall make available relevant records, systems, and personnel to f
 
 ## 12. Liability
 
-Each Party's liability under this DPA is subject to the limitations of liability set out in the TidySheet Terms of Service, except where applicable law requires otherwise.
+Each Party's liability under this DPA is subject to the limitations of liability set out in the RowRescue Terms of Service, except where applicable law requires otherwise.
 
 ## 13. Term and Termination
 

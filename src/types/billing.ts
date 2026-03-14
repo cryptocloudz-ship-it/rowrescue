@@ -1,4 +1,4 @@
-/** Billing & entitlement types for TidySheet */
+/** Billing & entitlement types for RowRescue */
 
 export type PlanId = "free" | "pro" | "team";
 

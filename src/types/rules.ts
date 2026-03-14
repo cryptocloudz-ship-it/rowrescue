@@ -1,4 +1,4 @@
-/** Rule type definitions for TidySheet cleaning engine */
+/** Rule type definitions for RowRescue cleaning engine */
 
 import type { Row, CleanResult } from "./sheet";
 
