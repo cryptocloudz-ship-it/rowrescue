@@ -3,6 +3,8 @@
 import { Check, X, ShieldCheck, Zap, Activity } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { getUtmParams } from "@/lib/utm";
+import { trackCheckoutStarted } from "@/lib/analytics";
 
 const FEATURES = [
   { name: "Exports per day", free: "5", pro: "Unlimited", team: "Unlimited" },
@@ -38,15 +40,25 @@ function FeatureCell({ value }: { value: boolean | string }) {
 
 export default function PricingPage() {
   const [loading, setLoading] = useState<string | null>(null);
+  const [yearly, setYearly] = useState(false);
 
   async function handleCheckout(priceId: string) {
     setLoading(priceId);
+
+    const plan = priceId === proPriceId ? "pro" : "team";
+    trackCheckoutStarted({ plan, billing_period: yearly ? "yearly" : "monthly" });
+
     try {
+      const utm = getUtmParams();
       const res = await fetch("/api/stripe/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ priceId }),
+        body: JSON.stringify({ priceId, utm }),
       });
+      if (res.status === 401) {
+        window.location.href = `/sign-up?redirect_url=${encodeURIComponent("/pricing")}`;
+        return;
+      }
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
@@ -55,13 +67,18 @@ export default function PricingPage() {
         setLoading(null);
       }
     } catch {
-      alert("Something went wrong");
+      alert("Something went wrong. Please try again.");
       setLoading(null);
     }
   }
 
   const proMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID!;
+  const proYearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID!;
   const teamMonthlyPriceId = process.env.NEXT_PUBLIC_STRIPE_TEAM_MONTHLY_PRICE_ID!;
+  const teamYearlyPriceId = process.env.NEXT_PUBLIC_STRIPE_TEAM_YEARLY_PRICE_ID!;
+
+  const proPriceId = yearly ? proYearlyPriceId : proMonthlyPriceId;
+  const teamPriceId = yearly ? teamYearlyPriceId : teamMonthlyPriceId;
 
   return (
     <div className="min-h-screen bg-background-dark text-slate-100 font-display relative overflow-hidden">
@@ -94,11 +111,37 @@ export default function PricingPage() {
           <p className="text-xl text-slate-400 mt-6 max-w-2xl mx-auto leading-relaxed">
             Get your data ready for analysis in seconds, not hours. Start for free today, upgrade when you need to process massive files.
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-8 text-sm font-bold text-slate-300">
-            <span className="flex items-center gap-2 px-4 py-2 glass-panel rounded-full border border-primary/20">
-              <Check className="w-5 h-5 text-primary" /> Trusted by 1,200+ data teams
-            </span>
-            <span className="flex items-center gap-2 px-4 py-2 glass-panel rounded-full border border-primary/20">
+          <div className="mt-8 flex flex-col items-center gap-6">
+            <div className="flex items-center gap-3 p-1.5 glass-panel rounded-full border border-primary/20">
+              <button
+                onClick={() => setYearly(false)}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all ${
+                  !yearly
+                    ? "bg-primary text-background-dark neon-glow"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setYearly(true)}
+                className={`px-5 py-2 rounded-full text-sm font-bold transition-all flex items-center gap-2 ${
+                  yearly
+                    ? "bg-primary text-background-dark neon-glow"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+              >
+                Yearly
+                <span className={`text-xs px-2 py-0.5 rounded-full font-bold ${
+                  yearly
+                    ? "bg-background-dark/30 text-background-dark"
+                    : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                }`}>
+                  Save 31%
+                </span>
+              </button>
+            </div>
+            <span className="flex items-center gap-2 px-4 py-2 glass-panel rounded-full border border-primary/20 text-sm font-bold text-slate-300">
               <ShieldCheck className="w-5 h-5 text-primary" /> 14-day money-back guarantee
             </span>
           </div>
@@ -137,22 +180,34 @@ export default function PricingPage() {
               Full automated power for data professionals
             </p>
             <div className="mt-6">
-              <span className="text-5xl font-extrabold text-slate-100">€12</span>
-              <span className="text-slate-500 ml-2 font-medium">/month</span>
-            </div>
-            <div className="mt-3 flex items-center justify-between">
-              <p className="text-sm font-medium text-slate-400">or €99/year</p>
-              <span className="inline-flex items-center px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold rounded-full">
-                Save €45/yr
+              <span className="text-5xl font-extrabold text-slate-100">
+                {yearly ? "€99" : "€12"}
+              </span>
+              <span className="text-slate-500 ml-2 font-medium">
+                {yearly ? "/year" : "/month"}
               </span>
             </div>
+            {yearly ? (
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-sm font-medium text-slate-400">€8.25/mo effective</p>
+                <span className="inline-flex items-center px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold rounded-full">
+                  Save €45/yr
+                </span>
+              </div>
+            ) : (
+              <div className="mt-3">
+                <p className="text-sm font-medium text-slate-400">
+                  or <button onClick={() => setYearly(true)} className="text-emerald-400 hover:text-emerald-300 font-bold underline underline-offset-2 transition-colors">€99/year — save €45</button>
+                </p>
+              </div>
+            )}
             <button
-              onClick={() => handleCheckout(proMonthlyPriceId)}
+              onClick={() => handleCheckout(proPriceId)}
               disabled={!!loading}
               className="mt-6 flex items-center justify-center gap-2 w-full px-4 py-4 bg-primary text-background-dark rounded-xl hover:brightness-110 font-bold text-lg shadow-sm disabled:opacity-50 transition-all neon-glow"
             >
-              {loading === proMonthlyPriceId ? "Redirecting..." : "Clean My Data Now"}
-              {loading !== proMonthlyPriceId && <Zap className="w-5 h-5" />}
+              {loading === proPriceId ? "Redirecting..." : "Clean My Data Now"}
+              {loading !== proPriceId && <Zap className="w-5 h-5" />}
             </button>
             <p className="text-xs text-primary/80 mt-4 text-center flex items-center justify-center gap-1.5 font-medium">
               <ShieldCheck className="w-4 h-4" /> Fully refundable within 14 days
@@ -166,16 +221,22 @@ export default function PricingPage() {
               Shared rules and presets for your organization
             </p>
             <div className="mt-6 mb-2">
-              <span className="text-5xl font-extrabold text-slate-100">€19</span>
-              <span className="text-slate-500 ml-2 font-medium">/seat/m</span>
+              <span className="text-5xl font-extrabold text-slate-100">
+                {yearly ? "€249" : "€29"}
+              </span>
+              <span className="text-slate-500 ml-2 font-medium">
+                {yearly ? "/seat/yr" : "/seat/mo"}
+              </span>
             </div>
-            <p className="text-sm text-slate-500 mb-6 font-medium">Minimum 2 seats</p>
+            <p className="text-sm text-slate-500 mb-6 font-medium">
+              {yearly ? "€20.75/mo per seat" : "Minimum 2 seats"}
+            </p>
             <button
-              onClick={() => handleCheckout(teamMonthlyPriceId)}
+              onClick={() => handleCheckout(teamPriceId)}
               disabled={!!loading}
               className="flex items-center justify-center w-full px-4 py-3 bg-slate-800 border border-slate-700 text-slate-200 rounded-xl hover:bg-slate-700 font-bold transition-colors disabled:opacity-50"
             >
-              {loading === teamMonthlyPriceId ? "Redirecting..." : "Upgrade to Team"}
+              {loading === teamPriceId ? "Redirecting..." : "Upgrade to Team"}
             </button>
           </div>
         </div>

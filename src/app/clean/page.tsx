@@ -9,6 +9,7 @@ import { PreviewGrid } from "@/components/grid/PreviewGrid";
 import { ExportPanel } from "@/components/ui/ExportPanel";
 import { StatsBar } from "@/components/ui/StatsBar";
 import { useKeyboardShortcuts } from "@/lib/hooks/useKeyboardShortcuts";
+import { useBeforeUnload } from "@/lib/hooks/useBeforeUnload";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import {
   ArrowLeft,
@@ -21,9 +22,12 @@ import {
   Lock,
   ShieldAlert,
   Activity,
+  Zap,
 } from "lucide-react";
 import Link from "next/link";
 import { WelcomeModal } from "@/components/ui/WelcomeModal";
+import { OnboardingHint } from "@/components/ui/OnboardingHint";
+import { HelpButton } from "@/components/ui/HelpButton";
 
 const STAGES = [
   { id: "idle", label: "Upload", icon: FileUp },
@@ -84,12 +88,17 @@ export default function CleanPage() {
     engineResult,
     rowLimitHit,
     totalRowCount,
+    cleaningTimeMs,
+    isPro,
     setStage,
     runCleaning,
     resetAll,
   } = useSheetStore();
 
   const exportRef = useRef<HTMLDivElement>(null);
+
+  // Warn before closing tab if data is loaded
+  useBeforeUnload(stage !== "idle");
 
   const shortcutHandlers = useMemo(
     () => ({
@@ -107,8 +116,11 @@ export default function CleanPage() {
         if (stage === "configuring") setStage("health-check");
         else if (stage === "previewing" || stage === "exporting") setStage("configuring");
       },
+      onRun: () => {
+        if (stage === "configuring") runCleaning();
+      },
     }),
-    [stage, setStage]
+    [stage, setStage, runCleaning]
   );
 
   useKeyboardShortcuts(shortcutHandlers);
@@ -192,6 +204,23 @@ export default function CleanPage() {
             <div className="w-full max-w-3xl">
               <FileUploader />
             </div>
+
+            {/* How it works */}
+            <div className="w-full max-w-2xl mt-8 grid grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+              {[
+                { step: "1", icon: FileUp, title: "Upload", desc: "Drop your messy CSV or Excel file" },
+                { step: "2", icon: Settings2, title: "Clean", desc: "Toggle smart rules — preview every change" },
+                { step: "3", icon: Download, title: "Export", desc: "Download your pristine data instantly" },
+              ].map((item) => (
+                <div key={item.step} className="text-center group">
+                  <div className="mx-auto w-12 h-12 rounded-2xl glass-panel border border-primary/10 flex items-center justify-center mb-3 group-hover:border-primary/30 group-hover:bg-primary/5 transition-all">
+                    <item.icon className="w-5 h-5 text-slate-400 group-hover:text-primary transition-colors" />
+                  </div>
+                  <p className="text-sm font-bold text-slate-300">{item.title}</p>
+                  <p className="text-xs font-medium text-slate-500 mt-1">{item.desc}</p>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -199,6 +228,9 @@ export default function CleanPage() {
         {stage === "health-check" && parsedSheet && healthReport && (
           <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <StatsBar sheet={parsedSheet} />
+            <OnboardingHint id="health-check">
+              We scanned your file and found potential issues. Review them below, then click <strong className="text-primary">Continue</strong> to choose which rules to apply.
+            </OnboardingHint>
             <HealthReportPanel
               report={healthReport}
               onContinue={() => setStage("configuring")}
@@ -210,6 +242,9 @@ export default function CleanPage() {
         {stage === "configuring" && parsedSheet && (
           <div className="max-w-3xl mx-auto space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <StatsBar sheet={parsedSheet} />
+            <OnboardingHint id="configuring">
+              We auto-enabled rules that match your file&apos;s issues. Toggle others on/off, then hit <strong className="text-primary">Apply & Preview</strong> to see every change before exporting.
+            </OnboardingHint>
             {rowLimitHit && (
               <div className="p-5 glass-panel border border-amber-500/30 rounded-xl shadow-[0_0_30px_rgba(245,158,11,0.1)] relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-2xl rounded-full" />
@@ -264,6 +299,31 @@ export default function CleanPage() {
             <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-[1400px] mx-auto">
               <StatsBar sheet={parsedSheet} />
 
+              <OnboardingHint id="previewing">
+                Green cells were changed, red rows were removed. Scroll down to <strong className="text-primary">export</strong> your cleaned file, or go back to adjust rules.
+              </OnboardingHint>
+
+              {/* Success celebration */}
+              {(() => {
+                const changedCount = allChanges.filter((c) => c.changeType === "changed").length;
+                const removedCount = parsedSheet.rowCount - cleanedRows.length;
+                const totalFixes = changedCount + removedCount + allQuarantined.length;
+                if (totalFixes === 0) return null;
+                const timeStr = cleaningTimeMs < 1000
+                  ? `${cleaningTimeMs}ms`
+                  : `${(cleaningTimeMs / 1000).toFixed(1)}s`;
+                return (
+                  <div className="text-center py-3 glass-panel border border-primary/20 rounded-xl animate-in fade-in zoom-in-95 duration-500">
+                    <p className="text-base font-bold text-slate-200">
+                      <span className="text-primary neon-text-glow">
+                        {totalFixes.toLocaleString()} fixes
+                      </span>
+                      {" "}applied in {timeStr}
+                    </p>
+                  </div>
+                );
+              })()}
+
               {/* Summary stats */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <StatCard
@@ -315,7 +375,7 @@ export default function CleanPage() {
                 <ExportPanel />
               </div>
 
-              <div className="flex justify-center gap-4 pt-8 pb-12 border-t border-primary/10 mt-8">
+              <div className={`flex justify-center gap-4 pt-8 border-t border-primary/10 mt-8 ${!isPro && healthReport ? "pb-24" : "pb-12"}`}>
                 <button
                   onClick={() => setStage("configuring")}
                   className="px-6 py-3 text-sm font-bold glass-panel rounded-xl text-slate-300 hover:text-primary hover:border-primary/50 transition-colors border border-primary/20"
@@ -329,9 +389,46 @@ export default function CleanPage() {
                   Start Over
                 </button>
               </div>
+
+              {/* Sticky upgrade banner for free users */}
+              {!isPro && healthReport && (() => {
+                const proFixCount = healthReport.issues
+                  .filter((i) => {
+                    const ruleId = ({
+                      date_inconsistency: "normalizeDate",
+                      number_format: "normalizeNumbers",
+                      invalid_email: "validateEmail",
+                      invalid_phone: "validatePhone",
+                    } as Record<string, string>)[i.type];
+                    return ruleId !== undefined;
+                  })
+                  .reduce((sum, i) => sum + i.count, 0);
+                if (proFixCount === 0) return null;
+                return (
+                  <div className="fixed bottom-0 left-0 right-0 z-40 glass-panel border-t border-amber-500/30 bg-background-dark/95 backdrop-blur-xl shadow-[0_-4px_30px_rgba(0,0,0,0.5)] animate-in slide-in-from-bottom-4 duration-500">
+                    <div className="max-w-[1400px] mx-auto px-4 py-3 flex items-center justify-between gap-4">
+                      <p className="text-sm font-bold text-slate-300">
+                        You cleaned{" "}
+                        <span className="text-primary">{allChanges.filter((c) => c.changeType === "changed").length.toLocaleString()} cells</span>
+                        {" — Pro would have caught "}
+                        <span className="text-amber-400">{proFixCount.toLocaleString()} more</span>
+                      </p>
+                      <Link
+                        href="/pricing"
+                        className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 text-sm font-extrabold rounded-xl transition-all shadow-[0_0_15px_rgba(245,158,11,0.3)]"
+                      >
+                        <Zap className="w-4 h-4" />
+                        Upgrade — €12/mo
+                      </Link>
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           )}
       </main>
+
+      <HelpButton stage={stage} />
     </div>
   );
 }

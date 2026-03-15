@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /clean
+Disallow: /dashboard
+Disallow: /billing
+Disallow: /files
+Disallow: /automations
+Disallow: /sign-in
+Disallow: /sign-up
+
+Sitemap: https://rowrescue.app/sitemap.xml

@@ -13,11 +13,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { priceId } = await request.json();
+  const { priceId, utm } = await request.json();
 
-  if (!priceId) {
+  // Validate priceId against known Stripe price IDs
+  const allowedPriceIds = new Set(
+    [
+      process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID,
+      process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID,
+      process.env.NEXT_PUBLIC_STRIPE_TEAM_MONTHLY_PRICE_ID,
+    ].filter(Boolean)
+  );
+
+  if (!priceId || !allowedPriceIds.has(priceId)) {
     return NextResponse.json(
-      { error: "Missing priceId" },
+      { error: "Invalid price ID" },
       { status: 400 }
     );
   }
@@ -33,7 +42,12 @@ export async function POST(request: NextRequest) {
     line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${request.nextUrl.origin}/billing?success=true`,
     cancel_url: `${request.nextUrl.origin}/pricing`,
-    metadata: { clerkUserId: userId },
+    metadata: {
+      clerkUserId: userId,
+      ...(utm?.utm_source && { utm_source: String(utm.utm_source).slice(0, 500) }),
+      ...(utm?.utm_medium && { utm_medium: String(utm.utm_medium).slice(0, 500) }),
+      ...(utm?.utm_campaign && { utm_campaign: String(utm.utm_campaign).slice(0, 500) }),
+    },
   };
 
   // Use existing Stripe customer if available, otherwise pass email

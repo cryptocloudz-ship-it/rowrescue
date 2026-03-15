@@ -408,13 +408,31 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
         })}
       </div>
 
+      {enabledCount > 0 && healthReport && (() => {
+        const estimatedFixes = healthReport.issues.reduce((sum, issue) => {
+          const ruleId = ISSUE_TO_RULE[issue.type];
+          if (!ruleId) return sum;
+          const config = ruleConfigs.find((rc) => rc.ruleId === ruleId);
+          if (config?.enabled) return sum + issue.count;
+          return sum;
+        }, 0);
+        const rowCount = parsedSheet?.rowCount ?? 0;
+        return estimatedFixes > 0 ? (
+          <div className="mt-8 p-4 glass-panel border border-primary/20 rounded-xl text-center animate-in fade-in duration-300">
+            <p className="text-sm font-bold text-slate-300">
+              Estimated impact: <span className="text-primary neon-text-glow text-lg">{estimatedFixes.toLocaleString()}</span> fixes across <span className="text-slate-100">{rowCount.toLocaleString()}</span> rows
+            </p>
+          </div>
+        ) : null;
+      })()}
+
       <button
         onClick={onRunCleaning}
         disabled={enabledCount === 0}
         aria-label={enabledCount === 0 ? "Select at least one rule to proceed" : `Apply ${enabledCount} cleaning rules and preview results`}
-        className={`w-full mt-8 px-4 py-4 rounded-xl transition-all duration-300 font-extrabold text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark
+        className={`w-full ${enabledCount > 0 && healthReport ? "mt-4" : "mt-8"} px-4 py-4 rounded-xl transition-all duration-300 font-extrabold text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark
           ${enabledCount === 0
-            ? "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700" 
+            ? "bg-slate-800 text-slate-500 cursor-not-allowed border border-slate-700"
             : "bg-primary text-background-dark hover:brightness-110 shadow-[0_0_20px_rgba(13,242,223,0.2)] hover:shadow-[0_0_30px_rgba(13,242,223,0.4)] neon-glow"
           }
         `}

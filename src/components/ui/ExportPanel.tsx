@@ -1,11 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Download, FileText, FileSpreadsheet, AlertTriangle, Sparkles, ArrowRight, CheckCircle, Clock, Lock } from "lucide-react";
+import { Download, FileText, FileSpreadsheet, AlertTriangle, Sparkles, ArrowRight, CheckCircle, Clock, Lock, Copy, Check, FileUp, Loader2 } from "lucide-react";
 import { useSheetStore } from "@/store/sheetStore";
 import { exportToCSV, exportChangeLog, exportQuarantined } from "@/lib/engine/exporters/csvExporter";
 import { exportToXLSX } from "@/lib/engine/exporters/xlsxExporter";
 import { exportSummary } from "@/lib/engine/exporters/summaryExporter";
+import { trackExport } from "@/lib/analytics";
 
 function downloadBlob(content: string | Uint8Array, filename: string, mime: string) {
   const blob = content instanceof Uint8Array
@@ -29,8 +30,13 @@ export function ExportPanel() {
     ruleConfigs,
     isPro,
     engineResult,
+    cleaningTimeMs,
+    resetAll,
   } = useSheetStore();
   const [showPostExport, setShowPostExport] = useState(false);
+  const [exported, setExported] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [downloading, setDownloading] = useState<string | null>(null);
   const [exportsRemaining, setExportsRemaining] = useState<number | null>(null);
   const [limitReached, setLimitReached] = useState(false);
   const [timeUntilReset, setTimeUntilReset] = useState("");
@@ -90,23 +96,37 @@ export function ExportPanel() {
   };
 
   const handleExportCSV = async () => {
-    const allowed = await recordExport();
-    if (!allowed) return;
-    const csv = exportToCSV(cleanedRows, cleanedHeaders, {
-      watermark: hasWatermark,
-    });
-    downloadBlob(csv, `${baseName}_cleaned.csv`, "text/csv;charset=utf-8");
-    if (hasWatermark) setShowPostExport(true);
+    setDownloading("csv");
+    try {
+      const allowed = await recordExport();
+      if (!allowed) return;
+      const csv = exportToCSV(cleanedRows, cleanedHeaders, {
+        watermark: hasWatermark,
+      });
+      downloadBlob(csv, `${baseName}_cleaned.csv`, "text/csv;charset=utf-8");
+      setExported(true);
+      trackExport({ format: "csv", row_count: cleanedRows.length, is_pro: isPro });
+      if (hasWatermark) setShowPostExport(true);
+    } finally {
+      setDownloading(null);
+    }
   };
 
   const handleExportXLSX = async () => {
     if (!isPro) return;
-    const xlsx = await exportToXLSX(cleanedRows, cleanedHeaders);
-    downloadBlob(
-      xlsx,
-      `${baseName}_cleaned.xlsx`,
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    );
+    setDownloading("xlsx");
+    try {
+      const xlsx = await exportToXLSX(cleanedRows, cleanedHeaders);
+      downloadBlob(
+        xlsx,
+        `${baseName}_cleaned.xlsx`,
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      );
+      setExported(true);
+      trackExport({ format: "xlsx", row_count: cleanedRows.length, is_pro: isPro });
+    } finally {
+      setDownloading(null);
+    }
   };
 
   const handleExportChangeLog = () => {
@@ -216,16 +236,22 @@ export function ExportPanel() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="group" aria-label="Export options">
         <button
           onClick={handleExportCSV}
-          disabled={limitReached}
+          disabled={limitReached || downloading === "csv"}
           aria-label={`Download cleaned CSV with ${cleanedRows.length} rows`}
           className="flex items-center gap-4 p-5 glass-panel bg-primary/10 border border-primary/30 rounded-2xl hover:shadow-[0_0_30px_rgba(13,242,223,0.15)] shadow-[inset_0_0_20px_rgba(13,242,223,0.05)] hover:-translate-y-1 transition-all duration-300 text-left focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark disabled:opacity-50 disabled:cursor-not-allowed group relative overflow-hidden animate-pulse hover:animate-none"
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-primary/20 blur-3xl rounded-full pointer-events-none group-hover:bg-primary/30 transition-colors duration-500" />
           <div className="p-3 bg-slate-900/50 border border-primary/20 rounded-xl group-hover:bg-primary/20 transition-colors shadow-[0_0_15px_rgba(13,242,223,0.1)] relative z-10">
-            <Download className="w-6 h-6 text-primary drop-shadow-[0_0_8px_rgba(13,242,223,0.8)]" aria-hidden="true" />
+            {downloading === "csv" ? (
+              <Loader2 className="w-6 h-6 text-primary animate-spin" aria-hidden="true" />
+            ) : (
+              <Download className="w-6 h-6 text-primary drop-shadow-[0_0_8px_rgba(13,242,223,0.8)]" aria-hidden="true" />
+            )}
           </div>
           <div className="relative z-10">
-            <p className="font-extrabold text-slate-100 text-base group-hover:text-primary transition-colors tracking-tight">Cleaned CSV</p>
+            <p className="font-extrabold text-slate-100 text-base group-hover:text-primary transition-colors tracking-tight">
+              {downloading === "csv" ? "Exporting…" : "Cleaned CSV"}
+            </p>
             <p className="text-sm font-medium mt-1 text-primary/80">
               {cleanedRows.length.toLocaleString()} rows
             </p>
@@ -234,16 +260,20 @@ export function ExportPanel() {
 
         <button
           onClick={handleExportXLSX}
-          disabled={!isPro}
+          disabled={!isPro || downloading === "xlsx"}
           aria-label={isPro ? `Download Excel file with ${cleanedRows.length} rows` : "Excel export requires Pro plan"}
           className="flex items-center gap-4 p-5 glass-panel border border-primary/10 rounded-2xl hover:border-primary/30 hover:bg-white/5 transition-all duration-300 text-left disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-1 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 group relative overflow-hidden"
         >
           <div className="p-3 bg-slate-800/50 border border-slate-700 rounded-xl group-hover:border-primary/30 group-hover:bg-primary/10 transition-colors relative z-10">
-            <FileSpreadsheet className={`w-6 h-6 ${isPro ? "text-primary drop-shadow-[0_0_8px_rgba(13,242,223,0.5)]" : "text-slate-500"}`} aria-hidden="true" />
+            {downloading === "xlsx" ? (
+              <Loader2 className="w-6 h-6 text-primary animate-spin" aria-hidden="true" />
+            ) : (
+              <FileSpreadsheet className={`w-6 h-6 ${isPro ? "text-primary drop-shadow-[0_0_8px_rgba(13,242,223,0.5)]" : "text-slate-500"}`} aria-hidden="true" />
+            )}
           </div>
           <div className="relative z-10">
             <p className="font-bold text-slate-200 text-base group-hover:text-primary transition-colors tracking-tight">
-              Excel (.xlsx){" "}
+              {downloading === "xlsx" ? "Exporting…" : "Excel (.xlsx)"}{" "}
               {!isPro && (
                 <span className="text-xs bg-amber-500/10 text-amber-400 border border-amber-500/20 px-1.5 py-0.5 rounded ml-1 font-bold uppercase tracking-wider">Pro</span>
               )}
@@ -337,6 +367,58 @@ export function ExportPanel() {
           </div>
         </div>
       )}
+
+      {/* Post-export: shareable badge + clean another file */}
+      {exported && (() => {
+        const changedCount = allChanges.filter((c) => c.changeType === "changed").length;
+        const timeStr = cleaningTimeMs < 1000
+          ? `${cleaningTimeMs}ms`
+          : `${(cleaningTimeMs / 1000).toFixed(1)}s`;
+        const shareText = `Cleaned ${changedCount.toLocaleString()} cells in ${timeStr} with RowRescue`;
+
+        return (
+          <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            {/* Shareable badge */}
+            <div className="glass-panel border border-primary/20 rounded-2xl p-5">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3 min-w-0">
+                  <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                  <p className="text-sm font-bold text-slate-300 truncate">{shareText}</p>
+                </div>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(shareText);
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-400 hover:text-primary bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-primary/30 rounded-lg transition-all"
+                >
+                  {copied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      Copy
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Clean another file */}
+            <button
+              onClick={resetAll}
+              className="w-full flex items-center justify-center gap-2 p-4 glass-panel border border-primary/10 hover:border-primary/30 rounded-2xl text-slate-300 hover:text-primary font-bold transition-all hover:bg-primary/5 group"
+            >
+              <FileUp className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              Clean another file
+            </button>
+          </div>
+        );
+      })()}
     </section>
   );
 }

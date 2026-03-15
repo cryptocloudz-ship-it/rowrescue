@@ -13,8 +13,21 @@ import { generateHealthReport } from "@/lib/engine/healthReport";
 import { runEngine, undoRule, type EngineResult } from "@/lib/engine/ruleEngine";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { FREE_RULES } from "@/config/plans";
+import { trackFileUpload, trackDemoLoaded, trackCleaningRun } from "@/lib/analytics";
 
 const FREE_ROW_LIMIT = 5_000;
+
+// Maps health report issue types to rule IDs (shared with RuleConfigurator)
+const ISSUE_TO_RULE: Record<string, string> = {
+  duplicate_rows: "deduplicateRows",
+  empty_rows: "removeEmptyRows",
+  empty_columns: "removeEmptyColumns",
+  inconsistent_headers: "normalizeHeaders",
+  date_inconsistency: "normalizeDate",
+  number_format: "normalizeNumbers",
+  invalid_email: "validateEmail",
+  invalid_phone: "validatePhone",
+};
 
 interface SheetState {
   // Stage
@@ -39,6 +52,7 @@ interface SheetState {
   allChanges: CellChange[];
   allQuarantined: QuarantinedRow[];
   engineErrors: { ruleId: string; error: string }[];
+  cleaningTimeMs: number;
 
   // Actions
   importFile: (file: File) => Promise<void>;
@@ -85,6 +99,7 @@ export const useSheetStore = create<SheetState>((set, get) => ({
   allChanges: [],
   allQuarantined: [],
   engineErrors: [],
+  cleaningTimeMs: 0,
 
   importFile: async (file: File) => {
     try {
@@ -104,7 +119,28 @@ export const useSheetStore = create<SheetState>((set, get) => ({
 
       set({ parsedSheet: parsed, stage: "health-check" });
       const report = generateHealthReport(parsed.rows, parsed.headers);
-      set({ healthReport: report, stage: "configuring" });
+
+      // Auto-enable free rules that match detected issues
+      const { ruleConfigs, isPro: userIsPro } = get();
+      const detectedRuleIds = new Set(
+        report.issues
+          .filter((i) => i.count > 0)
+          .map((i) => ISSUE_TO_RULE[i.type])
+          .filter(Boolean)
+      );
+      const autoEnabled = ruleConfigs.map((rc) =>
+        detectedRuleIds.has(rc.ruleId) && (userIsPro || FREE_RULES.includes(rc.ruleId))
+          ? { ...rc, enabled: true }
+          : rc
+      );
+
+      set({ healthReport: report, ruleConfigs: autoEnabled, stage: "configuring" });
+
+      trackFileUpload({
+        file_type: file.name.split(".").pop() || "unknown",
+        row_count: parsed.rowCount,
+        file_size_bytes: file.size,
+      });
     } catch (err) {
       set({
         error: err instanceof Error ? err.message : "Failed to parse file",
@@ -141,7 +177,9 @@ export const useSheetStore = create<SheetState>((set, get) => ({
 
     set({ stage: "cleaning" });
 
+    const t0 = performance.now();
     const result = runEngine(parsedSheet.rows, ruleConfigs);
+    const cleaningTimeMs = Math.round(performance.now() - t0);
 
     set({
       engineResult: result,
@@ -149,7 +187,15 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       allChanges: result.allChanges,
       allQuarantined: result.allQuarantined,
       engineErrors: result.errors,
+      cleaningTimeMs,
       stage: "previewing",
+    });
+
+    trackCleaningRun({
+      rules_enabled: ruleConfigs.filter((rc) => rc.enabled).length,
+      row_count: parsedSheet.rowCount,
+      duration_ms: cleaningTimeMs,
+      changes_count: result.allChanges.length,
     });
   },
 
@@ -188,6 +234,7 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       allChanges: [],
       allQuarantined: [],
       engineErrors: [],
+      cleaningTimeMs: 0,
     });
   },
 
@@ -205,7 +252,24 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       encoding: "UTF-8",
     };
     const report = generateHealthReport(DEMO_ROWS, DEMO_HEADERS);
-    set({ parsedSheet: parsed, healthReport: report, stage: "configuring", error: null });
+
+    // Auto-enable free rules that match detected issues
+    const { ruleConfigs, isPro } = get();
+    const detectedRuleIds = new Set(
+      report.issues
+        .filter((i) => i.count > 0)
+        .map((i) => ISSUE_TO_RULE[i.type])
+        .filter(Boolean)
+    );
+    const autoEnabled = ruleConfigs.map((rc) =>
+      detectedRuleIds.has(rc.ruleId) && (isPro || FREE_RULES.includes(rc.ruleId))
+        ? { ...rc, enabled: true }
+        : rc
+    );
+
+    set({ parsedSheet: parsed, healthReport: report, ruleConfigs: autoEnabled, stage: "configuring", error: null });
+
+    trackDemoLoaded();
   },
 
   getDemoCSV: () => {

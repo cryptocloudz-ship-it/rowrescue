@@ -6,6 +6,7 @@ interface ShortcutHandlers {
   onUndo?: () => void;
   onExport?: () => void;
   onBack?: () => void;
+  onRun?: () => void;
 }
 
 export function useKeyboardShortcuts(handlers: ShortcutHandlers) {
@@ -30,6 +31,13 @@ export function useKeyboardShortcuts(handlers: ShortcutHandlers) {
       if (mod && e.shiftKey && e.key.toLowerCase() === "e") {
         e.preventDefault();
         handlers.onExport?.();
+        return;
+      }
+
+      // Ctrl/Cmd+Enter → Run cleaning
+      if (mod && e.key === "Enter") {
+        e.preventDefault();
+        handlers.onRun?.();
         return;
       }
 

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Geist, Geist_Mono } from "next/font/google";
 import { CookieConsent } from "@/components/ui/CookieConsent";
+import { UtmCapture } from "@/components/ui/UtmCapture";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -31,12 +33,22 @@ export const metadata: Metadata = {
     url: "https://rowrescue.app",
     siteName: "RowRescue",
     type: "website",
+    images: [
+      {
+        url: "https://rowrescue.app/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "RowRescue — Clean messy spreadsheets in seconds",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "RowRescue — Clean Messy CSVs in Seconds",
     description: "Privacy-first spreadsheet cleaning. 100% client-side data processing.",
+    images: ["https://rowrescue.app/og-image.png"],
   },
+  metadataBase: new URL("https://rowrescue.app"),
 };
 
 export default function RootLayout({
@@ -51,8 +63,12 @@ export default function RootLayout({
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
           {children}
+          <UtmCapture />
           <CookieConsent />
         </body>
+        {process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID} />
+        )}
       </html>
     </ClerkProvider>
   );
