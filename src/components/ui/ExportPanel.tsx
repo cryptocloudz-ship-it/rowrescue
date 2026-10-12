@@ -11,7 +11,8 @@ import { trackExport } from "@/lib/analytics";
 function downloadBlob(content: string | Uint8Array, filename: string, mime: string) {
   const blob = content instanceof Uint8Array
     ? new Blob([content.buffer as ArrayBuffer], { type: mime })
-    : new Blob([content], { type: mime });
+    : // UTF-8 BOM so Excel shows accented characters correctly when opening the CSV
+      new Blob([mime.startsWith("text/csv") ? "\ufeff" + content : content], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;

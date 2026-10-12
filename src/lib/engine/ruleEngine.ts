@@ -9,7 +9,7 @@
 
 import type { Row, CleanResult, CellChange, QuarantinedRow } from "@/types/sheet";
 import type { RuleConfig } from "@/types/rules";
-import { RULE_MAP } from "./rules";
+import { RULE_MAP, executionRank } from "./rules";
 
 export interface RuleSnapshot {
   ruleId: string;
@@ -49,7 +49,9 @@ export function runEngine(
   const snapshots: RuleSnapshot[] = [];
   const errors: { ruleId: string; error: string }[] = [];
 
-  const enabledRules = ruleConfigs.filter((rc) => rc.enabled);
+  const enabledRules = ruleConfigs
+    .filter((rc) => rc.enabled)
+    .sort((a, b) => executionRank(a.ruleId) - executionRank(b.ruleId));
 
   for (const config of enabledRules) {
     const ruleDef = RULE_MAP.get(config.ruleId);

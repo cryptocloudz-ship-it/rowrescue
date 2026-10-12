@@ -4,6 +4,8 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { X, Cookie } from "lucide-react";
 
+export const CONSENT_EVENT = "rowrescue:cookie-consent";
+
 export function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -16,6 +18,7 @@ export function CookieConsent() {
 
   const handleAccept = () => {
     localStorage.setItem("rowrescue_cookie_consent", "accepted");
+    window.dispatchEvent(new Event(CONSENT_EVENT));
     setIsVisible(false);
   };
 

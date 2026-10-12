@@ -21,6 +21,7 @@ export interface HealthIssue {
   id: string;
   type:
     | "duplicate_rows"
+    | "encoding_issues"
     | "empty_rows"
     | "empty_columns"
     | "inconsistent_headers"

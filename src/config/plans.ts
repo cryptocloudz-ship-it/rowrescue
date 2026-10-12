@@ -51,7 +51,7 @@ export const PLANS: Record<string, PlanDefinition> = {
     id: "team",
     name: "Team",
     description: "Shared cleaning for your organisation.",
-    priceMonthly: 1900, // €19.00/seat
+    priceMonthly: 2900, // €29.00/seat
     priceYearly: null,
     stripePriceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_TEAM_MONTHLY_PRICE_ID,
     limits: {
@@ -82,4 +82,8 @@ export const FREE_RULES = [
   "removeEmptyColumns",
   "trimWhitespace",
   "normalizeHeaders",
+  "fixEncoding",
+  "normalizeDate",
+  "normalizeEmail",
+  "validateEmail",
 ];

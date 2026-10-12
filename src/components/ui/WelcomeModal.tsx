@@ -9,6 +9,8 @@ export function WelcomeModal() {
   const { loadDemoData } = useSheetStore();
 
   useEffect(() => {
+    // Visitors arriving from a tool page already have a file loaded; don't interrupt them
+    if (useSheetStore.getState().stage !== "idle") return;
     const hasSeenWelcome = localStorage.getItem("rowrescue_welcome_seen");
     if (!hasSeenWelcome) {
       // eslint-disable-next-line react-hooks/set-state-in-effect

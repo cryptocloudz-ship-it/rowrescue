@@ -6,6 +6,7 @@
  */
 
 import type { Row, HealthIssue, HealthReport, Severity } from "@/types/sheet";
+import { repairMojibake } from "./rules/fixEncoding";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^[+]?[\d\s\-().]{7,20}$/;
@@ -28,6 +29,7 @@ export function generateHealthReport(
   checkNumberFormats(rows, headers, issues);
   checkInvalidEmails(rows, headers, issues);
   checkInvalidPhones(rows, headers, issues);
+  checkEncodingIssues(rows, headers, issues);
 
   const highCount = issues.filter((i) => i.severity === "HIGH").length;
   const mediumCount = issues.filter((i) => i.severity === "MEDIUM").length;
@@ -292,6 +294,37 @@ function checkInvalidPhones(rows: Row[], headers: string[], issues: HealthIssue[
       count: invalidCount,
       examples,
       affectedColumns: phoneColumns,
+    });
+  }
+}
+
+function checkEncodingIssues(rows: Row[], headers: string[], issues: HealthIssue[]) {
+  let count = 0;
+  const examples: string[] = [];
+  const affected = new Set<string>();
+
+  for (const col of headers) {
+    for (let i = 0; i < rows.length; i++) {
+      const val = rows[i][col];
+      if (typeof val !== "string") continue;
+      const repaired = repairMojibake(val);
+      if (repaired) {
+        count++;
+        affected.add(col);
+        if (examples.length < 3) examples.push(`Row ${i + 1}: "${val}" → "${repaired}"`);
+      }
+    }
+  }
+
+  if (count > 0) {
+    pushIssue(issues, {
+      type: "encoding_issues",
+      severity: "MEDIUM",
+      title: "Garbled Characters",
+      description: `Found ${count} cell${count > 1 ? "s" : ""} with encoding damage (e.g. "Ã©" instead of "é").`,
+      count,
+      examples,
+      affectedColumns: [...affected],
     });
   }
 }

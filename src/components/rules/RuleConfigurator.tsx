@@ -25,6 +25,7 @@ const CATEGORY_ORDER: RuleCategory[] = [
 // Maps health report issue types to the rule that fixes them
 const ISSUE_TO_RULE: Record<string, string> = {
   duplicate_rows: "deduplicateRows",
+  encoding_issues: "fixEncoding",
   empty_rows: "removeEmptyRows",
   empty_columns: "removeEmptyColumns",
   inconsistent_headers: "normalizeHeaders",
@@ -450,7 +451,7 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
               ? {
                   id: "all",
                   name: "All Pro Features",
-                  description: "Unlock all 17 advanced cleaning rules and process unlimited files up to unlimited rows at once.",
+                  description: "Unlock every cleaning rule and process files of up to 500,000 rows at once.",
                   category: "row_cleaning", // unused
                   supportsColumnTargeting: false,
                 } as RuleDefinition

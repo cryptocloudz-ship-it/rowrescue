@@ -1,27 +1,30 @@
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isPublicRoute = createRouteMatcher([
-  "/",
-  "/pricing",
-  "/clean(.*)",
-  "/legal(.*)",
-  "/sign-in(.*)",
-  "/sign-up(.*)",
-  "/api/stripe/webhook",
-  "/api/clerk/webhook",
+// Only the signed-in app is protected. Marketing and tool pages must stay public (and indexable),
+// so new SEO pages don't need to be registered here.
+const isProtectedRoute = createRouteMatcher([
+  "/dashboard(.*)",
+  "/billing(.*)",
+  "/files(.*)",
+  "/automations(.*)",
 ]);
 
 export default clerkMiddleware(async (auth, request) => {
-  if (!isPublicRoute(request)) {
+  if (isProtectedRoute(request)) {
     await auth.protect();
   }
 });
 
 export const config = {
+  // Clerk only runs where server-side auth is needed. Marketing and tool pages are static and use
+  // client-side auth UI, so skipping them keeps TTFB low and avoids auth redirects for crawlers.
   matcher: [
-    // Skip Next.js internals and static files
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    // Always run for API routes
     "/(api|trpc)(.*)",
+    "/dashboard(.*)",
+    "/billing(.*)",
+    "/files(.*)",
+    "/automations(.*)",
+    "/sign-in(.*)",
+    "/sign-up(.*)",
   ],
 };

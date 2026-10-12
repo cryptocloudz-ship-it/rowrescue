@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
 import {
@@ -13,6 +14,8 @@ import {
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = { robots: { index: false, follow: false } };
 
 export default function AppLayout({
   children,

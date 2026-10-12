@@ -11,13 +11,19 @@ export function deduplicateRows(
   const seen = new Set<string>();
   const uniqueRows: Row[] = [];
   let removed = 0;
+  // Key columns come from explicit by_columns config or from the column picker (options.columns)
+  const requested =
+    (opts.mode === "by_columns" && opts.keyColumns?.length ? opts.keyColumns : opts.columns) ?? [];
+  // Ignore columns that don't exist; with none left, compare whole rows rather than collapsing everything
+  const present = new Set(rows.flatMap((r) => Object.keys(r)));
+  const keyColumns = requested.filter((c) => present.has(c));
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     let key: string;
 
-    if (opts.mode === "by_columns" && opts.keyColumns?.length) {
-      key = opts.keyColumns.map((col) => String(row[col] ?? "")).join("||");
+    if (keyColumns.length) {
+      key = keyColumns.map((col) => String(row[col] ?? "")).join("||");
     } else {
       key = JSON.stringify(row);
     }

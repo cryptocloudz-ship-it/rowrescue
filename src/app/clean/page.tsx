@@ -257,7 +257,7 @@ export default function CleanPage() {
                       Row Limit Reached: Cleaning first {parsedSheet.rowCount.toLocaleString()} rows
                     </h4>
                     <p className="text-sm text-amber-200/70 mt-2 mb-4 leading-relaxed font-medium">
-                      Your file has {totalRowCount.toLocaleString()} rows, but the Free plan only processes up to 5,000 rows per file. Upgrade to Pro to clean the entire dataset at once (up to Unlimited rows).
+                      Your file has {totalRowCount.toLocaleString()} rows, but the Free plan only processes up to 5,000 rows per file. Upgrade to Pro to clean the entire dataset at once (up to 500,000 rows).
                     </p>
                     <Link
                       href="/pricing"
