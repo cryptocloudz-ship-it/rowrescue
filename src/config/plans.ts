@@ -52,8 +52,9 @@ export const PLANS: Record<string, PlanDefinition> = {
     name: "Team",
     description: "Shared cleaning for your organisation.",
     priceMonthly: 2900, // €29.00/seat
-    priceYearly: null,
+    priceYearly: 24900, // €249.00/seat
     stripePriceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_TEAM_MONTHLY_PRICE_ID,
+    stripePriceIdYearly: process.env.NEXT_PUBLIC_STRIPE_TEAM_YEARLY_PRICE_ID,
     limits: {
       maxRows: 500_000,
       maxExportsPerDay: Infinity,
@@ -71,6 +72,27 @@ export const PLANS: Record<string, PlanDefinition> = {
     },
   },
 };
+
+/** Subscription states that keep paid features on. past_due keeps access during Stripe's retry window. */
+export const PAID_STATUSES = new Set(["active", "trialing", "past_due"]);
+
+/** The plan a user is actually entitled to, given their stored plan and subscription status. */
+export function effectivePlan(plan: string | null | undefined, status: string | null | undefined): string {
+  if (!plan || plan === "free") return "free";
+  return status && PAID_STATUSES.has(status) ? plan : "free";
+}
+
+/** Plan for a Stripe price ID, or null if it isn't one of ours. */
+export function planForPriceId(priceId: string | undefined): "pro" | "team" | null {
+  if (!priceId) return null;
+  for (const [planId, plan] of Object.entries(PLANS)) {
+    if (planId === "free") continue;
+    if (plan.stripePriceIdMonthly === priceId || plan.stripePriceIdYearly === priceId) {
+      return planId as "pro" | "team";
+    }
+  }
+  return null;
+}
 
 export function getPlanLimits(planId: string) {
   return PLANS[planId]?.limits ?? PLANS.free.limits;

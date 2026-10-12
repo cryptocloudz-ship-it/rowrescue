@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { users } from "@/db/drizzle";
 import { eq } from "drizzle-orm";
-import { getPlanLimits } from "@/config/plans";
+import { getPlanLimits, effectivePlan } from "@/config/plans";
 
 /**
  * GET /api/entitlements
@@ -50,10 +50,11 @@ export async function GET() {
     exportsToday = 0;
   }
 
-  const limits = getPlanLimits(user.plan);
+  const plan = effectivePlan(user.plan, user.subscriptionStatus);
+  const limits = getPlanLimits(plan);
 
   return NextResponse.json({
-    plan: user.plan,
+    plan,
     status: user.subscriptionStatus,
     exportsToday,
     limits,
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
   }
 
   const [user] = await db.select().from(users).where(eq(users.id, userId));
-  const plan = user?.plan ?? "free";
+  const plan = effectivePlan(user?.plan, user?.subscriptionStatus);
   const limits = getPlanLimits(plan);
 
   // Enforce row limit

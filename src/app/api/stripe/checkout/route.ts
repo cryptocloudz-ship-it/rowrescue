@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
-import { db } from "@/db";
-import { users } from "@/db/drizzle";
-import { eq } from "drizzle-orm";
 import { stripe } from "@/lib/stripe";
+import { planForPriceId } from "@/config/plans";
+import { ensureUser } from "@/lib/billing/ensureUser";
 import type Stripe from "stripe";
+
+const TEAM_MIN_SEATS = 2;
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -15,23 +16,16 @@ export async function POST(request: NextRequest) {
 
   const { priceId, utm } = await request.json();
 
-  // Validate priceId against known Stripe price IDs
-  const allowedPriceIds = new Set(
-    [
-      process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID,
-      process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PRICE_ID,
-      process.env.NEXT_PUBLIC_STRIPE_TEAM_MONTHLY_PRICE_ID,
-    ].filter(Boolean)
-  );
-
-  if (!priceId || !allowedPriceIds.has(priceId)) {
+  // Only our own plan prices can be bought
+  const plan = planForPriceId(priceId);
+  if (!plan) {
     return NextResponse.json(
       { error: "Invalid price ID" },
       { status: 400 }
     );
   }
 
-  const [user] = await db.select().from(users).where(eq(users.id, userId));
+  const user = await ensureUser(userId);
 
   if (!user) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -39,7 +33,13 @@ export async function POST(request: NextRequest) {
 
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     mode: "subscription",
-    line_items: [{ price: priceId, quantity: 1 }],
+    line_items: [
+      plan === "team"
+        ? { price: priceId, quantity: TEAM_MIN_SEATS, adjustable_quantity: { enabled: true, minimum: TEAM_MIN_SEATS, maximum: 100 } }
+        : { price: priceId, quantity: 1 },
+    ],
+    allow_promotion_codes: true,
+    client_reference_id: userId,
     success_url: `${request.nextUrl.origin}/billing?success=true`,
     cancel_url: `${request.nextUrl.origin}/pricing`,
     metadata: {
