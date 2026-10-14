@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { UtmCapture } from "@/components/ui/UtmCapture";
 import { ConsentedAnalytics } from "@/components/ui/ConsentedAnalytics";
-import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION } from "@/config/site";
+import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH } from "@/config/site";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -21,21 +21,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: SITE_TITLE, template: `%s | ${SITE_NAME}` },
   description: SITE_DESCRIPTION,
-  openGraph: {
-    title: SITE_TITLE,
-    description: "Privacy-first spreadsheet cleaning. 100% client-side data processing.",
-    siteName: SITE_NAME,
-    type: "website",
-    locale: "en",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: "SpreadsheetFix — Clean messy spreadsheets in seconds",
-      },
-    ],
-  },
+  openGraph: DEFAULT_OPEN_GRAPH,
   twitter: {
     card: "summary_large_image",
     title: SITE_TITLE,

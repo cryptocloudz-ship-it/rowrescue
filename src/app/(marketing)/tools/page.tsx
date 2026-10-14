@@ -4,13 +4,14 @@ import { TOOLS } from "@/content/tools";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
-import { absoluteUrl } from "@/config/site";
+import { absoluteUrl, DEFAULT_OPEN_GRAPH } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Free CSV Cleaning Tools",
   description:
     "Free, private tools to remove duplicates, fix dates and encoding, validate emails, trim spaces and merge CSV files. Everything runs in your browser.",
   alternates: { canonical: "/tools" },
+  openGraph: { ...DEFAULT_OPEN_GRAPH, title: "Free CSV Cleaning Tools | SpreadsheetFix", url: "/tools" },
 };
 
 export default function ToolsIndex() {

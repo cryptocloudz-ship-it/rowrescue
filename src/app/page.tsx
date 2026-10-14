@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TOOLS } from "@/content/tools";
-import { SITE_NAME, SITE_DESCRIPTION, absoluteUrl } from "@/config/site";
+import { SITE_NAME, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH, absoluteUrl } from "@/config/site";
 import {
   Shield,
   Zap,
@@ -30,7 +30,7 @@ import {
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
-  openGraph: { url: "/" },
+  openGraph: { ...DEFAULT_OPEN_GRAPH, url: "/" },
 };
 
 const STRUCTURED_DATA = [
