@@ -1,4 +1,4 @@
--- RowRescue Initial Schema
+-- SpreadsheetFix Initial Schema
 -- Neon Postgres
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";

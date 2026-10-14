@@ -41,7 +41,7 @@ export default async function BillingPage({
             <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 stroke-primary" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
             </svg>
-            RowRescue
+            SpreadsheetFix
           </Link>
           <Link
             href="/clean"

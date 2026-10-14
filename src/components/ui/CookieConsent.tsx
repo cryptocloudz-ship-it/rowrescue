@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { X, Cookie } from "lucide-react";
 
-export const CONSENT_EVENT = "rowrescue:cookie-consent";
+export const CONSENT_EVENT = "spreadsheetfix:cookie-consent";
 
 export function CookieConsent() {
   const [isVisible, setIsVisible] = useState(false);
@@ -44,7 +44,7 @@ export function CookieConsent() {
         <div className="flex-1 min-w-0 relative z-10">
           <h3 className="text-lg font-bold text-slate-100 mb-1">We respect your privacy</h3>
           <p className="text-sm font-medium text-slate-400 leading-relaxed pr-8 sm:pr-0">
-            RowRescue strictly processes your data client-side in your browser. We only use essential tracking cookies to ensure the website functions correctly and optional anonymised analytics to help us improve. Read our <Link href="/legal/cookie-policy" className="text-primary hover:underline underline-offset-2">Cookie Policy</Link> for details.
+            SpreadsheetFix strictly processes your data client-side in your browser. We only use essential tracking cookies to ensure the website functions correctly and optional anonymised analytics to help us improve. Read our <Link href="/legal/cookie-policy" className="text-primary hover:underline underline-offset-2">Cookie Policy</Link> for details.
           </p>
         </div>
 

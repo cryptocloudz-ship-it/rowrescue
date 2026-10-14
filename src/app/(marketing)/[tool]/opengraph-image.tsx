@@ -3,7 +3,7 @@ import { TOOLS, TOOL_MAP } from "@/content/tools";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const alt = "RowRescue free CSV tool";
+export const alt = "SpreadsheetFix free CSV tool";
 
 export function generateStaticParams() {
   return TOOLS.map((t) => ({ tool: t.slug }));
@@ -41,9 +41,9 @@ export default async function Image({ params }: { params: Promise<{ tool: string
               color: "#0B0F19",
             }}
           >
-            RR
+            SF
           </div>
-          <span style={{ fontSize: "30px", fontWeight: 800, color: "#0df2df" }}>RowRescue</span>
+          <span style={{ fontSize: "30px", fontWeight: 800, color: "#0df2df" }}>SpreadsheetFix</span>
         </div>
         <div style={{ fontSize: "68px", fontWeight: 800, color: "#f1f5f9", lineHeight: 1.1, letterSpacing: "-1px" }}>
           {tool?.h1 ?? "Clean messy CSVs in seconds"}

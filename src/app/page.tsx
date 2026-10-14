@@ -107,7 +107,7 @@ export default function LandingPage() {
         </h1>
         <p className="text-xl text-slate-400 mt-6 max-w-2xl mx-auto leading-relaxed">
           Stop manually finding duplicates, bad dates, and broken emails.
-          RowRescue cleans your data instantly — right in your browser.
+          SpreadsheetFix cleans your data instantly — right in your browser.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
           <Link
@@ -157,7 +157,7 @@ john.doe@gmail, 12/31/2023, 555-1234, John Doe`}
               <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10" />
               <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2 mb-4 neon-text-glow relative z-10">
-                <CheckCircle2 className="w-4 h-4 text-primary" /> After: RowRescue
+                <CheckCircle2 className="w-4 h-4 text-primary" /> After: SpreadsheetFix
               </h3>
               <div className="font-mono text-xs sm:text-sm overflow-x-auto text-primary/90 bg-[#1e2330]/80 border border-primary/30 rounded-xl p-5 shadow-[inset_0_0_20px_rgba(13,242,223,0.05)] whitespace-pre leading-relaxed relative z-10">
 {`email,date,phone,name

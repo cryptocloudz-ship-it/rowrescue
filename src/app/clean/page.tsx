@@ -144,12 +144,12 @@ export default function CleanPage() {
       <header className="glass-header sticky top-0 z-50 border-b border-primary/10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 group" aria-label="RowRescue home">
+            <Link href="/" className="flex items-center gap-2 group" aria-label="SpreadsheetFix home">
               <div className="size-8 bg-primary rounded-lg flex items-center justify-center neon-glow group-hover:scale-105 transition-transform">
                 <Activity className="size-5 text-background-dark font-bold" />
               </div>
               <span className="text-xl font-bold text-primary tracking-tight neon-text-glow">
-                RowRescue
+                SpreadsheetFix
               </span>
             </Link>
             {stage !== "idle" && (

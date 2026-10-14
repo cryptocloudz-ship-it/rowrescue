@@ -9,7 +9,7 @@ export function SiteFooter() {
         <div>
           <div className="flex items-center gap-2 text-slate-200 font-bold mb-3">
             <Activity className="size-4 text-primary" aria-hidden="true" />
-            RowRescue
+            SpreadsheetFix
           </div>
           <p className="leading-relaxed">
             Privacy-first CSV and Excel cleaning. Files are processed in your browser and never uploaded.
@@ -28,7 +28,7 @@ export function SiteFooter() {
           </ul>
         </nav>
         <nav aria-label="Company">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">RowRescue</h2>
+          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">SpreadsheetFix</h2>
           <ul className="space-y-2">
             <li><Link href="/tools" className="hover:text-primary transition-colors">All tools</Link></li>
             <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
@@ -39,7 +39,7 @@ export function SiteFooter() {
         </nav>
       </div>
       <p className="max-w-5xl mx-auto px-4 mt-10 text-xs text-slate-600">
-        &copy; {new Date().getFullYear()} RowRescue. All rights reserved.
+        &copy; {new Date().getFullYear()} SpreadsheetFix. All rights reserved.
       </p>
     </footer>
   );

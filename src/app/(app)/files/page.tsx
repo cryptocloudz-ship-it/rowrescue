@@ -46,7 +46,7 @@ export default function FilesPage() {
         <div>
           <h3 className="font-bold text-slate-200">Zero Data Retention Guarantee</h3>
           <p className="text-sm font-medium text-slate-400 mt-1">
-            RowRescue is a strictly local tool. The history below only shows metadata (names, timestamps, row counts) stored locally in your browser to help you keep track of your work. The actual contents of your spreadsheets are permanently discarded the moment you leave the app.
+            SpreadsheetFix is a strictly local tool. The history below only shows metadata (names, timestamps, row counts) stored locally in your browser to help you keep track of your work. The actual contents of your spreadsheets are permanently discarded the moment you leave the app.
           </p>
         </div>
       </div>

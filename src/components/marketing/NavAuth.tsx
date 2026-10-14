@@ -8,13 +8,13 @@ export function NavAuth() {
   return (
     <>
       <SignedOut>
-        <Link href="/sign-in" className="text-slate-300 hover:text-primary transition-colors">
+        <Link href="/sign-in" className="text-slate-300 hover:text-primary transition-colors hidden sm:inline">
           Sign In
         </Link>
       </SignedOut>
       <Link
         href="/clean"
-        className="px-5 py-2.5 bg-primary text-background-dark rounded-xl hover:brightness-110 font-bold transition-all neon-glow"
+        className="px-3 py-2 sm:px-5 sm:py-2.5 whitespace-nowrap bg-primary text-background-dark rounded-xl hover:brightness-110 font-bold transition-all neon-glow"
       >
         Start Cleaning
       </Link>

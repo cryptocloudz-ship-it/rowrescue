@@ -40,7 +40,7 @@ export function WelcomeModal() {
             <Sparkles className="w-7 h-7 drop-shadow-[0_0_8px_rgba(13,242,223,0.8)]" />
           </div>
           <h2 className="text-3xl font-extrabold text-slate-100 tracking-tight">
-            Welcome to RowRescue!
+            Welcome to SpreadsheetFix!
           </h2>
           <p className="text-slate-400 mt-3 text-base leading-relaxed font-medium">
             The fastest, most private way to clean messy spreadsheets. Everything runs securely in your browser.

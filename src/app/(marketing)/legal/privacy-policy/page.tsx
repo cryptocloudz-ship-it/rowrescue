@@ -15,7 +15,7 @@ export default function PrivacyPolicyPage() {
               <Activity className="size-5 text-background-dark font-bold" />
             </div>
             <span className="text-xl font-bold text-primary tracking-tight neon-text-glow">
-              RowRescue
+              SpreadsheetFix
             </span>
           </Link>
           <Link
@@ -34,7 +34,7 @@ export default function PrivacyPolicyPage() {
         <section className="mb-10 text-slate-300">
           <h2 className="text-2xl font-bold text-slate-200 mb-4">1. Our Core Promise: 100% Client-Side Processing</h2>
           <p className="leading-relaxed mb-4">
-            Unlike traditional SaaS platforms, RowRescue operates entirely inside your web browser. When you upload a spreadsheet for cleaning, <strong>the contents of your file never leave your device.</strong> We do not upload, transmit, store, or parse your spreadsheet data on our servers.
+            Unlike traditional SaaS platforms, SpreadsheetFix operates entirely inside your web browser. When you upload a spreadsheet for cleaning, <strong>the contents of your file never leave your device.</strong> We do not upload, transmit, store, or parse your spreadsheet data on our servers.
           </p>
         </section>
 

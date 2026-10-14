@@ -35,7 +35,7 @@ export const TOOLS: ToolPage[] = [
       "Delete duplicate rows from a CSV or Excel file in seconds. Exact or key-column matching, a full change log, and your data never leaves your browser.",
     h1: "Remove duplicate rows from a CSV",
     intro:
-      "Drop a CSV or Excel file below and RowRescue finds every repeated row, shows you which ones it will remove, and gives you back a clean file. Matching runs entirely in your browser — nothing is uploaded.",
+      "Drop a CSV or Excel file below and SpreadsheetFix finds every repeated row, shows you which ones it will remove, and gives you back a clean file. Matching runs entirely in your browser — nothing is uploaded.",
     kind: "cleaner",
     preset: { ruleIds: ["trimWhitespace", "deduplicateRows"] },
     before: `email,name,plan
@@ -50,7 +50,7 @@ ben@acme.io,Ben Ode,free
 # 2 duplicate rows removed`,
     steps: [
       "Upload your CSV, TSV or XLSX file (or try the demo data).",
-      "RowRescue trims stray spaces first, so “ana@acme.io ” and “ana@acme.io” count as the same value.",
+      "SpreadsheetFix trims stray spaces first, so “ana@acme.io ” and “ana@acme.io” count as the same value.",
       "Review the rows marked as duplicates in the preview, then download the de-duplicated file.",
     ],
     sections: [
@@ -60,17 +60,17 @@ ben@acme.io,Ben Ode,free
       },
       {
         heading: "Why duplicates survive Excel’s Remove Duplicates",
-        body: "Invisible trailing spaces, double spaces and inconsistent capitalisation make rows look identical to you but different to Excel. RowRescue normalises whitespace before comparing, which catches the near-duplicates that spreadsheet tools miss.",
+        body: "Invisible trailing spaces, double spaces and inconsistent capitalisation make rows look identical to you but different to Excel. SpreadsheetFix normalises whitespace before comparing, which catches the near-duplicates that spreadsheet tools miss.",
       },
       {
         heading: "The first occurrence is always kept",
-        body: "When RowRescue finds a repeat, it keeps the first row it saw and removes later copies, so your original ordering is preserved. Every removal is listed in the change log so you can audit exactly what went.",
+        body: "When SpreadsheetFix finds a repeat, it keeps the first row it saw and removes later copies, so your original ordering is preserved. Every removal is listed in the change log so you can audit exactly what went.",
       },
     ],
     faqs: [
       {
         q: "How do I remove duplicates from a CSV without Excel?",
-        a: "Open RowRescue, drop your CSV into the box above and download the cleaned file. There is nothing to install and no account is needed for files up to 5,000 rows.",
+        a: "Open SpreadsheetFix, drop your CSV into the box above and download the cleaned file. There is nothing to install and no account is needed for files up to 5,000 rows.",
       },
       {
         q: "Can I remove duplicates based on one column, like email?",
@@ -82,7 +82,7 @@ ben@acme.io,Ben Ode,free
       },
       {
         q: "Is my file uploaded to a server?",
-        a: "No. The file is parsed and de-duplicated in your browser with JavaScript. Its contents are never sent to RowRescue.",
+        a: "No. The file is parsed and de-duplicated in your browser with JavaScript. Its contents are never sent to SpreadsheetFix.",
       },
       {
         q: "How large a file can I de-duplicate?",
@@ -99,7 +99,7 @@ ben@acme.io,Ben Ode,free
       "Fix mixed date formats in a CSV: 03/04/2024, 4 March 2024 and 2024-03-04 become one format. Detects US vs European order per column. Free, in-browser.",
     h1: "Normalize mixed date formats in a CSV",
     intro:
-      "Exports from different systems mix 12/31/2024, 31.12.2024 and “December 31, 2024” in the same column. Upload your file and RowRescue converts every recognisable date to one consistent format, ready for databases, BI tools and imports.",
+      "Exports from different systems mix 12/31/2024, 31.12.2024 and “December 31, 2024” in the same column. Upload your file and SpreadsheetFix converts every recognisable date to one consistent format, ready for databases, BI tools and imports.",
     kind: "cleaner",
     preset: { ruleIds: ["normalizeDate"], options: { normalizeDate: { targetFormat: "YYYY-MM-DD", dateOrder: "auto" } } },
     before: `order_id,ordered,shipped
@@ -112,16 +112,16 @@ ben@acme.io,Ben Ode,free
 1003,2024-05-01,2024-05-05`,
     steps: [
       "Upload the CSV or Excel file containing your dates.",
-      "RowRescue checks each column to work out whether it is month-first (US) or day-first (European).",
+      "SpreadsheetFix checks each column to work out whether it is month-first (US) or day-first (European).",
       "Pick the output format — YYYY-MM-DD, DD/MM/YYYY or MM/DD/YYYY — preview the changes and download.",
     ],
     sections: [
       {
         heading: "Is 03/04/2024 March or April?",
-        body: "It depends on where the data came from. RowRescue looks at the whole column: if any value has a day above 12 in the first position (25/12/2024), the column is day-first; if it appears in the second position (12/25/2024), it is month-first. Each column is judged separately, so a US order date and a European delivery date in the same file both convert correctly. If a column gives no evidence either way, RowRescue reads it day-first, and you can force US or European order in the rule settings.",
+        body: "It depends on where the data came from. SpreadsheetFix looks at the whole column: if any value has a day above 12 in the first position (25/12/2024), the column is day-first; if it appears in the second position (12/25/2024), it is month-first. Each column is judged separately, so a US order date and a European delivery date in the same file both convert correctly. If a column gives no evidence either way, SpreadsheetFix reads it day-first, and you can force US or European order in the rule settings.",
       },
       {
-        heading: "Formats RowRescue understands",
+        heading: "Formats SpreadsheetFix understands",
         body: "ISO dates (2024-03-04), slash, dash and dot separated dates (03/04/2024, 03-04-2024, 03.04.2024), and written months in English, full or abbreviated (March 4, 2024; 4 Mar 2024). Cells that aren’t dates are left untouched.",
       },
       {
@@ -136,7 +136,7 @@ ben@acme.io,Ben Ode,free
       },
       {
         q: "Will it confuse US and European dates?",
-        a: "RowRescue infers the order per column from values that can only be read one way, such as 25/12/2024. If a column is entirely ambiguous, you can set US (MM/DD) or European (DD/MM) order explicitly.",
+        a: "SpreadsheetFix infers the order per column from values that can only be read one way, such as 25/12/2024. If a column is entirely ambiguous, you can set US (MM/DD) or European (DD/MM) order explicitly.",
       },
       {
         q: "Why does Excel change my CSV dates?",
@@ -161,7 +161,7 @@ ben@acme.io,Ben Ode,free
       "Find and quarantine invalid email addresses in a CSV before you import it. Lowercases and trims emails, flags bad formats. Private: runs in your browser.",
     h1: "Validate and clean email addresses in a CSV",
     intro:
-      "Before you import a list into your CRM or email platform, upload it here. RowRescue trims and lowercases every address, then moves rows with malformed emails into a separate quarantine so they don’t pollute your import.",
+      "Before you import a list into your CRM or email platform, upload it here. SpreadsheetFix trims and lowercases every address, then moves rows with malformed emails into a separate quarantine so they don’t pollute your import.",
     kind: "cleaner",
     preset: { ruleIds: ["trimWhitespace", "normalizeEmail", "validateEmail", "deduplicateRows"] },
     before: `email,first_name
@@ -176,14 +176,14 @@ kim@example.org,Kim
 # quarantined: lee@example (no domain suffix)
 # 1 duplicate removed`,
     steps: [
-      "Upload the contact list as CSV or Excel. RowRescue detects email columns automatically.",
+      "Upload the contact list as CSV or Excel. SpreadsheetFix detects email columns automatically.",
       "Addresses are trimmed and lowercased so duplicates match, then checked for a valid format.",
       "Rows with invalid emails move to quarantine for review; download the clean list.",
     ],
     sections: [
       {
         heading: "What counts as invalid",
-        body: "RowRescue checks syntax: a local part, a single @, a domain and a top-level domain of at least two letters. That catches typos like “lee@example”, “ana.gmail.com” and stray characters from copy-paste. It does not contact mail servers, so it won’t tell you whether a mailbox exists — that also means no address ever leaves your machine.",
+        body: "SpreadsheetFix checks syntax: a local part, a single @, a domain and a top-level domain of at least two letters. That catches typos like “lee@example”, “ana.gmail.com” and stray characters from copy-paste. It does not contact mail servers, so it won’t tell you whether a mailbox exists — that also means no address ever leaves your machine.",
       },
       {
         heading: "Quarantine instead of delete",
@@ -197,10 +197,10 @@ kim@example.org,Kim
     faqs: [
       {
         q: "How do I check if emails in a CSV are valid?",
-        a: "Upload the CSV above. RowRescue flags every address with an invalid format and moves those rows to a quarantine list you can review before downloading.",
+        a: "Upload the CSV above. SpreadsheetFix flags every address with an invalid format and moves those rows to a quarantine list you can review before downloading.",
       },
       {
-        q: "Does RowRescue verify that the mailbox exists?",
+        q: "Does SpreadsheetFix verify that the mailbox exists?",
         a: "No. It validates format only and never contacts mail servers, which keeps your list private. Use it to remove malformed addresses before running a deliverability check.",
       },
       {
@@ -209,7 +209,7 @@ kim@example.org,Kim
       },
       {
         q: "Is it safe to upload customer emails?",
-        a: "Your file is never uploaded. All checks run in your browser, which makes RowRescue suitable for GDPR-sensitive contact lists.",
+        a: "Your file is never uploaded. All checks run in your browser, which makes SpreadsheetFix suitable for GDPR-sensitive contact lists.",
       },
       {
         q: "How many emails can I validate for free?",
@@ -226,7 +226,7 @@ kim@example.org,Kim
       "Remove leading, trailing and double spaces from every cell in a CSV or Excel file, and drop blank rows. Free, instant and private — nothing is uploaded.",
     h1: "Trim whitespace and extra spaces in a CSV",
     intro:
-      "Leading spaces, trailing spaces and doubled spaces break lookups, joins and duplicate checks without being visible. Upload a file and RowRescue strips them from every cell and removes fully blank rows.",
+      "Leading spaces, trailing spaces and doubled spaces break lookups, joins and duplicate checks without being visible. Upload a file and SpreadsheetFix strips them from every cell and removes fully blank rows.",
     kind: "cleaner",
     preset: { ruleIds: ["trimWhitespace", "removeEmptyRows"] },
     before: `sku,product,colour
@@ -238,7 +238,7 @@ A-100,Desk Lamp,black
 A-101,Floor Lamp,white`,
     steps: [
       "Upload your CSV, TSV or Excel file.",
-      "RowRescue trims both ends of every text cell, collapses repeated spaces to one, and removes rows that are completely empty.",
+      "SpreadsheetFix trims both ends of every text cell, collapses repeated spaces to one, and removes rows that are completely empty.",
       "Check the highlighted changes in the preview and download.",
     ],
     sections: [
@@ -258,7 +258,7 @@ A-101,Floor Lamp,white`,
     faqs: [
       {
         q: "How do I remove spaces from a CSV file?",
-        a: "Upload it above. RowRescue trims leading and trailing spaces in every cell and collapses repeated spaces, then lets you download the cleaned file.",
+        a: "Upload it above. SpreadsheetFix trims leading and trailing spaces in every cell and collapses repeated spaces, then lets you download the cleaned file.",
       },
       {
         q: "Does it remove spaces inside words?",
@@ -283,7 +283,7 @@ A-101,Floor Lamp,white`,
       "Combine multiple CSV files into one, even when columns are in a different order. Optional duplicate removal. Free, private and runs in your browser.",
     h1: "Merge multiple CSV files into one",
     intro:
-      "Select two or more CSV files and RowRescue stacks them into a single file. Columns are matched by header name, so files with different column orders — or a few extra columns — combine correctly.",
+      "Select two or more CSV files and SpreadsheetFix stacks them into a single file. Columns are matched by header name, so files with different column orders — or a few extra columns — combine correctly.",
     kind: "merge",
     before: `jan.csv:  email,name
           ana@acme.io,Ana
@@ -294,13 +294,13 @@ ana@acme.io,Ana,
 ben@acme.io,Ben,Lyon`,
     steps: [
       "Choose or drop all the CSV files you want to combine.",
-      "RowRescue lines up columns by header name and adds any column that appears in only some files.",
+      "SpreadsheetFix lines up columns by header name and adds any column that appears in only some files.",
       "Optionally remove duplicate rows across files, then download the merged CSV or keep cleaning it.",
     ],
     sections: [
       {
         heading: "Columns are matched by name, not position",
-        body: "Copy-pasting files together breaks as soon as one export has its columns in a different order. RowRescue reads each file’s header row and places every value under the right column. Headers are compared ignoring case and surrounding spaces, so “Email ”, “email” and “EMAIL” line up.",
+        body: "Copy-pasting files together breaks as soon as one export has its columns in a different order. SpreadsheetFix reads each file’s header row and places every value under the right column. Headers are compared ignoring case and surrounding spaces, so “Email ”, “email” and “EMAIL” line up.",
       },
       {
         heading: "Files with different columns",
@@ -308,13 +308,13 @@ ben@acme.io,Ben,Lyon`,
       },
       {
         heading: "Merge, then clean",
-        body: "Monthly exports often overlap. Tick “remove duplicate rows” to de-duplicate across all files while merging, or send the merged file straight into the full RowRescue cleaner to fix dates, emails and spacing.",
+        body: "Monthly exports often overlap. Tick “remove duplicate rows” to de-duplicate across all files while merging, or send the merged file straight into the full SpreadsheetFix cleaner to fix dates, emails and spacing.",
       },
     ],
     faqs: [
       {
         q: "How do I combine multiple CSV files into one?",
-        a: "Select all the files in the box above and click Merge. RowRescue matches columns by header name and gives you a single CSV to download.",
+        a: "Select all the files in the box above and click Merge. SpreadsheetFix matches columns by header name and gives you a single CSV to download.",
       },
       {
         q: "What if my CSV files have different columns?",
@@ -343,7 +343,7 @@ ben@acme.io,Ben,Lyon`,
       "Clean up a messy CSV — duplicates, blank rows, spacing, headers, dates — and save it as an Excel-ready file. Private, in-browser CSV to XLSX cleaner.",
     h1: "Clean a CSV and get an Excel-ready file",
     intro:
-      "Opening a raw export in Excel usually means mangled dates, blank rows and columns full of stray spaces. Upload the CSV here, let RowRescue fix it, and download a tidy file that opens cleanly in Excel.",
+      "Opening a raw export in Excel usually means mangled dates, blank rows and columns full of stray spaces. Upload the CSV here, let SpreadsheetFix fix it, and download a tidy file that opens cleanly in Excel.",
     kind: "cleaner",
     preset: {
       ruleIds: ["fixEncoding", "trimWhitespace", "removeEmptyRows", "removeEmptyColumns", "normalizeHeaders", "deduplicateRows", "normalizeDate"],
@@ -358,7 +358,7 @@ José Díaz,2024-03-14
 Mia Chen,2024-02-01`,
     steps: [
       "Upload the CSV you’d normally open in Excel.",
-      "RowRescue repairs garbled characters, trims spaces, tidies headers, normalises dates and removes blank rows and empty columns.",
+      "SpreadsheetFix repairs garbled characters, trims spaces, tidies headers, normalises dates and removes blank rows and empty columns.",
       "Download a clean CSV that opens correctly in Excel — or, on Pro, a native .xlsx workbook.",
     ],
     sections: [
@@ -378,7 +378,7 @@ Mia Chen,2024-02-01`,
     faqs: [
       {
         q: "How do I convert a CSV to Excel without breaking the dates?",
-        a: "Normalise the dates to YYYY-MM-DD first — RowRescue does this automatically — and Excel will read them consistently regardless of regional settings. Pro users can export straight to .xlsx.",
+        a: "Normalise the dates to YYYY-MM-DD first — SpreadsheetFix does this automatically — and Excel will read them consistently regardless of regional settings. Pro users can export straight to .xlsx.",
       },
       {
         q: "Is XLSX export free?",
@@ -386,11 +386,11 @@ Mia Chen,2024-02-01`,
       },
       {
         q: "Why do accented characters look wrong when I open a CSV in Excel?",
-        a: "Excel may read a UTF-8 file as a legacy encoding. RowRescue repairs characters that are already garbled, and its CSV export is UTF-8 so Excel can display accents correctly.",
+        a: "Excel may read a UTF-8 file as a legacy encoding. SpreadsheetFix repairs characters that are already garbled, and its CSV export is UTF-8 so Excel can display accents correctly.",
       },
       {
         q: "Can I upload an Excel file instead?",
-        a: "Yes. RowRescue accepts .xlsx and .xls as well as CSV and TSV.",
+        a: "Yes. SpreadsheetFix accepts .xlsx and .xls as well as CSV and TSV.",
       },
     ],
     related: ["normalize-dates-csv", "fix-csv-encoding", "trim-whitespace-csv"],
@@ -403,7 +403,7 @@ Mia Chen,2024-02-01`,
       "Repair garbled characters like Ã©, â€™ and Ã¼ in a CSV and convert Windows-1252 files to UTF-8. Free, private, runs entirely in your browser.",
     h1: "Fix garbled characters and CSV encoding",
     intro:
-      "Seeing “CafÃ©” instead of “Café”, or “donâ€™t” instead of “don’t”? The file was saved in one encoding and opened in another. Upload it here: RowRescue detects the file’s encoding, repairs the garbled text, and gives you back clean UTF-8.",
+      "Seeing “CafÃ©” instead of “Café”, or “donâ€™t” instead of “don’t”? The file was saved in one encoding and opened in another. Upload it here: SpreadsheetFix detects the file’s encoding, repairs the garbled text, and gives you back clean UTF-8.",
     kind: "cleaner",
     preset: { ruleIds: ["fixEncoding"] },
     before: `name,city,note
@@ -413,18 +413,18 @@ ZoÃ« Smith,ZÃ¼rich,â‚¬50 credit`,
 José Özil,München,don’t call
 Zoë Smith,Zürich,€50 credit`,
     steps: [
-      "Upload the CSV. RowRescue reads the raw bytes and detects UTF-8, UTF-8 with BOM, UTF-16 or Windows-1252.",
+      "Upload the CSV. SpreadsheetFix reads the raw bytes and detects UTF-8, UTF-8 with BOM, UTF-16 or Windows-1252.",
       "Cells containing mojibake — text that was double-decoded — are repaired back to the original characters, including files that were mis-saved twice.",
       "Download the result as UTF-8, the encoding every modern tool expects.",
     ],
     sections: [
       {
         heading: "What causes “Ã©” in a CSV",
-        body: "The character é takes two bytes in UTF-8. When software reads those bytes as Windows-1252 or Latin-1, each byte becomes its own character, and é turns into Ã©. If that broken text is saved and opened the same wrong way again, it gets worse: Ã©. RowRescue reverses this process exactly instead of guessing with find-and-replace.",
+        body: "The character é takes two bytes in UTF-8. When software reads those bytes as Windows-1252 or Latin-1, each byte becomes its own character, and é turns into Ã©. If that broken text is saved and opened the same wrong way again, it gets worse: Ã©. SpreadsheetFix reverses this process exactly instead of guessing with find-and-replace.",
       },
       {
         heading: "Two different problems, both handled",
-        body: "Sometimes the file itself is in an old encoding such as Windows-1252, which is common for exports from older Windows software. RowRescue detects that from the bytes and decodes it correctly. Other times the text inside the file is already garbled; the Fix Encoding rule repairs those cells. Text that is already correct is never changed.",
+        body: "Sometimes the file itself is in an old encoding such as Windows-1252, which is common for exports from older Windows software. SpreadsheetFix detects that from the bytes and decodes it correctly. Other times the text inside the file is already garbled; the Fix Encoding rule repairs those cells. Text that is already correct is never changed.",
       },
       {
         heading: "Safe by design",
@@ -434,15 +434,15 @@ Zoë Smith,Zürich,€50 credit`,
     faqs: [
       {
         q: "How do I fix encoding in a CSV file?",
-        a: "Upload it above. RowRescue detects the encoding automatically, repairs garbled characters, and lets you download a clean UTF-8 CSV.",
+        a: "Upload it above. SpreadsheetFix detects the encoding automatically, repairs garbled characters, and lets you download a clean UTF-8 CSV.",
       },
       {
         q: "How do I convert a CSV from ANSI / Windows-1252 to UTF-8?",
-        a: "Upload the file. If its bytes aren’t valid UTF-8, RowRescue decodes it as Windows-1252, and every download is UTF-8.",
+        a: "Upload the file. If its bytes aren’t valid UTF-8, SpreadsheetFix decodes it as Windows-1252, and every download is UTF-8.",
       },
       {
         q: "Why does my CSV show Ã© instead of é?",
-        a: "The file was written as UTF-8 but read as Windows-1252 or Latin-1 somewhere along the way. RowRescue’s Fix Encoding rule reverses that misreading.",
+        a: "The file was written as UTF-8 but read as Windows-1252 or Latin-1 somewhere along the way. SpreadsheetFix’s Fix Encoding rule reverses that misreading.",
       },
       {
         q: "Will it change text that is already correct?",

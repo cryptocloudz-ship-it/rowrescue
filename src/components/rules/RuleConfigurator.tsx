@@ -190,7 +190,7 @@ function ProUpgradeModal({
               "Unlimited daily exports",
               "Process up to 500,000 rows at once",
               "Export to native Excel (.xlsx)",
-              "Remove RowRescue watermarks"
+              "Remove SpreadsheetFix watermarks"
             ].map((feature, i) => (
               <li key={i} className="flex items-center gap-3 text-sm font-medium text-slate-300">
                 <CheckCircle2 className="w-5 h-5 text-primary drop-shadow-[0_0_5px_rgba(13,242,223,0.5)] flex-shrink-0" />

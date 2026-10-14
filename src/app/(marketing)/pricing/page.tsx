@@ -93,7 +93,7 @@ export default function PricingPage() {
               <Activity className="size-5 text-background-dark font-bold" />
             </div>
             <span className="text-xl font-bold text-primary tracking-tight neon-text-glow">
-              RowRescue
+              SpreadsheetFix
             </span>
           </Link>
           <Link
@@ -297,7 +297,7 @@ export default function PricingPage() {
               answer="Absolutely. 100% of the file processing happens instantly inside your browser using JavaScript. Your spreadsheet contents are never uploaded to any remote server or cloud bucket. We strictly only store your account email and basic billing metadata."
             />
             <FaqItem
-              question="Can I use RowRescue without creating an account?"
+              question="Can I use SpreadsheetFix without creating an account?"
               answer="Yes! Our Free tier is completely frictionless with zero sign-up required. Simply drag your file in and start cleaning immediately. Accounts are only needed if you decide to upgrade to Pro or Team features."
             />
             <FaqItem
@@ -320,7 +320,7 @@ export default function PricingPage() {
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-slate-500 font-medium">
           <div className="flex items-center gap-2">
             <Activity className="size-4 text-primary" />
-            <span>&copy; {new Date().getFullYear()} RowRescue. All rights reserved.</span>
+            <span>&copy; {new Date().getFullYear()} SpreadsheetFix. All rights reserved.</span>
           </div>
           <div className="flex gap-8">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>

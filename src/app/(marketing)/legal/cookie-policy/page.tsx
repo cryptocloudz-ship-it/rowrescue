@@ -15,7 +15,7 @@ export default function CookiePolicyPage() {
               <Activity className="size-5 text-background-dark font-bold" />
             </div>
             <span className="text-xl font-bold text-primary tracking-tight neon-text-glow">
-              RowRescue
+              SpreadsheetFix
             </span>
           </Link>
           <Link
@@ -53,7 +53,7 @@ export default function CookiePolicyPage() {
         <section className="mb-10 text-slate-300">
           <h2 className="text-2xl font-bold text-slate-200 mb-4">3. Analytics and Performance Cookies (Optional)</h2>
           <p className="leading-relaxed mb-4">
-            We use third-party analytics (like Sentry for error tracking) to help us understand how visitors use the RowRescue application. These cookies collect information such as the pages you visit, the links you click, and the buttons you use. The information collected is anonymized and aggregated. You can decline these cookies using our Cookie Consent banner.
+            We use third-party analytics (like Sentry for error tracking) to help us understand how visitors use the SpreadsheetFix application. These cookies collect information such as the pages you visit, the links you click, and the buttons you use. The information collected is anonymized and aggregated. You can decline these cookies using our Cookie Consent banner.
           </p>
         </section>
 

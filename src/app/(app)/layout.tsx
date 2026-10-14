@@ -31,7 +31,7 @@ export default function AppLayout({
             <Activity className="size-5 text-background-dark font-bold" />
           </div>
           <h2 className="text-xl font-bold tracking-tight text-primary neon-text-glow">
-            RowRescue
+            SpreadsheetFix
           </h2>
         </div>
         

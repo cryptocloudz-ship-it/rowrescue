@@ -1,4 +1,4 @@
-/** Billing & entitlement types for RowRescue */
+/** Billing & entitlement types for SpreadsheetFix */
 
 export type PlanId = "free" | "pro" | "team";
 

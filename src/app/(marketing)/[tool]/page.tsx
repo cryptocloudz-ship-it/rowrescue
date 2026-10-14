@@ -114,7 +114,7 @@ export default async function ToolPage({ params }: Props) {
             </figure>
             <figure className="glass-panel rounded-2xl border border-primary/30 p-5">
               <figcaption className="text-xs font-bold text-primary uppercase tracking-widest flex items-center gap-2 mb-3">
-                <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> After RowRescue
+                <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> After SpreadsheetFix
               </figcaption>
               <pre className="font-mono text-xs sm:text-sm text-primary/90 whitespace-pre overflow-x-auto leading-relaxed">{tool.after}</pre>
             </figure>

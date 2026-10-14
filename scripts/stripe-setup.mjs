@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Idempotently create RowRescue's Stripe catalog and webhook endpoint.
+ * Idempotently create SpreadsheetFix's Stripe catalog and webhook endpoint.
  *
  *   vercel env run -e production -- node scripts/stripe-setup.mjs [--live]
  *
@@ -25,7 +25,7 @@ if (!isTestKey && !process.argv.includes("--live")) {
 }
 
 const stripe = new Stripe(key);
-const WEBHOOK_URL = process.env.STRIPE_WEBHOOK_URL || "https://rowrescue.com/api/stripe/webhook";
+const WEBHOOK_URL = process.env.STRIPE_WEBHOOK_URL || "https://spreadsheetfix.com/api/stripe/webhook";
 const WEBHOOK_EVENTS = [
   "checkout.session.completed",
   "customer.subscription.updated",
@@ -37,7 +37,7 @@ const WEBHOOK_EVENTS = [
 const CATALOG = [
   {
     plan: "pro",
-    name: "RowRescue Pro",
+    name: "SpreadsheetFix Pro",
     description: "Clean files up to 500,000 rows, every cleaning rule, Excel export, no watermark.",
     prices: [
       { lookup_key: "rowrescue_pro_monthly", unit_amount: 1200, interval: "month", env: "NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PRICE_ID" },
@@ -46,7 +46,7 @@ const CATALOG = [
   },
   {
     plan: "team",
-    name: "RowRescue Team",
+    name: "SpreadsheetFix Team",
     description: "Everything in Pro plus shared presets, audit log and seat management. Priced per seat.",
     prices: [
       { lookup_key: "rowrescue_team_monthly", unit_amount: 2900, interval: "month", env: "NEXT_PUBLIC_STRIPE_TEAM_MONTHLY_PRICE_ID" },
@@ -110,7 +110,7 @@ if (endpoint) {
   const created = await stripe.webhookEndpoints.create({
     url: WEBHOOK_URL,
     enabled_events: WEBHOOK_EVENTS,
-    description: "RowRescue subscription lifecycle",
+    description: "SpreadsheetFix subscription lifecycle",
   });
   console.log(`created webhook ${created.id} -> ${WEBHOOK_URL}`);
   for (const target of ["production", "preview"]) {

@@ -32,7 +32,7 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "RowRescue — Clean messy spreadsheets in seconds",
+        alt: "SpreadsheetFix — Clean messy spreadsheets in seconds",
       },
     ],
   },
