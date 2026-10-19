@@ -55,7 +55,12 @@ Defined in `src/app/globals.css` under `@theme`, so they work as Tailwind classe
 | `--color-accent-strong` | `#142A6B` | Accent hover and pressed states |
 | `--color-accent-tint` | `#EEF2FB` | Selected row or list item |
 
-The accent means "fixed" or "act". It is never used for decoration.
+The accent means "fixed" or "act". It is never used for decoration. Pro upsells use the
+accent too, never a second brand colour.
+
+**Status colours** are the only other hues, and only for state: `emerald` for success,
+`amber` for warnings (e.g. a past-due subscription, a row-limit notice), `rose` for errors.
+Use the 50 shade for backgrounds, 200 for borders and 700/800 for text.
 
 **Type**
 - `--font-ui`: IBM Plex Sans 400/500/600. Headlines are 600 with `-0.03em` tracking.
@@ -66,7 +71,8 @@ The accent means "fixed" or "act". It is never used for decoration.
 **Shape and space**
 - 8 px spacing grid. Content max width 1200 px with 24 px gutters.
 - Radius: 6 px for controls, 8 px for panels, 10 px for product frames.
-- Elevation: product frames only, `0 1px 2px rgb(14 21 37 / 4%), 0 12px 32px rgb(14 21 37 / 6%)`.
+- Borders default to `--color-rule` (set in `globals.css`), so a bare `border` is a hairline.
+- Elevation: product frames and dialogs only, `0 1px 2px rgb(14 21 37 / 4%), 0 12px 32px rgb(14 21 37 / 6%)`.
 - Touch targets are at least 44 px tall. The primary button is 48 px.
 
 **Imagery**

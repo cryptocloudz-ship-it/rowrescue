@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
-import { Upload, FileSpreadsheet, AlertCircle } from "lucide-react";
 import { useSheetStore } from "@/store/sheetStore";
 import { ACCEPTED_TYPES, validateFile } from "./fileValidation";
 
@@ -48,7 +47,7 @@ export function FileUploader() {
   );
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto font-ui">
       <div
         role="button"
         tabIndex={0}
@@ -58,18 +57,10 @@ export function FileUploader() {
         onDragLeave={onDragLeave}
         onClick={() => fileInputRef.current?.click()}
         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInputRef.current?.click(); } }}
-        className={`glass-panel border-2 border-dashed rounded-2xl p-14 text-center cursor-pointer relative overflow-hidden group
-          transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background-dark
-          ${isDragging
-            ? "border-primary bg-primary/5 shadow-[0_0_40px_rgba(13,242,223,0.15)]"
-            : "border-primary/20 hover:border-primary/50 hover:bg-white/5 hover:shadow-[0_0_30px_rgba(13,242,223,0.05)]"
-          }
-        `}
+        className={`flex flex-col items-start gap-3 p-8 rounded-lg border border-dashed cursor-pointer transition-colors focus:outline-2 focus:outline-offset-2 focus:outline-accent ${
+          isDragging ? "border-accent bg-accent-tint" : "border-[#b8c0cc] bg-surface hover:border-ink-muted"
+        }`}
       >
-        {isDragging && (
-           <div className="absolute inset-0 bg-primary/10 w-full h-full animate-pulse blur-3xl pointer-events-none" />
-        )}
-
         <input
           ref={fileInputRef}
           type="file"
@@ -78,48 +69,34 @@ export function FileUploader() {
           className="hidden"
           aria-label="Select file to upload"
         />
-
-        <div className="flex flex-col items-center gap-5 relative z-10">
-          <div className={`p-5 rounded-2xl transition-colors duration-300 ${isDragging ? "bg-primary/20 shadow-[0_0_20px_rgba(13,242,223,0.3)]" : "bg-slate-800/80 border border-slate-700/50 group-hover:border-primary/30"}`}>
-            <Upload className={`w-10 h-10 transition-colors duration-300 ${isDragging ? "text-primary drop-shadow-[0_0_8px_rgba(13,242,223,0.8)]" : "text-slate-400 group-hover:text-primary"}`} />
-          </div>
-
-          <div>
-            <p className={`text-xl font-bold transition-colors ${isDragging ? "text-primary neon-text-glow" : "text-slate-200"}`}>
-              {isDragging ? "Drop your file here" : "Drag & drop your file"}
-            </p>
-            <p className="text-sm font-medium text-slate-400 mt-2">
-              or click to browse — CSV, TSV, XLSX up to 50MB
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 mt-2 group-hover:text-slate-400 transition-colors">
-            <FileSpreadsheet className="w-4 h-4" />
-            <span>100% client-side. Your data never leaves your browser.</span>
-          </div>
-        </div>
+        <span className="inline-flex items-center min-h-12 px-[22px] rounded-md bg-accent text-white text-base font-semibold hover:bg-accent-strong transition-colors">
+          Choose a file
+        </span>
+        <span className="text-sm text-ink-muted">
+          {isDragging ? "Drop to open it" : "or drop a CSV, TSV or Excel file here, up to 50 MB"}
+        </span>
+        <span className="text-[13px] text-ink-muted">Processed in your browser. Nothing is uploaded.</span>
       </div>
 
       {error && (
-        <div role="alert" className="mt-6 flex items-center gap-3 text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 text-sm font-bold shadow-[0_0_20px_rgba(244,63,94,0.1)] animate-in fade-in slide-in-from-top-2">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
-          <span>{error}</span>
-        </div>
+        <p role="alert" className="mt-3 text-sm font-medium text-rose-700">
+          {error}
+        </p>
       )}
 
-      <div className="mt-12 text-center flex flex-col items-center animate-in fade-in slide-in-from-bottom-4 duration-700 delay-150">
-        <p className="text-sm font-bold text-slate-500 mb-4 uppercase tracking-wider">Don&apos;t have a file ready?</p>
+      <p className="mt-5 text-sm text-ink-muted">
+        No file to hand?{" "}
         <button
+          type="button"
           onClick={(e) => {
             e.stopPropagation();
             loadDemoData();
           }}
-          className="inline-flex items-center gap-2 px-6 py-3.5 glass-panel text-slate-300 font-bold rounded-xl hover:border-primary hover:text-primary transition-all duration-300 border border-slate-700 hover:shadow-[0_0_20px_rgba(13,242,223,0.1)] group"
+          className="text-accent hover:text-accent-strong underline underline-offset-2 font-medium"
         >
-          <FileSpreadsheet className="w-5 h-5 text-slate-400 group-hover:text-primary transition-colors" />
-          Try with Demo Data
+          Try it with sample data
         </button>
-      </div>
+      </p>
     </div>
   );
 }

@@ -27,7 +27,7 @@ export function ToolLauncher({ preset }: { preset: RulePreset }) {
       <EntitlementsSync />
       <FileUploader />
       {stage === "parsing" && (
-        <p role="status" className="mt-4 text-center text-sm text-slate-400">
+        <p role="status" className="mt-4 text-center text-sm text-ink-muted">
           Reading your file…
         </p>
       )}

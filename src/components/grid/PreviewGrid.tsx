@@ -59,7 +59,7 @@ export function PreviewGrid({
         header: "#",
         size: 50,
         cell: ({ row }) => (
-          <span className="text-xs text-gray-400 font-mono">
+          <span className="text-xs text-ink-muted font-mono">
             {row.index + 1}
           </span>
         ),
@@ -78,14 +78,14 @@ export function PreviewGrid({
 
             if (!change) {
               return (
-                <span className="text-sm font-mono text-gray-700 truncate block max-w-[200px]">
-                  {value || <span className="text-gray-300">—</span>}
+                <span className="text-sm font-mono text-ink-body truncate block max-w-[200px]">
+                  {value || <span className="text-ink-muted">—</span>}
                 </span>
               );
             }
 
             let bg = "";
-            let textColor = "text-gray-700";
+            let textColor = "text-ink-body";
             let title = "";
 
             switch (change.changeType) {
@@ -108,10 +108,10 @@ export function PreviewGrid({
 
             return (
               <span
-                className={`text-sm font-mono ${textColor} ${bg} px-1 rounded truncate block max-w-[200px] cursor-help`}
+                className={`text-sm font-mono ${textColor}  ${bg} px-1 rounded truncate block max-w-[200px] cursor-help`}
                 title={title}
               >
-                {value || <span className="text-gray-300">—</span>}
+                {value || <span className="text-ink-muted">—</span>}
               </span>
             );
           },
@@ -132,23 +132,23 @@ export function PreviewGrid({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-ink-muted">
           Showing {displayRows.length} of {cleanedRows.length} rows
           {cleanedRows.length > maxPreviewRows &&
             ` (preview limited to ${maxPreviewRows})`}
         </p>
-        <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+        <label className="flex items-center gap-2 text-sm text-ink-body cursor-pointer">
           <input
             type="checkbox"
             checked={showChangesOnly}
             onChange={(e) => setShowChangesOnly(e.target.checked)}
-            className="rounded border-gray-300 text-teal-600 focus:ring-teal-500"
+            className="rounded border-rule-strong text-accent focus:ring-teal-500"
           />
           Show changed rows only
         </label>
       </div>
 
-      <div className="flex gap-3 text-xs text-gray-500">
+      <div className="flex gap-3 text-xs text-ink-muted">
         <span className="flex items-center gap-1">
           <span className="w-3 h-3 rounded bg-green-100 border border-green-300" />
           Changed
@@ -158,21 +158,21 @@ export function PreviewGrid({
           Removed
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-3 h-3 rounded bg-amber-100 border border-amber-300" />
+          <span className="w-3 h-3 rounded bg-amber-100 border border-amber-200" />
           Flagged
         </span>
       </div>
 
-      <div className="border border-gray-200 rounded-xl shadow-sm overflow-hidden bg-white max-h-[500px] flex flex-col relative animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="border border-rule rounded-lg shadow-sm overflow-hidden bg-white max-h-[500px] flex flex-col relative animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="overflow-auto flex-1">
           <table className="w-full text-left border-collapse">
-            <thead className="bg-gray-100/90 backdrop-blur-md sticky top-0 z-20 shadow-sm">
+            <thead className="bg-surface/90 sticky top-0 z-20 shadow-sm">
               {table.getHeaderGroups().map((hg) => (
                 <tr key={hg.id}>
                   {hg.headers.map((header) => (
                     <th
                       key={header.id}
-                      className="px-4 py-3 text-xs font-semibold text-gray-700 tracking-wider border-b border-gray-200"
+                      className="px-4 py-3 text-xs font-semibold text-ink-body tracking-wider border-b border-rule"
                       style={{ width: header.getSize() }}
                     >
                       {flexRender(
@@ -184,9 +184,9 @@ export function PreviewGrid({
                 </tr>
               ))}
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-rule">
               {table.getRowModel().rows.map((row, index) => (
-                <tr key={row.id} className={`hover:bg-teal-50/50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/40'}`}>
+                <tr key={row.id} className={`hover:bg-surface transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-surface/40'}`}>
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-4 py-2.5">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -204,18 +204,18 @@ export function PreviewGrid({
           <button
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
-            className="text-sm text-teal-600 hover:text-teal-700 disabled:text-gray-300"
+            className="text-sm text-accent hover:text-accent-strong disabled:text-ink-muted"
           >
             ← Previous
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-ink-muted">
             Page {table.getState().pagination.pageIndex + 1} of{" "}
             {table.getPageCount()}
           </span>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
-            className="text-sm text-teal-600 hover:text-teal-700 disabled:text-gray-300"
+            className="text-sm text-accent hover:text-accent-strong disabled:text-ink-muted"
           >
             Next →
           </button>

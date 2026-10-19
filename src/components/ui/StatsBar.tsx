@@ -1,6 +1,5 @@
 "use client";
 
-import { FileSpreadsheet, Rows3, Columns3, HardDrive } from "lucide-react";
 import type { ParsedSheet } from "@/types/sheet";
 
 function formatBytes(bytes: number): string {
@@ -10,35 +9,17 @@ function formatBytes(bytes: number): string {
 }
 
 export function StatsBar({ sheet }: { sheet: ParsedSheet }) {
+  const delimiter = sheet.delimiter === "\t" ? "tab" : sheet.delimiter;
   return (
-    <div className="flex flex-wrap gap-4 p-3 bg-gray-50 rounded-lg border text-sm">
-      <div className="flex items-center gap-2 text-gray-600">
-        <FileSpreadsheet className="w-4 h-4 text-gray-400" />
-        <span className="font-medium">{sheet.fileName}</span>
-      </div>
-      <div className="flex items-center gap-2 text-gray-600">
-        <Rows3 className="w-4 h-4 text-gray-400" />
-        <span>{sheet.rowCount.toLocaleString()} rows</span>
-      </div>
-      <div className="flex items-center gap-2 text-gray-600">
-        <Columns3 className="w-4 h-4 text-gray-400" />
-        <span>{sheet.columnCount} columns</span>
-      </div>
-      <div className="flex items-center gap-2 text-gray-600">
-        <HardDrive className="w-4 h-4 text-gray-400" />
-        <span>{formatBytes(sheet.fileSize)}</span>
-      </div>
-      {sheet.delimiter && (
-        <div className="text-gray-500">
-          Delimiter:{" "}
-          <span className="font-mono">
-            {sheet.delimiter === "\t"
-              ? "TAB"
-              : sheet.delimiter === ","
-              ? ","
-              : sheet.delimiter}
-          </span>
-        </div>
+    <div className="flex flex-wrap items-baseline gap-x-5 gap-y-1 px-4 py-3 bg-surface rounded-lg border border-rule text-sm">
+      <span className="font-data font-medium text-ink">{sheet.fileName}</span>
+      <span className="text-ink-muted">{sheet.rowCount.toLocaleString()} rows</span>
+      <span className="text-ink-muted">{sheet.columnCount} columns</span>
+      <span className="text-ink-muted">{formatBytes(sheet.fileSize)}</span>
+      {delimiter && (
+        <span className="text-ink-muted">
+          Delimiter <span className="font-data text-ink-body">{delimiter}</span>
+        </span>
       )}
     </div>
   );
