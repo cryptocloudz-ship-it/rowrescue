@@ -1,5 +1,4 @@
 import type { Row, CleanResult } from "@/types/sheet";
-import type { RuleOptions } from "@/types/rules";
 
 export function removeEmptyColumns(
   rows: Row[]

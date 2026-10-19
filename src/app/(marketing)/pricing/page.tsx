@@ -325,9 +325,9 @@ export default function PricingPage() {
           </div>
           <div className="flex gap-8">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-            <a href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms</a>
-            <a href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy</a>
-            <a href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookies</a>
+            <Link href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms</Link>
+            <Link href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link>
+            <Link href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookies</Link>
             <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-primary transition-colors">Contact</a>
           </div>
         </div>

@@ -1,30 +1,39 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { X, Cookie } from "lucide-react";
 
 export const CONSENT_EVENT = "spreadsheetfix:cookie-consent";
 
-export function CookieConsent() {
-  const [isVisible, setIsVisible] = useState(false);
+const CONSENT_KEY = "rowrescue_cookie_consent";
 
-  useEffect(() => {
-    const consent = localStorage.getItem("rowrescue_cookie_consent");
-    if (!consent) {
-      setIsVisible(true);
-    }
-  }, []);
+function subscribe(onChange: () => void) {
+  window.addEventListener(CONSENT_EVENT, onChange);
+  window.addEventListener("storage", onChange);
+  return () => {
+    window.removeEventListener(CONSENT_EVENT, onChange);
+    window.removeEventListener("storage", onChange);
+  };
+}
+
+export function CookieConsent() {
+  // Hidden on the server and until the client confirms no choice has been stored.
+  const isVisible = useSyncExternalStore(
+    subscribe,
+    () => !localStorage.getItem(CONSENT_KEY),
+    () => false,
+  );
 
   const handleAccept = () => {
-    localStorage.setItem("rowrescue_cookie_consent", "accepted");
+    localStorage.setItem(CONSENT_KEY, "accepted");
     window.dispatchEvent(new Event(CONSENT_EVENT));
-    setIsVisible(false);
   };
 
+  // ConsentedAnalytics only loads on "accepted", so the event here just hides the banner.
   const handleDecline = () => {
-    localStorage.setItem("rowrescue_cookie_consent", "declined");
-    setIsVisible(false);
+    localStorage.setItem(CONSENT_KEY, "declined");
+    window.dispatchEvent(new Event(CONSENT_EVENT));
   };
 
   if (!isVisible) return null;

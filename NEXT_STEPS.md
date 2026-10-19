@@ -60,7 +60,5 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
   from the main checkout, or from a clean `git archive <sha>` export with `.vercel/project.json`
   copied in.
 - Next.js replaces (doesn't merge) `openGraph` per page; spread `DEFAULT_OPEN_GRAPH` from `src/config/site.ts`.
-- Pre-existing lint errors (terms page quotes, `<a>` links in the pricing footer) and two `tsc`
-  errors in `rules.test.ts`; they don't block the Vercel build.
 - Local builds need placeholder env (DATABASE_URL, STRIPE_SECRET_KEY, a fake `pk_test_` Clerk key)
   because the DB and Stripe clients initialise at import.

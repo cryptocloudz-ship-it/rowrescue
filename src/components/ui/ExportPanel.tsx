@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Download, FileText, FileSpreadsheet, AlertTriangle, Sparkles, ArrowRight, CheckCircle, Clock, Lock, Copy, Check, FileUp, Loader2 } from "lucide-react";
 import { useSheetStore } from "@/store/sheetStore";
@@ -172,14 +173,14 @@ export function ExportPanel() {
           <p className="text-sm font-medium text-rose-300 mt-1">
             Free plan allows 5 exports per day. Exports reset at midnight.
           </p>
-          <a
+          <Link
             href="/pricing"
             className="inline-flex items-center gap-2 mt-4 px-4 py-2 bg-amber-500 text-slate-900 text-sm font-extrabold rounded-xl hover:bg-amber-400 transition-colors shadow-[0_0_15px_rgba(245,158,11,0.3)]"
           >
             <Sparkles className="w-4 h-4" />
             Upgrade for unlimited exports
             <ArrowRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       )}
 
@@ -198,13 +199,13 @@ export function ExportPanel() {
               <p className="text-sm font-medium text-amber-200/70 mt-1.5 mb-4 leading-relaxed">
                 Free exports include a small &quot;Cleaned by SpreadsheetFix&quot; watermark row at the end of your data. Upgrade to Pro to remove it and unlock direct Excel (.xlsx) exports.
               </p>
-              <a
+              <Link
                 href="/pricing"
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-amber-500 text-slate-900 text-sm font-extrabold rounded-xl hover:bg-amber-400 transition-all shadow-[0_0_15px_rgba(245,158,11,0.3)] hover:shadow-[0_0_20px_rgba(245,158,11,0.5)]"
               >
                 <Lock className="w-4 h-4" />
                 Upgrade to Pro — €12/mo
-              </a>
+              </Link>
             </div>
           </div>
         </div>
@@ -349,14 +350,14 @@ export function ExportPanel() {
                 Upgrade to Pro to remove watermarks, unlock Excel export, and access all 17 cleaning rules.
               </p>
               <div className="flex items-center gap-4 mt-4">
-                <a
+                <Link
                   href="/pricing"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 text-slate-900 text-sm font-extrabold rounded-xl hover:bg-emerald-400 transition-colors shadow-[0_0_15px_rgba(52,211,153,0.3)]"
                 >
                   <Sparkles className="w-4 h-4" />
                   Remove limits — €12/mo
                   <ArrowRight className="w-4 h-4" />
-                </a>
+                </Link>
                 <button
                   onClick={() => setShowPostExport(false)}
                   className="text-sm font-bold text-emerald-500 hover:text-emerald-400 transition-colors"

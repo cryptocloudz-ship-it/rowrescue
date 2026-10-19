@@ -12,7 +12,7 @@ const MOCK_AUTOMATIONS = [
 ];
 
 export default function AutomationsPage() {
-  const [automations, setAutomations] = useState(MOCK_AUTOMATIONS);
+  const [automations] = useState(MOCK_AUTOMATIONS);
 
   return (
     <div className="p-8 pb-20 fade-in slide-in-from-bottom-5 duration-700">

@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton } from "@clerk/nextjs";
 import {
   Activity,
   LayoutDashboard,
   FolderOpen,
   Sparkles,
-  Key,
   CreditCard,
   Search,
   Bell,

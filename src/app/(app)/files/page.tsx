@@ -1,6 +1,6 @@
 "use client";
 
-import { FolderOpen, History, FileText, Download, Trash2, ShieldAlert } from "lucide-react";
+import { FolderOpen, History, FileText, Trash2, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -97,7 +97,7 @@ export default function FilesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800">
-                {history.map((item, idx) => (
+                {history.map((item) => (
                   <tr key={item.id} className="hover:bg-white/5 transition-colors group">
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">

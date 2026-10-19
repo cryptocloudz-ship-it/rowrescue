@@ -1,4 +1,5 @@
 import { describe, it, expect } from "vitest";
+import type { Row } from "@/types/sheet";
 import { trimWhitespace } from "../trimWhitespace";
 import { removeEmptyRows } from "../removeEmptyRows";
 import { removeEmptyColumns } from "../removeEmptyColumns";
@@ -72,7 +73,7 @@ describe("removeEmptyRows", () => {
     const rows = [
       { name: null, age: undefined },
       { name: "Alice", age: "30" },
-    ];
+    ] as unknown as Row[]; // undefined isn't a CellValue, but can appear at runtime
     const result = removeEmptyRows(rows);
     expect(result.rows).toHaveLength(1);
     expect(result.rows[0].name).toBe("Alice");
@@ -527,7 +528,7 @@ describe("validateRequired", () => {
   });
 
   it("flags null and undefined as missing", () => {
-    const rows = [{ name: null, email: undefined }];
+    const rows = [{ name: null, email: undefined }] as unknown as Row[];
     const result = validateRequired(rows, { columns: ["name", "email"] });
     expect(result.quarantined).toHaveLength(1);
     expect(result.changes).toHaveLength(2);

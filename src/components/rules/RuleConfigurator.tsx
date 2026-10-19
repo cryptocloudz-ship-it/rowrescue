@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Settings2, Lock, ChevronDown, Columns, Sparkles, X, ArrowRight, CheckCircle2, Eye } from "lucide-react";
 import { useSheetStore } from "@/store/sheetStore";
@@ -208,12 +209,12 @@ function ProUpgradeModal({
               {loading ? "Redirecting..." : "Upgrade to Pro \u2014 \u20AC12/mo"}
               {!loading && <ArrowRight className="w-5 h-5" />}
             </button>
-            <a
+            <Link
               href="/pricing"
               className="w-full text-center text-sm font-bold text-slate-500 hover:text-primary transition-colors py-2"
             >
               Compare plans &rarr;
-            </a>
+            </Link>
           </div>
         </div>
       </div>

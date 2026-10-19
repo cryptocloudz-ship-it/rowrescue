@@ -35,7 +35,7 @@ export default function TermsOfServicePage() {
         <section className="mb-10 text-slate-300">
           <h2 className="text-2xl font-bold text-slate-200 mb-4">1. Acceptance of Terms</h2>
           <p className="leading-relaxed mb-4">
-            By accessing or using the SpreadsheetFix application ("Service"), you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the Service.
+            By accessing or using the SpreadsheetFix application (&quot;Service&quot;), you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the Service.
           </p>
         </section>
 
