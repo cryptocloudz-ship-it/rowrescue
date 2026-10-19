@@ -14,6 +14,7 @@ const nextConfig: NextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: blob: https://img.clerk.com https://www.googletagmanager.com",
               "font-src 'self'",
+              "worker-src 'self' blob:",
               "connect-src 'self' https://api.stripe.com https://*.clerk.accounts.dev https://clerk.spreadsheetfix.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
               "frame-src https://js.stripe.com https://hooks.stripe.com https://*.clerk.accounts.dev https://clerk.spreadsheetfix.com https://challenges.cloudflare.com",
               "object-src 'none'",
