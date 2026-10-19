@@ -1,27 +1,27 @@
 import Link from "next/link";
-import { Activity } from "lucide-react";
 import { TOOLS } from "@/content/tools";
 import { SUPPORT_EMAIL } from "@/config/site";
+import { BrandMark } from "./SiteHeader";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-primary/10 glass-panel py-12 relative z-10">
-      <div className="max-w-5xl mx-auto px-4 grid gap-10 sm:grid-cols-3 text-sm text-slate-400">
+    <footer className="bg-surface border-t border-rule font-ui text-ink">
+      <div className="max-w-[1200px] mx-auto px-6 pt-14 pb-10 grid gap-10 sm:grid-cols-3 text-sm">
         <div>
-          <div className="flex items-center gap-2 text-slate-200 font-bold mb-3">
-            <Activity className="size-4 text-primary" aria-hidden="true" />
+          <div className="flex items-center gap-2.5 font-semibold text-[15px] mb-3">
+            <BrandMark />
             SpreadsheetFix
           </div>
-          <p className="leading-relaxed">
-            Privacy-first CSV and Excel cleaning. Files are processed in your browser and never uploaded.
+          <p className="leading-relaxed text-ink-muted max-w-[300px]">
+            CSV and Excel cleaning in your browser. Files are never uploaded.
           </p>
         </div>
         <nav aria-label="Free tools">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Free tools</h2>
+          <h2 className="text-[13px] font-medium text-ink-muted mb-3">Free tools</h2>
           <ul className="space-y-2">
             {TOOLS.map((t) => (
               <li key={t.slug}>
-                <Link href={`/${t.slug}`} className="hover:text-primary transition-colors">
+                <Link href={`/${t.slug}`} className="text-ink-body hover:text-ink">
                   {t.name}
                 </Link>
               </li>
@@ -29,19 +29,19 @@ export function SiteFooter() {
           </ul>
         </nav>
         <nav aria-label="Company">
-          <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">SpreadsheetFix</h2>
+          <h2 className="text-[13px] font-medium text-ink-muted mb-3">SpreadsheetFix</h2>
           <ul className="space-y-2">
-            <li><Link href="/tools" className="hover:text-primary transition-colors">All tools</Link></li>
-            <li><Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link></li>
-            <li><Link href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms</Link></li>
-            <li><Link href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link></li>
-            <li><Link href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookies</Link></li>
-            <li><a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-primary transition-colors">Contact</a></li>
+            <li><Link href="/tools" className="text-ink-body hover:text-ink">All tools</Link></li>
+            <li><Link href="/pricing" className="text-ink-body hover:text-ink">Pricing</Link></li>
+            <li><Link href="/legal/terms-of-service" className="text-ink-body hover:text-ink">Terms</Link></li>
+            <li><Link href="/legal/privacy-policy" className="text-ink-body hover:text-ink">Privacy</Link></li>
+            <li><Link href="/legal/cookie-policy" className="text-ink-body hover:text-ink">Cookies</Link></li>
+            <li><a href={`mailto:${SUPPORT_EMAIL}`} className="text-ink-body hover:text-ink">Contact</a></li>
           </ul>
         </nav>
       </div>
-      <p className="max-w-5xl mx-auto px-4 mt-10 text-xs text-slate-600">
-        &copy; {new Date().getFullYear()} SpreadsheetFix. All rights reserved.
+      <p className="max-w-[1200px] mx-auto px-6 pb-10 text-[13px] text-ink-muted">
+        &copy; {new Date().getFullYear()} SpreadsheetFix
       </p>
     </footer>
   );

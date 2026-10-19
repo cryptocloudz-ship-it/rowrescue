@@ -8,20 +8,18 @@ export function NavAuth() {
   return (
     <>
       <SignedOut>
-        <Link href="/sign-in" className="text-slate-300 hover:text-primary transition-colors hidden sm:inline">
-          Sign In
+        <Link href="/sign-in" className="text-ink hover:text-accent py-3 hidden sm:inline">
+          Sign in
         </Link>
       </SignedOut>
       <Link
         href="/clean"
-        className="px-3 py-2 sm:px-5 sm:py-2.5 whitespace-nowrap bg-primary text-background-dark rounded-xl hover:brightness-110 font-bold transition-all neon-glow"
+        className="inline-flex items-center min-h-10 px-3.5 whitespace-nowrap rounded-md border border-rule-strong bg-paper text-ink text-sm font-medium hover:border-ink-muted transition-colors"
       >
-        Start Cleaning
+        Open the cleaner
       </Link>
       <SignedIn>
-        <div className="relative z-10 p-0.5 rounded-full border border-primary/30">
-          <UserButton />
-        </div>
+        <UserButton />
       </SignedIn>
     </>
   );
