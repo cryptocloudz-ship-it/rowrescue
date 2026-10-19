@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { users } from "@/db/drizzle";
 import { and, eq } from "drizzle-orm";
 import { planForPriceId } from "@/config/plans";
+import { handleChargeRefunded, handleDisputeCreated, handleEarlyFraudWarning } from "@/lib/billing/riskEvents";
 import type Stripe from "stripe";
 
 type StoredStatus = "active" | "past_due" | "canceled" | "trialing" | "incomplete";
@@ -20,6 +21,20 @@ function storedStatus(status: Stripe.Subscription.Status): StoredStatus {
     default: // unpaid, incomplete_expired, paused
       return "canceled";
   }
+}
+
+/** Drop a user back to free for a subscription that has ended. Idempotent. */
+async function revokeSubscription(subscriptionId: string) {
+  await db
+    .update(users)
+    .set({
+      plan: "free",
+      subscriptionStatus: "canceled",
+      stripeSubscriptionId: null,
+      currentPeriodEnd: null,
+      updatedAt: new Date(),
+    })
+    .where(eq(users.stripeSubscriptionId, subscriptionId));
 }
 
 export async function POST(request: NextRequest) {
@@ -103,17 +118,7 @@ export async function POST(request: NextRequest) {
 
     case "customer.subscription.deleted": {
       const subscription = event.data.object as Stripe.Subscription;
-
-      await db
-        .update(users)
-        .set({
-          plan: "free",
-          subscriptionStatus: "canceled",
-          stripeSubscriptionId: null,
-          currentPeriodEnd: null,
-          updatedAt: new Date(),
-        })
-        .where(eq(users.stripeSubscriptionId, subscription.id));
+      await revokeSubscription(subscription.id);
 
       console.log(`[Stripe] subscription.deleted: sub=${subscription.id}`);
       break;
@@ -148,6 +153,35 @@ export async function POST(request: NextRequest) {
         .where(and(eq(users.stripeCustomerId, customerId), eq(users.subscriptionStatus, "past_due")));
 
       console.log(`[Stripe] invoice.paid: customer=${customerId}`);
+      break;
+    }
+
+    // Risk events: end access rather than wait for subscription.deleted, which may arrive later
+    case "charge.refunded": {
+      const charge = event.data.object as Stripe.Charge;
+      const outcome = await handleChargeRefunded(stripe, charge);
+      for (const id of outcome.subscriptionIds) await revokeSubscription(id);
+      console.log(`[Stripe] charge.refunded: charge=${charge.id}`, outcome);
+      break;
+    }
+
+    case "charge.dispute.created": {
+      const dispute = event.data.object as Stripe.Dispute;
+      const outcome = await handleDisputeCreated(stripe, dispute);
+      for (const id of outcome.subscriptionIds) await revokeSubscription(id);
+      // Evidence is submitted from the Stripe Dashboard; Stripe emails the account owner too
+      console.warn(
+        `[Stripe] DISPUTE opened: dispute=${dispute.id} reason=${dispute.reason} amount=${dispute.amount} ${dispute.currency}`,
+        outcome
+      );
+      break;
+    }
+
+    case "radar.early_fraud_warning.created": {
+      const warning = event.data.object as Stripe.Radar.EarlyFraudWarning;
+      const outcome = await handleEarlyFraudWarning(stripe, warning);
+      for (const id of outcome.subscriptionIds) await revokeSubscription(id);
+      console.warn(`[Stripe] early fraud warning: efw=${warning.id} type=${warning.fraud_type}`, outcome);
       break;
     }
 

@@ -42,12 +42,17 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
   monthly/yearly EUR prices (price IDs in `NEXT_PUBLIC_STRIPE_*_PRICE_ID`). Webhook
   `we_1UPpiRAMuW35ARQqVsgV8zXK` → `https://spreadsheetfix.com/api/stripe/webhook`,
   secret in `RR_STRIPE_WEBHOOK_SECRET`. `scripts/stripe-setup.mjs` is idempotent, test-mode only.
+- **Refunds, disputes, fraud** (`src/lib/billing/riskEvents.ts`, called from the webhook): a full refund
+  or a new dispute cancels the subscription right away and drops the user to free; an actionable early
+  fraud warning also refunds the charge (reason `fraudulent`). Partial refunds leave the plan alone.
+  Dispute evidence is handled in the Stripe Dashboard.
 
 ## Next steps
 
 - Before taking real money: `vercel integration resource claim rowrescue-payments`, rerun
   `scripts/stripe-setup.mjs --live` with live keys, and enable Stripe Tax if VAT-registered.
-- Not built yet: handling for refunds, disputes and early-fraud-warning events.
+  Also rerun `scripts/stripe-setup.mjs` against the test sandbox so its existing webhook subscribes to
+  the refund/dispute/fraud events, then try them with `stripe trigger charge.dispute.created` etc.
 - Housekeeping: re-add the older Stripe/Clerk secrets as "sensitive" in Vercel; revoke the deployment
   protection bypass token if unused; decide whether to rename the GitHub repo and Vercel project; the old Letshost DNS zone for rowrescue.com is unused.
 
