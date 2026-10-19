@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { UserButton, useUser } from "@clerk/nextjs";
 import {
@@ -14,6 +15,8 @@ import {
 
 export const dynamic = "force-dynamic";
 
+export const metadata: Metadata = { robots: { index: false, follow: false } };
+
 export default function AppLayout({
   children,
 }: {
@@ -28,7 +31,7 @@ export default function AppLayout({
             <Activity className="size-5 text-background-dark font-bold" />
           </div>
           <h2 className="text-xl font-bold tracking-tight text-primary neon-text-glow">
-            RowRescue
+            SpreadsheetFix
           </h2>
         </div>
         

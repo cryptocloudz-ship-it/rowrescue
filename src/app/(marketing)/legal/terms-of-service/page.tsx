@@ -2,6 +2,7 @@
 
 import { Activity } from "lucide-react";
 import Link from "next/link";
+import { SUPPORT_EMAIL } from "@/config/site";
 
 export default function TermsOfServicePage() {
   return (
@@ -15,7 +16,7 @@ export default function TermsOfServicePage() {
               <Activity className="size-5 text-background-dark font-bold" />
             </div>
             <span className="text-xl font-bold text-primary tracking-tight neon-text-glow">
-              RowRescue
+              SpreadsheetFix
             </span>
           </Link>
           <Link
@@ -34,14 +35,14 @@ export default function TermsOfServicePage() {
         <section className="mb-10 text-slate-300">
           <h2 className="text-2xl font-bold text-slate-200 mb-4">1. Acceptance of Terms</h2>
           <p className="leading-relaxed mb-4">
-            By accessing or using the RowRescue application ("Service"), you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the Service.
+            By accessing or using the SpreadsheetFix application ("Service"), you agree to be bound by these Terms of Service. If you disagree with any part of the terms, you may not access the Service.
           </p>
         </section>
 
         <section className="mb-10 text-slate-300">
           <h2 className="text-2xl font-bold text-slate-200 mb-4">2. Description of Service</h2>
           <p className="leading-relaxed mb-4">
-            RowRescue is a client-side data cleaning application. We provide a set of tools to format, deduplicate, and validate CSV and Excel data within your web browser. Due to our privacy-first architecture, your file contents are never transmitted to our servers for processing.
+            SpreadsheetFix is a client-side data cleaning application. We provide a set of tools to format, deduplicate, and validate CSV and Excel data within your web browser. Due to our privacy-first architecture, your file contents are never transmitted to our servers for processing.
           </p>
         </section>
 
@@ -68,10 +69,18 @@ export default function TermsOfServicePage() {
         <section className="mb-10 text-slate-300">
           <h2 className="text-2xl font-bold text-slate-200 mb-4">5. Limitation of Liability</h2>
           <p className="leading-relaxed mb-4">
-            In no event shall RowRescue, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
+            In no event shall SpreadsheetFix, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
           </p>
         </section>
-        
+
+        <section className="mb-10 text-slate-300">
+          <h2 className="text-2xl font-bold text-slate-200 mb-4">6. Contact Us</h2>
+          <p className="leading-relaxed mb-4">
+            For refund requests or any questions about these Terms, contact us at{" "}
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">{SUPPORT_EMAIL}</a>.
+          </p>
+        </section>
+
         <div className="border-t border-slate-800 pt-8 mt-12">
           <Link href="/pricing" className="text-primary hover:underline font-bold">
             &larr; Back to Pricing

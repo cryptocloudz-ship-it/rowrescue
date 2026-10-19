@@ -5,19 +5,16 @@ import type { RuleOptions, NormalizeDateOptions } from "@/types/rules";
 const DATE_PATTERNS: { regex: RegExp; parse: (m: RegExpMatchArray) => Date | null }[] = [
   // YYYY-MM-DD
   { regex: /^(\d{4})-(\d{1,2})-(\d{1,2})$/, parse: (m) => safeDate(+m[1], +m[2], +m[3]) },
-  // DD/MM/YYYY
-  { regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, parse: (m) => safeDate(+m[3], +m[2], +m[1]) },
-  // MM/DD/YYYY
-  { regex: /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/, parse: (m) => safeDate(+m[3], +m[1], +m[2]) },
-  // DD-MM-YYYY
-  { regex: /^(\d{1,2})-(\d{1,2})-(\d{4})$/, parse: (m) => safeDate(+m[3], +m[2], +m[1]) },
-  // DD.MM.YYYY
-  { regex: /^(\d{1,2})\.(\d{1,2})\.(\d{4})$/, parse: (m) => safeDate(+m[3], +m[2], +m[1]) },
   // Month DD, YYYY
   { regex: /^(\w+)\s+(\d{1,2}),?\s+(\d{4})$/, parse: (m) => parseMonthName(m[1], +m[2], +m[3]) },
   // DD Month YYYY
   { regex: /^(\d{1,2})\s+(\w+)\s+(\d{4})$/, parse: (m) => parseMonthName(m[2], +m[1], +m[3]) },
 ];
+
+// NN/NN/YYYY, NN-NN-YYYY, NN.NN.YYYY — day/month order is ambiguous and resolved per column
+const NUMERIC_DATE = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/;
+
+type DateOrder = "DMY" | "MDY";
 
 const MONTHS: Record<string, number> = {
   january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
@@ -38,8 +35,35 @@ function parseMonthName(name: string, day: number, year: number): Date | null {
   return safeDate(year, month, day);
 }
 
-function tryParseDate(value: string): Date | null {
+/**
+ * Infer day/month order for a column: a first part above 12 proves day-first,
+ * a second part above 12 proves month-first. With no evidence, fall back to `fallback`.
+ */
+export function detectDateOrder(values: unknown[], fallback: DateOrder = "DMY"): DateOrder {
+  let dayFirst = false;
+  let monthFirst = false;
+  for (const value of values) {
+    if (typeof value !== "string") continue;
+    const m = value.trim().match(NUMERIC_DATE);
+    if (!m) continue;
+    if (+m[1] > 12) dayFirst = true;
+    if (+m[2] > 12) monthFirst = true;
+  }
+  if (dayFirst && !monthFirst) return "DMY";
+  if (monthFirst && !dayFirst) return "MDY";
+  return fallback;
+}
+
+function tryParseDate(value: string, order: DateOrder = "DMY"): Date | null {
   const trimmed = value.trim();
+  const numeric = trimmed.match(NUMERIC_DATE);
+  if (numeric) {
+    const [a, b, year] = [+numeric[1], +numeric[2], +numeric[3]];
+    // Prefer the column's order, but accept the other when the preferred one is impossible (e.g. 01/15/2024 in a DMY column)
+    return order === "DMY"
+      ? safeDate(year, b, a) ?? safeDate(year, a, b)
+      : safeDate(year, a, b) ?? safeDate(year, b, a);
+  }
   for (const pattern of DATE_PATTERNS) {
     const match = trimmed.match(pattern.regex);
     if (match) {
@@ -72,12 +96,24 @@ export function normalizeDate(
   const changes: CellChange[] = [];
   const now = Date.now();
   const targetColumns = opts.columns;
+  const requestedOrder = opts.dateOrder ?? "auto";
+
+  const columnOrder = new Map<string, DateOrder>();
+  const orderFor = (column: string): DateOrder => {
+    if (requestedOrder !== "auto") return requestedOrder;
+    let order = columnOrder.get(column);
+    if (!order) {
+      order = detectDateOrder(rows.map((r) => r[column]));
+      columnOrder.set(column, order);
+    }
+    return order;
+  };
 
   const newRows = rows.map((row, rowIndex) => {
     const newRow: Row = { ...row };
     for (const [key, value] of Object.entries(row)) {
       if (typeof value !== "string" || (targetColumns && !targetColumns.includes(key))) continue;
-      const parsed = tryParseDate(value);
+      const parsed = tryParseDate(value, orderFor(key));
       if (parsed) {
         const formatted = formatDate(parsed, opts.targetFormat);
         if (formatted !== value) {

@@ -25,6 +25,7 @@ const CATEGORY_ORDER: RuleCategory[] = [
 // Maps health report issue types to the rule that fixes them
 const ISSUE_TO_RULE: Record<string, string> = {
   duplicate_rows: "deduplicateRows",
+  encoding_issues: "fixEncoding",
   empty_rows: "removeEmptyRows",
   empty_columns: "removeEmptyColumns",
   inconsistent_headers: "normalizeHeaders",
@@ -189,7 +190,7 @@ function ProUpgradeModal({
               "Unlimited daily exports",
               "Process up to 500,000 rows at once",
               "Export to native Excel (.xlsx)",
-              "Remove RowRescue watermarks"
+              "Remove SpreadsheetFix watermarks"
             ].map((feature, i) => (
               <li key={i} className="flex items-center gap-3 text-sm font-medium text-slate-300">
                 <CheckCircle2 className="w-5 h-5 text-primary drop-shadow-[0_0_5px_rgba(13,242,223,0.5)] flex-shrink-0" />
@@ -450,7 +451,7 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
               ? {
                   id: "all",
                   name: "All Pro Features",
-                  description: "Unlock all 17 advanced cleaning rules and process unlimited files up to unlimited rows at once.",
+                  description: "Unlock every cleaning rule and process files of up to 500,000 rows at once.",
                   category: "row_cleaning", // unused
                   supportsColumnTargeting: false,
                 } as RuleDefinition

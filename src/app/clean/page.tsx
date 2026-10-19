@@ -144,12 +144,12 @@ export default function CleanPage() {
       <header className="glass-header sticky top-0 z-50 border-b border-primary/10">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 group" aria-label="RowRescue home">
+            <Link href="/" className="flex items-center gap-2 group" aria-label="SpreadsheetFix home">
               <div className="size-8 bg-primary rounded-lg flex items-center justify-center neon-glow group-hover:scale-105 transition-transform">
                 <Activity className="size-5 text-background-dark font-bold" />
               </div>
               <span className="text-xl font-bold text-primary tracking-tight neon-text-glow">
-                RowRescue
+                SpreadsheetFix
               </span>
             </Link>
             {stage !== "idle" && (
@@ -257,7 +257,7 @@ export default function CleanPage() {
                       Row Limit Reached: Cleaning first {parsedSheet.rowCount.toLocaleString()} rows
                     </h4>
                     <p className="text-sm text-amber-200/70 mt-2 mb-4 leading-relaxed font-medium">
-                      Your file has {totalRowCount.toLocaleString()} rows, but the Free plan only processes up to 5,000 rows per file. Upgrade to Pro to clean the entire dataset at once (up to Unlimited rows).
+                      Your file has {totalRowCount.toLocaleString()} rows, but the Free plan only processes up to 5,000 rows per file. Upgrade to Pro to clean the entire dataset at once (up to 500,000 rows).
                     </p>
                     <Link
                       href="/pricing"

@@ -1,6 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { auth } from "@clerk/nextjs/server";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SiteHeader } from "@/components/marketing/SiteHeader";
+import { SiteFooter } from "@/components/marketing/SiteFooter";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { TOOLS } from "@/content/tools";
+import { SITE_NAME, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH, absoluteUrl } from "@/config/site";
 import {
   Shield,
   Zap,
@@ -12,7 +16,6 @@ import {
   XCircle,
   ArrowRight,
   Activity,
-  Quote,
   Trash2,
   CalendarCheck,
   Hash,
@@ -25,56 +28,69 @@ import {
   BookMarked,
 } from "lucide-react";
 
-export default async function LandingPage() {
-  await auth();
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  openGraph: { ...DEFAULT_OPEN_GRAPH, url: "/" },
+};
 
+const STRUCTURED_DATA = [
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: SITE_NAME,
+    url: absoluteUrl("/"),
+    description: SITE_DESCRIPTION,
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Any (web browser)",
+    image: absoluteUrl("/og-image.png"),
+    offers: [
+      { "@type": "Offer", name: "Free", price: "0", priceCurrency: "EUR" },
+      {
+        "@type": "Offer",
+        name: "Pro",
+        price: "12",
+        priceCurrency: "EUR",
+        priceSpecification: {
+          "@type": "UnitPriceSpecification",
+          price: "12",
+          priceCurrency: "EUR",
+          billingDuration: "P1M",
+        },
+      },
+    ],
+    featureList: [
+      "Remove duplicate rows",
+      "Normalize mixed date formats",
+      "Validate email addresses",
+      "Trim whitespace",
+      "Fix character encoding",
+      "Merge CSV files",
+      "Export to Excel",
+    ],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: absoluteUrl("/"),
+    logo: absoluteUrl("/og-image.png"),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: SITE_NAME,
+    url: absoluteUrl("/"),
+  },
+];
+
+export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background-dark font-display text-slate-100 overflow-hidden relative">
+      <JsonLd data={STRUCTURED_DATA} />
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none -z-10" />
-      {/* Nav */}
-      <header className="glass-header sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="size-8 bg-primary rounded-lg flex items-center justify-center neon-glow">
-              <Activity className="size-5 text-background-dark font-bold" />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-primary neon-text-glow">RowRescue</span>
-          </div>
-          <nav className="flex items-center gap-6 text-sm font-medium">
-            <a href="#how-it-works" className="text-slate-300 hover:text-primary transition-colors hidden sm:inline">
-              How It Works
-            </a>
-            <a href="#features" className="text-slate-300 hover:text-primary transition-colors hidden sm:inline">
-              Features
-            </a>
-            <Link href="/pricing" className="text-slate-300 hover:text-primary transition-colors">
-              Pricing
-            </Link>
-            <SignedOut>
-              <Link href="/sign-in" className="text-slate-300 hover:text-primary transition-colors">
-                Sign In
-              </Link>
-              <Link
-                href="/clean"
-                className="px-5 py-2.5 bg-primary text-background-dark rounded-xl hover:brightness-110 font-bold transition-all neon-glow"
-              >
-                Start Cleaning
-              </Link>
-            </SignedOut>
-            <SignedIn>
-              <Link
-                href="/clean"
-                className="px-5 py-2.5 bg-primary text-background-dark rounded-xl hover:brightness-110 font-bold transition-all neon-glow"
-              >
-                Start Cleaning
-              </Link>
-              <div className="relative z-10 p-0.5 rounded-full border border-primary/30">
-                <UserButton />
-              </div>
-            </SignedIn>
-          </nav>
-        </div>
-      </header>
+      <SiteHeader />
+
+      <main id="main-content">
 
       {/* Hero */}
       <section className="max-w-4xl mx-auto px-4 pt-28 pb-20 text-center relative z-10">
@@ -91,7 +107,7 @@ export default async function LandingPage() {
         </h1>
         <p className="text-xl text-slate-400 mt-6 max-w-2xl mx-auto leading-relaxed">
           Stop manually finding duplicates, bad dates, and broken emails.
-          RowRescue cleans your data instantly — right in your browser.
+          SpreadsheetFix cleans your data instantly — right in your browser.
         </p>
         <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
           <Link
@@ -141,7 +157,7 @@ john.doe@gmail, 12/31/2023, 555-1234, John Doe`}
               <div className="absolute inset-0 bg-primary/5 animate-pulse pointer-events-none" />
               <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -z-10" />
               <h3 className="text-sm font-bold text-primary uppercase tracking-widest flex items-center gap-2 mb-4 neon-text-glow relative z-10">
-                <CheckCircle2 className="w-4 h-4 text-primary" /> After: RowRescue
+                <CheckCircle2 className="w-4 h-4 text-primary" /> After: SpreadsheetFix
               </h3>
               <div className="font-mono text-xs sm:text-sm overflow-x-auto text-primary/90 bg-[#1e2330]/80 border border-primary/30 rounded-xl p-5 shadow-[inset_0_0_20px_rgba(13,242,223,0.05)] whitespace-pre leading-relaxed relative z-10">
 {`email,date,phone,name
@@ -159,8 +175,8 @@ jane.smith@yahoo.com, 2023-12-31, +1-555-567-8901, Jane Smith
       <section className="py-16 relative z-10">
         <div className="max-w-4xl mx-auto px-4">
           <div className="grid grid-cols-3 gap-4 sm:gap-8">
-            <StatCard number="1.2M+" label="Cells Cleaned" />
-            <StatCard number="50K+" label="Files Processed" />
+            <StatCard number="18" label="Cleaning Rules" />
+            <StatCard number="50 MB" label="Max File Size" />
             <StatCard number="0" label="Bytes Uploaded" />
           </div>
         </div>
@@ -257,31 +273,26 @@ jane.smith@yahoo.com, 2023-12-31, +1-555-567-8901, Jane Smith
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-24 relative z-10">
+      {/* Free tools — internal links to the high-intent landing pages */}
+      <section id="tools" className="py-24 relative z-10 scroll-mt-20">
         <div className="max-w-5xl mx-auto px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-100 text-center mb-4">
-            Trusted by data teams
+            Free tools for one-off fixes
           </h2>
           <p className="text-slate-400 text-center mb-16 max-w-xl mx-auto text-lg">
-            Join thousands of analysts, ops teams, and freelancers who save hours every week.
+            Got one specific problem? Jump straight to the tool for it.
           </p>
-          <div className="grid md:grid-cols-3 gap-8">
-            <TestimonialCard
-              quote="I used to spend 2 hours cleaning survey exports. RowRescue does it in seconds and I trust the output more than my own regex."
-              name="Sarah Chen"
-              role="Data Analyst, Fintech Startup"
-            />
-            <TestimonialCard
-              quote="The health report alone is worth it. I had no idea how many duplicate entries were slipping through our CRM exports."
-              name="Marcus Webb"
-              role="Revenue Ops, SaaS Company"
-            />
-            <TestimonialCard
-              quote="Finally a tool that doesn't upload my client data to some random server. The browser-only approach is a game changer for GDPR."
-              name="Lena Richter"
-              role="Freelance Data Consultant"
-            />
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {TOOLS.map((t) => (
+              <Link
+                key={t.slug}
+                href={`/${t.slug}`}
+                className="p-6 glass-panel rounded-xl border border-primary/10 hover:border-primary/40 transition-all"
+              >
+                <h3 className="font-bold text-primary">{t.name}</h3>
+                <p className="text-sm text-slate-400 leading-relaxed mt-2">{t.h1}</p>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
@@ -330,7 +341,7 @@ jane.smith@yahoo.com, 2023-12-31, +1-555-567-8901, Jane Smith
             <PricingPreviewCard
               plan="Pro"
               price="€12/mo"
-              description="Unlimited rows, 17+ rules, Excel export, priority support."
+              description="Up to 500,000 rows, all 18 rules, Excel export, no watermark."
               cta="Upgrade to Pro"
               href="/pricing"
               featured
@@ -339,7 +350,7 @@ jane.smith@yahoo.com, 2023-12-31, +1-555-567-8901, Jane Smith
               plan="Team"
               price="€29/seat"
               description="Everything in Pro, plus shared presets and team billing."
-              cta="Contact Us"
+              cta="Get Team"
               href="/pricing"
             />
           </div>
@@ -373,23 +384,9 @@ jane.smith@yahoo.com, 2023-12-31, +1-555-567-8901, Jane Smith
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-primary/10 glass-panel py-10 relative z-10">
-        <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-slate-500 font-medium">
-          <div className="flex items-center gap-2">
-            <Activity className="size-4 text-primary" />
-            <span>&copy; {new Date().getFullYear()} RowRescue. All rights reserved.</span>
-          </div>
-          <div className="flex gap-8">
-            <a href="#how-it-works" className="hover:text-primary transition-colors">How It Works</a>
-            <a href="#features" className="hover:text-primary transition-colors">Features</a>
-            <Link href="/pricing" className="hover:text-primary transition-colors">Pricing</Link>
-            <a href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms</a>
-            <a href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy</a>
-            <a href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookies</a>
-          </div>
-        </div>
-      </footer>
+      </main>
+
+      <SiteFooter />
     </div>
   );
 }
@@ -474,29 +471,6 @@ function StatCard({ number, label }: { number: string; label: string }) {
       </div>
       <div className="text-sm font-medium text-slate-400 uppercase tracking-wider">
         {label}
-      </div>
-    </div>
-  );
-}
-
-function TestimonialCard({
-  quote,
-  name,
-  role,
-}: {
-  quote: string;
-  name: string;
-  role: string;
-}) {
-  return (
-    <div className="glass-panel border border-primary/10 rounded-2xl p-8 flex flex-col">
-      <Quote className="w-8 h-8 text-primary/30 mb-4 flex-shrink-0" />
-      <p className="text-sm text-slate-300 leading-relaxed flex-1 mb-6">
-        &ldquo;{quote}&rdquo;
-      </p>
-      <div>
-        <div className="font-bold text-slate-100 text-sm">{name}</div>
-        <div className="text-xs text-slate-500 mt-0.5">{role}</div>
       </div>
     </div>
   );

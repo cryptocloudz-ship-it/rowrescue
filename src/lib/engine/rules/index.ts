@@ -6,6 +6,7 @@ import { reorderColumns } from "./reorderColumns";
 import { deduplicateRows } from "./deduplicateRows";
 import { removeEmptyRows } from "./removeEmptyRows";
 import { trimWhitespace } from "./trimWhitespace";
+import { fixEncoding } from "./fixEncoding";
 import { stripHtml } from "./stripHtml";
 import { normalizeDate } from "./normalizeDate";
 import { normalizeNumbers } from "./normalizeNumbers";
@@ -60,6 +61,7 @@ export const ALL_RULES: RuleDefinition[] = [
     category: "row_cleaning",
     isPro: false,
     execute: deduplicateRows,
+    supportsColumnTargeting: true,
   },
   {
     id: "removeEmptyRows",
@@ -79,6 +81,15 @@ export const ALL_RULES: RuleDefinition[] = [
     supportsColumnTargeting: true,
   },
   {
+    id: "fixEncoding",
+    name: "Fix Encoding",
+    description: "Repair garbled characters such as \"CafÃ©\" → \"Café\" caused by opening UTF-8 files as Windows-1252.",
+    category: "row_cleaning",
+    isPro: false,
+    execute: fixEncoding,
+    supportsColumnTargeting: true,
+  },
+  {
     id: "stripHtml",
     name: "Strip HTML",
     description: "Remove HTML tags from cell values.",
@@ -94,7 +105,7 @@ export const ALL_RULES: RuleDefinition[] = [
     name: "Normalize Dates",
     description: "Detect and convert dates to a consistent format (e.g. YYYY-MM-DD).",
     category: "data_standardisation",
-    isPro: true,
+    isPro: false,
     execute: normalizeDate,
     supportsColumnTargeting: true,
   },
@@ -121,7 +132,7 @@ export const ALL_RULES: RuleDefinition[] = [
     name: "Normalize Email",
     description: "Lowercase and trim email addresses.",
     category: "data_standardisation",
-    isPro: true,
+    isPro: false,
     execute: normalizeEmail,
     supportsColumnTargeting: true,
   },
@@ -141,7 +152,7 @@ export const ALL_RULES: RuleDefinition[] = [
     name: "Validate Email",
     description: "Flag rows with invalid email addresses.",
     category: "validation",
-    isPro: true,
+    isPro: false,
     execute: validateEmail,
     supportsColumnTargeting: true,
   },
@@ -175,6 +186,21 @@ export const ALL_RULES: RuleDefinition[] = [
 
 export const RULE_MAP = new Map(ALL_RULES.map((r) => [r.id, r]));
 
+/**
+ * Execution order, independent of how rules are listed in the UI: transform values first,
+ * then drop empty rows and duplicates (so "a@b.com " and "A@b.com" match), then validate.
+ * Header renames run last because column pickers store the file's original header names.
+ */
+const ROW_REMOVAL = ["removeEmptyRows", "deduplicateRows"];
+const HEADER_RENAMES = ["normalizeHeaders", "renameColumns", "reorderColumns"];
+
+export function executionRank(ruleId: string): number {
+  if (HEADER_RENAMES.includes(ruleId)) return 3 + HEADER_RENAMES.indexOf(ruleId) / 10;
+  if (RULE_MAP.get(ruleId)?.category === "validation") return 2;
+  if (ROW_REMOVAL.includes(ruleId)) return 1 + ROW_REMOVAL.indexOf(ruleId) / 10;
+  return 0;
+}
+
 export {
   normalizeHeaders,
   renameColumns,
@@ -183,6 +209,7 @@ export {
   deduplicateRows,
   removeEmptyRows,
   trimWhitespace,
+  fixEncoding,
   stripHtml,
   normalizeDate,
   normalizeNumbers,

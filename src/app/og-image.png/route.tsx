@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
+export const dynamic = "force-static";
+
 
 export async function GET() {
   return new ImageResponse(
@@ -56,7 +57,7 @@ export async function GET() {
               boxShadow: "0 0 30px rgba(13,242,223,0.4)",
             }}
           >
-            RR
+            SF
           </div>
           <span
             style={{
@@ -66,7 +67,7 @@ export async function GET() {
               letterSpacing: "-0.5px",
             }}
           >
-            RowRescue
+            SpreadsheetFix
           </span>
         </div>
 

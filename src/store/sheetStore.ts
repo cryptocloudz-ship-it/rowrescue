@@ -15,11 +15,12 @@ import { ALL_RULES } from "@/lib/engine/rules";
 import { FREE_RULES } from "@/config/plans";
 import { trackFileUpload, trackDemoLoaded, trackCleaningRun } from "@/lib/analytics";
 
-const FREE_ROW_LIMIT = 5_000;
+export const FREE_ROW_LIMIT = 5_000;
 
 // Maps health report issue types to rule IDs (shared with RuleConfigurator)
 const ISSUE_TO_RULE: Record<string, string> = {
   duplicate_rows: "deduplicateRows",
+  encoding_issues: "fixEncoding",
   empty_rows: "removeEmptyRows",
   empty_columns: "removeEmptyColumns",
   inconsistent_headers: "normalizeHeaders",
@@ -28,6 +29,33 @@ const ISSUE_TO_RULE: Record<string, string> = {
   invalid_email: "validateEmail",
   invalid_phone: "validatePhone",
 };
+
+/** Rules a tool landing page asks to switch on, with optional per-rule options. */
+export interface RulePreset {
+  ruleIds: string[];
+  options?: Record<string, Record<string, unknown>>;
+}
+
+/** Enable rules matching detected issues plus any preset rules, limited to what the plan allows. */
+function autoEnableRules(
+  ruleConfigs: RuleConfig[],
+  report: HealthReport,
+  isPro: boolean,
+  preset: RulePreset | null
+): RuleConfig[] {
+  const wanted = new Set(
+    report.issues
+      .filter((i) => i.count > 0)
+      .map((i) => ISSUE_TO_RULE[i.type])
+      .filter(Boolean)
+  );
+  preset?.ruleIds.forEach((id) => wanted.add(id));
+  return ruleConfigs.map((rc) => {
+    if (!wanted.has(rc.ruleId) || !(isPro || FREE_RULES.includes(rc.ruleId))) return rc;
+    const presetOptions = preset?.options?.[rc.ruleId];
+    return { ...rc, enabled: true, options: presetOptions ? { ...rc.options, ...presetOptions } : rc.options };
+  });
+}
 
 interface SheetState {
   // Stage
@@ -45,6 +73,7 @@ interface SheetState {
   // Cleaning config
   ruleConfigs: RuleConfig[];
   isPro: boolean;
+  preset: RulePreset | null;
 
   // Engine results
   engineResult: EngineResult | null;
@@ -64,6 +93,7 @@ interface SheetState {
   undoRule: (ruleId: string) => void;
   resetAll: () => void;
   setIsPro: (isPro: boolean) => void;
+  setPreset: (preset: RulePreset | null) => void;
   loadDemoData: () => void;
   getDemoCSV: () => string;
 }
@@ -94,6 +124,7 @@ export const useSheetStore = create<SheetState>((set, get) => ({
   totalRowCount: 0,
   ruleConfigs: DEFAULT_RULE_CONFIGS,
   isPro: false,
+  preset: null,
   engineResult: null,
   cleanedRows: [],
   allChanges: [],
@@ -120,19 +151,8 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       set({ parsedSheet: parsed, stage: "health-check" });
       const report = generateHealthReport(parsed.rows, parsed.headers);
 
-      // Auto-enable free rules that match detected issues
-      const { ruleConfigs, isPro: userIsPro } = get();
-      const detectedRuleIds = new Set(
-        report.issues
-          .filter((i) => i.count > 0)
-          .map((i) => ISSUE_TO_RULE[i.type])
-          .filter(Boolean)
-      );
-      const autoEnabled = ruleConfigs.map((rc) =>
-        detectedRuleIds.has(rc.ruleId) && (userIsPro || FREE_RULES.includes(rc.ruleId))
-          ? { ...rc, enabled: true }
-          : rc
-      );
+      const { ruleConfigs, isPro: userIsPro, preset } = get();
+      const autoEnabled = autoEnableRules(ruleConfigs, report, userIsPro, preset);
 
       set({ healthReport: report, ruleConfigs: autoEnabled, stage: "configuring" });
 
@@ -235,10 +255,12 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       allQuarantined: [],
       engineErrors: [],
       cleaningTimeMs: 0,
+      preset: null,
     });
   },
 
   setIsPro: (isPro) => set({ isPro }),
+  setPreset: (preset) => set({ preset }),
 
   loadDemoData: () => {
     const parsed: ParsedSheet = {
@@ -253,19 +275,8 @@ export const useSheetStore = create<SheetState>((set, get) => ({
     };
     const report = generateHealthReport(DEMO_ROWS, DEMO_HEADERS);
 
-    // Auto-enable free rules that match detected issues
-    const { ruleConfigs, isPro } = get();
-    const detectedRuleIds = new Set(
-      report.issues
-        .filter((i) => i.count > 0)
-        .map((i) => ISSUE_TO_RULE[i.type])
-        .filter(Boolean)
-    );
-    const autoEnabled = ruleConfigs.map((rc) =>
-      detectedRuleIds.has(rc.ruleId) && (isPro || FREE_RULES.includes(rc.ruleId))
-        ? { ...rc, enabled: true }
-        : rc
-    );
+    const { ruleConfigs, isPro, preset } = get();
+    const autoEnabled = autoEnableRules(ruleConfigs, report, isPro, preset);
 
     set({ parsedSheet: parsed, healthReport: report, ruleConfigs: autoEnabled, stage: "configuring", error: null });
 

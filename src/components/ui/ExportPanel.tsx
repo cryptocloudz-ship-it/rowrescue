@@ -11,7 +11,8 @@ import { trackExport } from "@/lib/analytics";
 function downloadBlob(content: string | Uint8Array, filename: string, mime: string) {
   const blob = content instanceof Uint8Array
     ? new Blob([content.buffer as ArrayBuffer], { type: mime })
-    : new Blob([content], { type: mime });
+    : // UTF-8 BOM so Excel shows accented characters correctly when opening the CSV
+      new Blob([mime.startsWith("text/csv") ? "\ufeff" + content : content], { type: mime });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -192,10 +193,10 @@ export function ExportPanel() {
             </div>
             <div className="flex-1">
               <h4 className="text-lg font-bold text-amber-100">
-                Remove RowRescue watermarks
+                Remove SpreadsheetFix watermarks
               </h4>
               <p className="text-sm font-medium text-amber-200/70 mt-1.5 mb-4 leading-relaxed">
-                Free exports include a small &quot;Cleaned by RowRescue&quot; watermark row at the end of your data. Upgrade to Pro to remove it and unlock direct Excel (.xlsx) exports.
+                Free exports include a small &quot;Cleaned by SpreadsheetFix&quot; watermark row at the end of your data. Upgrade to Pro to remove it and unlock direct Excel (.xlsx) exports.
               </p>
               <a
                 href="/pricing"
@@ -374,7 +375,7 @@ export function ExportPanel() {
         const timeStr = cleaningTimeMs < 1000
           ? `${cleaningTimeMs}ms`
           : `${(cleaningTimeMs / 1000).toFixed(1)}s`;
-        const shareText = `Cleaned ${changedCount.toLocaleString()} cells in ${timeStr} with RowRescue`;
+        const shareText = `Cleaned ${changedCount.toLocaleString()} cells in ${timeStr} with SpreadsheetFix`;
 
         return (
           <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">

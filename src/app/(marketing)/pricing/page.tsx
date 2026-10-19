@@ -5,19 +5,22 @@ import Link from "next/link";
 import { useState } from "react";
 import { getUtmParams } from "@/lib/utm";
 import { trackCheckoutStarted } from "@/lib/analytics";
+import { SUPPORT_EMAIL } from "@/config/site";
 
 const FEATURES = [
   { name: "Exports per day", free: "5", pro: "Unlimited", team: "Unlimited" },
-  { name: "Max rows per file", free: "5,000", pro: "Unlimited", team: "Unlimited" },
+  { name: "Max rows per file", free: "5,000", pro: "500,000", team: "500,000" },
   { name: "Remove duplicates", free: true, pro: true, team: true },
   { name: "Remove empty rows/columns", free: true, pro: true, team: true },
   { name: "Trim whitespace", free: true, pro: true, team: true },
   { name: "Normalize headers", free: true, pro: true, team: true },
-  { name: "Normalize dates", free: false, pro: true, team: true },
+  { name: "Fix encoding (Ã© → é)", free: true, pro: true, team: true },
+  { name: "Normalize dates", free: true, pro: true, team: true },
+  { name: "Normalize & validate emails", free: true, pro: true, team: true },
   { name: "Normalize numbers", free: false, pro: true, team: true },
-  { name: "Normalize emails/phones", free: false, pro: true, team: true },
+  { name: "Normalize & validate phones", free: false, pro: true, team: true },
   { name: "Strip HTML", free: false, pro: true, team: true },
-  { name: "Validate & quarantine", free: false, pro: true, team: true },
+  { name: "Required-field & range validation", free: false, pro: true, team: true },
   { name: "Excel export", free: false, pro: true, team: true },
   { name: "Change log & summary", free: false, pro: true, team: true },
   { name: "Saved presets", free: "3 (local)", pro: "Unlimited (synced)", team: "Unlimited (shared)" },
@@ -91,7 +94,7 @@ export default function PricingPage() {
               <Activity className="size-5 text-background-dark font-bold" />
             </div>
             <span className="text-xl font-bold text-primary tracking-tight neon-text-glow">
-              RowRescue
+              SpreadsheetFix
             </span>
           </Link>
           <Link
@@ -295,7 +298,7 @@ export default function PricingPage() {
               answer="Absolutely. 100% of the file processing happens instantly inside your browser using JavaScript. Your spreadsheet contents are never uploaded to any remote server or cloud bucket. We strictly only store your account email and basic billing metadata."
             />
             <FaqItem
-              question="Can I use RowRescue without creating an account?"
+              question="Can I use SpreadsheetFix without creating an account?"
               answer="Yes! Our Free tier is completely frictionless with zero sign-up required. Simply drag your file in and start cleaning immediately. Accounts are only needed if you decide to upgrade to Pro or Team features."
             />
             <FaqItem
@@ -318,13 +321,14 @@ export default function PricingPage() {
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-6 text-sm text-slate-500 font-medium">
           <div className="flex items-center gap-2">
             <Activity className="size-4 text-primary" />
-            <span>&copy; {new Date().getFullYear()} RowRescue. All rights reserved.</span>
+            <span>&copy; {new Date().getFullYear()} SpreadsheetFix. All rights reserved.</span>
           </div>
           <div className="flex gap-8">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <a href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms</a>
             <a href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy</a>
             <a href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookies</a>
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-primary transition-colors">Contact</a>
           </div>
         </div>
       </footer>

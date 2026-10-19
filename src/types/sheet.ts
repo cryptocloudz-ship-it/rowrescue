@@ -1,4 +1,4 @@
-/** Core data types for RowRescue's client-side processing engine */
+/** Core data types for SpreadsheetFix's client-side processing engine */
 
 export type CellValue = string | number | boolean | null;
 
@@ -21,6 +21,7 @@ export interface HealthIssue {
   id: string;
   type:
     | "duplicate_rows"
+    | "encoding_issues"
     | "empty_rows"
     | "empty_columns"
     | "inconsistent_headers"

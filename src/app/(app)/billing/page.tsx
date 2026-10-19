@@ -1,10 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
-import { db } from "@/db";
-import { users } from "@/db/drizzle";
-import { eq } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { getPlanLimits } from "@/config/plans";
+import { getPlanLimits, effectivePlan } from "@/config/plans";
+import { ensureUser } from "@/lib/billing/ensureUser";
 import { BillingActions } from "./BillingActions";
 
 export default async function BillingPage({
@@ -18,7 +16,7 @@ export default async function BillingPage({
     redirect("/sign-in");
   }
 
-  const [user] = await db.select().from(users).where(eq(users.id, userId));
+  const user = await ensureUser(userId);
 
   if (!user) {
     redirect("/sign-in");
@@ -26,7 +24,7 @@ export default async function BillingPage({
 
   const params = await searchParams;
   const showSuccess = params.success === "true";
-  const limits = getPlanLimits(user.plan);
+  const limits = getPlanLimits(effectivePlan(user.plan, user.subscriptionStatus));
   const periodEnd = user.currentPeriodEnd
     ? new Date(user.currentPeriodEnd).toLocaleDateString("en-IE", {
         year: "numeric",
@@ -43,7 +41,7 @@ export default async function BillingPage({
             <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6 stroke-primary" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
             </svg>
-            RowRescue
+            SpreadsheetFix
           </Link>
           <Link
             href="/clean"

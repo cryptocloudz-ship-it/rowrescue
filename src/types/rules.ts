@@ -1,4 +1,4 @@
-/** Rule type definitions for RowRescue cleaning engine */
+/** Rule type definitions for SpreadsheetFix cleaning engine */
 
 import type { Row, CleanResult } from "./sheet";
 
@@ -23,10 +23,14 @@ export interface RenameColumnsOptions extends RuleOptions {
 export interface DeduplicateRowsOptions extends RuleOptions {
   mode: "exact" | "by_columns";
   keyColumns?: string[];
+  /** Set by the column picker: compare only these columns. Empty = whole row. */
+  columns?: string[];
 }
 
 export interface NormalizeDateOptions extends RuleOptions {
   targetFormat: string; // e.g. "YYYY-MM-DD", "DD/MM/YYYY", "MM/DD/YYYY"
+  /** How to read ambiguous dates like 03/04/2024. "auto" infers per column. Default: "auto". */
+  dateOrder?: "auto" | "DMY" | "MDY";
   columns?: string[];
 }
 
@@ -70,6 +74,10 @@ export interface StripHtmlOptions extends RuleOptions {
 }
 
 export interface TrimWhitespaceOptions extends RuleOptions {
+  columns?: string[];
+}
+
+export interface FixEncodingOptions extends RuleOptions {
   columns?: string[];
 }
 
