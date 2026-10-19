@@ -47,20 +47,20 @@ export function OnboardingHint({ id, children, position = "top" }: OnboardingHin
 
   return (
     <div
-      className={`animate-in fade-in slide-in-from-bottom-2 duration-500 glass-panel border border-primary/30 rounded-xl p-4 flex items-start gap-3 shadow-[0_0_20px_rgba(13,242,223,0.1)] relative ${
+      className={`animate-in fade-in slide-in-from-bottom-2 duration-500 bg-paper border border-rule-strong rounded-lg p-4 flex items-start gap-3 relative ${
         position === "bottom" ? "mt-4" : "mb-4"
       }`}
       role="status"
     >
-      <div className="p-1.5 bg-primary/10 rounded-lg flex-shrink-0">
-        <Lightbulb className="w-4 h-4 text-primary" />
+      <div className="p-1.5 bg-accent-tint rounded-lg flex-shrink-0">
+        <Lightbulb className="w-4 h-4 text-accent" />
       </div>
-      <p className="text-sm font-medium text-slate-300 flex-1 leading-relaxed">
+      <p className="text-sm font-medium text-ink-body flex-1 leading-relaxed">
         {children}
       </p>
       <button
         onClick={dismiss}
-        className="p-1 rounded-md text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-colors flex-shrink-0"
+        className="p-1 rounded-md text-ink-muted hover:text-ink-body hover:bg-surface transition-colors flex-shrink-0"
         aria-label="Dismiss hint"
       >
         <X className="w-3.5 h-3.5" />

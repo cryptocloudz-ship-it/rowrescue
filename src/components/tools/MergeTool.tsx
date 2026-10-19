@@ -87,8 +87,8 @@ export function MergeTool() {
           setDragging(false);
           if (e.dataTransfer.files.length) addFiles(e.dataTransfer.files);
         }}
-        className={`glass-panel border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
-          dragging ? "border-primary bg-primary/5" : "border-primary/20 hover:border-primary/50"
+        className={`bg-paper border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition-all focus:outline-none focus:ring-2 focus:ring-accent ${
+          dragging ? "border-accent bg-accent-tint" : "border-rule hover:border-rule-strong"
         }`}
       >
         <input
@@ -103,33 +103,33 @@ export function MergeTool() {
             e.target.value = "";
           }}
         />
-        <Upload className="w-10 h-10 mx-auto text-slate-400 mb-4" aria-hidden="true" />
-        <p className="text-lg font-bold text-slate-200">Drop two or more files to merge</p>
-        <p className="text-sm text-slate-400 mt-2">CSV, TSV or XLSX — processed in your browser, never uploaded</p>
+        <Upload className="w-10 h-10 mx-auto text-ink-muted mb-4" aria-hidden="true" />
+        <p className="text-lg font-semibold text-ink">Drop two or more files to merge</p>
+        <p className="text-sm text-ink-muted mt-2">CSV, TSV or XLSX — processed in your browser, never uploaded</p>
       </div>
 
       {busy && (
-        <p role="status" className="mt-4 flex items-center justify-center gap-2 text-sm text-slate-400">
+        <p role="status" className="mt-4 flex items-center justify-center gap-2 text-sm text-ink-muted">
           <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> Reading files…
         </p>
       )}
 
       {error && (
-        <div role="alert" className="mt-4 flex items-center gap-3 text-rose-400 bg-rose-500/10 border border-rose-500/30 rounded-xl p-4 text-sm font-bold">
+        <div role="alert" className="mt-4 flex items-center gap-3 text-rose-700 bg-rose-50 border border-rose-200 rounded-lg p-4 text-sm font-semibold">
           <AlertCircle className="w-5 h-5 flex-shrink-0" aria-hidden="true" />
           {error}
         </div>
       )}
 
       {sheets.length > 0 && (
-        <div className="mt-6 glass-panel rounded-2xl border border-primary/10 p-5">
-          <ul className="divide-y divide-primary/10">
+        <div className="mt-6 bg-paper border rounded-lg border-rule p-5">
+          <ul className="divide-y divide-rule">
             {sheets.map((s, i) => (
               <li key={`${s.fileName}-${i}`} className="flex items-center justify-between py-2 text-sm">
-                <span className="flex items-center gap-2 text-slate-200 min-w-0">
-                  <FileSpreadsheet className="w-4 h-4 text-primary flex-shrink-0" aria-hidden="true" />
+                <span className="flex items-center gap-2 text-ink min-w-0">
+                  <FileSpreadsheet className="w-4 h-4 text-accent flex-shrink-0" aria-hidden="true" />
                   <span className="truncate">{s.fileName}</span>
-                  <span className="text-slate-500 flex-shrink-0">
+                  <span className="text-ink-muted flex-shrink-0">
                     {s.rowCount.toLocaleString()} rows · {s.columnCount} cols
                   </span>
                 </span>
@@ -138,7 +138,7 @@ export function MergeTool() {
                     setSheets((prev) => prev.filter((_, j) => j !== i));
                     setResult(null);
                   }}
-                  className="p-1 text-slate-500 hover:text-rose-400"
+                  className="p-1 text-ink-muted hover:text-rose-700"
                   aria-label={`Remove ${s.fileName}`}
                 >
                   <X className="w-4 h-4" />
@@ -147,7 +147,7 @@ export function MergeTool() {
             ))}
           </ul>
 
-          <label className="mt-4 flex items-center gap-2 text-sm text-slate-300">
+          <label className="mt-4 flex items-center gap-2 text-sm text-ink-body">
             <input
               type="checkbox"
               checked={dedupe}
@@ -155,7 +155,7 @@ export function MergeTool() {
                 setDedupe(e.target.checked);
                 setResult(null);
               }}
-              className="accent-[#0df2df]"
+              className="accent-[#1f3d99]"
             />
             Remove duplicate rows across files
           </label>
@@ -163,7 +163,7 @@ export function MergeTool() {
           <button
             onClick={merge}
             disabled={sheets.length < 2}
-            className="mt-4 w-full py-3 bg-primary text-background-dark rounded-xl font-bold hover:brightness-110 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+            className="mt-4 w-full py-3 bg-accent text-white rounded-lg font-semibold hover:bg-accent-strong transition-all disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {sheets.length < 2 ? "Add at least two files" : `Merge ${sheets.length} files`}
           </button>
@@ -171,19 +171,19 @@ export function MergeTool() {
       )}
 
       {result && (
-        <div role="status" className="mt-6 glass-panel rounded-2xl border border-primary/30 p-5">
-          <p className="text-slate-200 font-bold">
+        <div role="status" className="mt-6 bg-paper border rounded-lg border-rule-strong p-5">
+          <p className="text-ink font-semibold">
             Merged {result.rows.length.toLocaleString()} rows into {result.headers.length} columns
           </p>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-ink-muted mt-1">
             {result.duplicatesRemoved > 0 && `${result.duplicatesRemoved.toLocaleString()} duplicate rows removed. `}
             Columns: {result.headers.join(", ")}
           </p>
           {result.truncatedFrom && (
-            <p className="text-sm text-amber-400 mt-3">
+            <p className="text-sm text-amber-700 mt-3">
               The merged file has {result.truncatedFrom.toLocaleString()} rows; the free plan keeps the first{" "}
               {FREE_ROW_LIMIT.toLocaleString()}.{" "}
-              <Link href="/pricing" className="underline font-bold">
+              <Link href="/pricing" className="underline font-semibold">
                 Upgrade to Pro
               </Link>{" "}
               to merge up to 500,000 rows.
@@ -192,15 +192,15 @@ export function MergeTool() {
           <div className="mt-4 grid sm:grid-cols-2 gap-3">
             <button
               onClick={download}
-              className="inline-flex items-center justify-center gap-2 py-3 bg-primary text-background-dark rounded-xl font-bold hover:brightness-110"
+              className="inline-flex items-center justify-center gap-2 py-3 bg-accent text-white rounded-lg font-semibold hover:bg-accent-strong"
             >
               <Download className="w-4 h-4" aria-hidden="true" /> Download merged CSV
             </button>
             <button
               onClick={cleanMerged}
-              className="inline-flex items-center justify-center gap-2 py-3 glass-panel border border-primary/30 text-slate-200 rounded-xl font-bold hover:bg-primary/10"
+              className="inline-flex items-center justify-center gap-2 py-3 bg-paper border border-rule-strong text-ink rounded-lg font-semibold hover:bg-accent-tint"
             >
-              <Sparkles className="w-4 h-4 text-primary" aria-hidden="true" /> Clean the merged file
+              <Sparkles className="w-4 h-4 text-accent" aria-hidden="true" /> Clean the merged file
             </button>
           </div>
         </div>

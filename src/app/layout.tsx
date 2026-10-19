@@ -1,30 +1,13 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist, Geist_Mono, Space_Grotesk, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { UtmCapture } from "@/components/ui/UtmCapture";
 import { ConsentedAnalytics } from "@/components/ui/ConsentedAnalytics";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH } from "@/config/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-// Self-hosted by next/font, so the CSP needs no Google Fonts allowance
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
-  subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
-});
-
-// New design system fonts (see DESIGN.md)
+// Self-hosted by next/font, so the CSP needs no Google Fonts allowance (see DESIGN.md)
 const plexSans = IBM_Plex_Sans({
   variable: "--font-plex-sans",
   subsets: ["latin"],
@@ -59,10 +42,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
-      <html lang="en" className="dark">
+    <ClerkProvider
+      appearance={{
+        variables: { colorPrimary: "#1f3d99", colorText: "#0e1525", fontFamily: "var(--font-plex-sans), system-ui, sans-serif", borderRadius: "6px" },
+      }}
+    >
+      <html lang="en">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${plexSans.variable} ${plexMono.variable} antialiased`}
+          className={`${plexSans.variable} ${plexMono.variable} antialiased`}
         >
           {children}
           <UtmCapture />

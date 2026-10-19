@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, CheckCircle2, ShieldCheck, XCircle } from "lucide-react";
+import { ALL_RULES } from "@/lib/engine/rules";
 import { TOOLS, TOOL_MAP } from "@/content/tools";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
@@ -46,7 +46,7 @@ export default async function ToolPage({ params }: Props) {
   const related = tool.related.map((s) => TOOL_MAP.get(s)).filter((t) => t !== undefined);
 
   return (
-    <div className="min-h-screen bg-background-dark font-display text-slate-100 relative overflow-x-hidden">
+    <div className="min-h-screen bg-paper font-ui text-ink relative overflow-x-hidden">
       <JsonLd
         data={[
           {
@@ -79,116 +79,112 @@ export default async function ToolPage({ params }: Props) {
           },
         ]}
       />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] max-w-full h-[420px] bg-primary/15 blur-[120px] rounded-full pointer-events-none -z-10" />
       <SiteHeader />
 
       <main id="main-content">
-        <section className="max-w-3xl mx-auto px-4 pt-16 pb-10 text-center">
-          <nav aria-label="Breadcrumb" className="text-xs text-slate-500 mb-6">
-            <Link href="/" className="hover:text-primary">Home</Link>
-            <span className="mx-2">/</span>
-            <Link href="/tools" className="hover:text-primary">Tools</Link>
-            <span className="mx-2">/</span>
-            <span className="text-slate-400">{tool.name}</span>
+        <section className="max-w-[1200px] mx-auto px-6 pt-14 pb-10">
+          <nav aria-label="Breadcrumb" className="text-sm text-ink-muted mb-6">
+            <Link href="/" className="hover:text-ink">Home</Link>
+            <span className="mx-2" aria-hidden="true">/</span>
+            <Link href="/tools" className="hover:text-ink">Tools</Link>
+            <span className="mx-2" aria-hidden="true">/</span>
+            <span aria-current="page">{tool.name}</span>
           </nav>
-          <h1 className="text-4xl sm:text-5xl font-bold leading-tight">{tool.h1}</h1>
-          <p className="text-lg text-slate-400 mt-5 leading-relaxed">{tool.intro}</p>
-          <p className="mt-5 inline-flex items-center gap-2 text-sm text-primary font-semibold">
-            <ShieldCheck className="w-4 h-4" aria-hidden="true" />
-            Free up to 5,000 rows · No sign-up · Nothing uploaded
-          </p>
+          <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em] max-w-[820px]">{tool.h1}</h1>
+          <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[680px]">{tool.intro}</p>
+          <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm">
+            <div><dt className="text-ink-muted">Free up to</dt><dd className="mt-0.5 font-medium">5,000 rows</dd></div>
+            <div><dt className="text-ink-muted">Account</dt><dd className="mt-0.5 font-medium">Not required</dd></div>
+            <div><dt className="text-ink-muted">Upload</dt><dd className="mt-0.5 font-medium">None</dd></div>
+          </dl>
         </section>
 
-        <section aria-label={`${tool.name} tool`} className="px-4 pb-16">
+        <section aria-label={`${tool.name} tool`} className="max-w-[1200px] mx-auto px-6 pb-16">
           {tool.kind === "merge" ? <MergeTool /> : <ToolLauncher preset={tool.preset!} />}
         </section>
 
-        <section className="max-w-5xl mx-auto px-4 pb-16">
-          <h2 className="text-2xl font-bold text-center mb-8">Before and after</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            <figure className="glass-panel rounded-2xl border border-rose-500/20 p-5">
-              <figcaption className="text-xs font-bold text-rose-400 uppercase tracking-widest flex items-center gap-2 mb-3">
-                <XCircle className="w-4 h-4" aria-hidden="true" /> Before
-              </figcaption>
-              <pre className="font-mono text-xs sm:text-sm text-slate-400 whitespace-pre overflow-x-auto leading-relaxed">{tool.before}</pre>
-            </figure>
-            <figure className="glass-panel rounded-2xl border border-primary/30 p-5">
-              <figcaption className="text-xs font-bold text-primary uppercase tracking-widest flex items-center gap-2 mb-3">
-                <CheckCircle2 className="w-4 h-4" aria-hidden="true" /> After SpreadsheetFix
-              </figcaption>
-              <pre className="font-mono text-xs sm:text-sm text-primary/90 whitespace-pre overflow-x-auto leading-relaxed">{tool.after}</pre>
-            </figure>
-          </div>
-        </section>
-
-        <section className="max-w-3xl mx-auto px-4 pb-16">
-          <h2 className="text-2xl font-bold mb-6">How it works</h2>
-          <ol className="space-y-4">
-            {tool.steps.map((step, i) => (
-              <li key={i} className="flex gap-4">
-                <span className="flex-shrink-0 size-8 rounded-full bg-primary/10 border border-primary/30 text-primary font-bold flex items-center justify-center text-sm">
-                  {i + 1}
-                </span>
-                <p className="text-slate-300 leading-relaxed pt-1">{step}</p>
-              </li>
-            ))}
-          </ol>
-        </section>
-
-        <section className="max-w-3xl mx-auto px-4 pb-16 space-y-10">
-          {tool.sections.map((s) => (
-            <div key={s.heading}>
-              <h2 className="text-2xl font-bold mb-3">{s.heading}</h2>
-              <p className="text-slate-400 leading-relaxed">{s.body}</p>
+        <section className="border-t border-rule bg-surface">
+          <div className="max-w-[1200px] mx-auto px-6 py-16">
+            <h2 className="text-[28px] leading-tight font-semibold tracking-[-0.015em]">Before and after</h2>
+            <div className="mt-8 grid md:grid-cols-2 gap-4">
+              <figure className="m-0 rounded-lg border border-rule bg-paper p-5">
+                <figcaption className="text-[13px] font-medium text-ink-muted mb-3">Before</figcaption>
+                <pre className="font-data text-xs sm:text-sm text-ink-body whitespace-pre overflow-x-auto leading-relaxed">{tool.before}</pre>
+              </figure>
+              <figure className="m-0 rounded-lg border border-rule bg-paper p-5">
+                <figcaption className="text-[13px] font-medium text-accent mb-3">After</figcaption>
+                <pre className="font-data text-xs sm:text-sm text-accent whitespace-pre overflow-x-auto leading-relaxed">{tool.after}</pre>
+              </figure>
             </div>
-          ))}
+          </div>
         </section>
 
-        <section className="max-w-3xl mx-auto px-4 pb-16">
-          <h2 className="text-2xl font-bold mb-6">Frequently asked questions</h2>
-          <div className="divide-y divide-primary/10 glass-panel rounded-2xl border border-primary/10">
-            {tool.faqs.map((f) => (
-              <details key={f.q} className="group p-5">
-                <summary className="cursor-pointer font-bold text-slate-200 list-none flex justify-between gap-4">
-                  {f.q}
-                  <span className="text-primary group-open:rotate-45 transition-transform" aria-hidden="true">+</span>
-                </summary>
-                <p className="mt-3 text-slate-400 leading-relaxed">{f.a}</p>
-              </details>
+        <div className="max-w-[1200px] mx-auto px-6 py-16 flex flex-col lg:flex-row gap-12 lg:gap-20">
+          <div className="flex-1 min-w-0 max-w-[720px] space-y-14">
+            <section>
+              <h2 className="text-[28px] leading-tight font-semibold tracking-[-0.015em]">How it works</h2>
+              <ol className="mt-6 border-t border-rule">
+                {tool.steps.map((step, i) => (
+                  <li key={i} className="flex gap-5 py-4 border-b border-rule">
+                    <span className="font-data text-sm text-accent pt-0.5 w-5 shrink-0">{i + 1}</span>
+                    <p className="text-ink-body leading-relaxed">{step}</p>
+                  </li>
+                ))}
+              </ol>
+            </section>
+
+            {tool.sections.map((sec) => (
+              <section key={sec.heading}>
+                <h2 className="text-[24px] leading-tight font-semibold tracking-[-0.01em]">{sec.heading}</h2>
+                <p className="mt-3 text-ink-body leading-relaxed">{sec.body}</p>
+              </section>
             ))}
-          </div>
-        </section>
 
-        <section className="max-w-3xl mx-auto px-4 pb-16">
-          <div className="glass-panel rounded-2xl border border-primary/30 p-8 text-center">
-            <h2 className="text-2xl font-bold">Cleaning bigger files every week?</h2>
-            <p className="text-slate-400 mt-3">
-              Pro cleans up to 500,000 rows per file, unlocks all 18 rules, exports to Excel and removes the watermark.
-            </p>
-            <Link
-              href="/pricing"
-              className="mt-6 inline-flex items-center gap-2 px-6 py-3 bg-primary text-background-dark rounded-xl font-bold hover:brightness-110 neon-glow"
-            >
-              See Pro pricing <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
+            <section>
+              <h2 className="text-[28px] leading-tight font-semibold tracking-[-0.015em]">Questions</h2>
+              <div className="mt-6 border-t border-rule">
+                {tool.faqs.map((f) => (
+                  <details key={f.q} className="group border-b border-rule">
+                    <summary className="cursor-pointer list-none flex justify-between gap-4 py-4 font-semibold">
+                      {f.q}
+                      <span className="text-ink-muted group-open:rotate-45 transition-transform" aria-hidden="true">+</span>
+                    </summary>
+                    <p className="pb-4 -mt-1 text-ink-body leading-relaxed">{f.a}</p>
+                  </details>
+                ))}
+              </div>
+            </section>
           </div>
-        </section>
 
-        <section className="max-w-5xl mx-auto px-4 pb-24">
-          <h2 className="text-xl font-bold mb-6">Related tools</h2>
-          <div className="grid sm:grid-cols-3 gap-4">
-            {related.map((r) => (
+          <aside className="lg:w-[320px] shrink-0 space-y-10">
+            <div className="rounded-lg border border-rule p-6">
+              <h2 className="font-semibold">Larger files</h2>
+              <p className="mt-2 text-sm leading-relaxed text-ink-body">
+                Pro cleans up to 500,000 rows per file, adds all {ALL_RULES.length} rules and Excel export, and removes
+                the watermark.
+              </p>
               <Link
-                key={r.slug}
-                href={`/${r.slug}`}
-                className="glass-panel rounded-xl border border-primary/10 hover:border-primary/40 p-5 transition-colors"
+                href="/pricing"
+                className="mt-5 inline-flex items-center min-h-11 px-4 rounded-md border border-rule-strong text-sm font-medium hover:border-ink-muted transition-colors"
               >
-                <div className="font-bold text-primary">{r.name}</div>
-                <p className="text-sm text-slate-400 mt-2">{r.metaDescription}</p>
+                See pricing
               </Link>
-            ))}
-          </div>
-        </section>
+            </div>
+            <nav aria-label="Related tools">
+              <h2 className="text-[13px] font-medium text-ink-muted">Related tools</h2>
+              <ul className="mt-3 border-t border-rule">
+                {related.map((r) => (
+                  <li key={r.slug} className="border-b border-rule">
+                    <Link href={`/${r.slug}`} className="group block py-4">
+                      <span className="font-semibold group-hover:text-accent">{r.name}</span>
+                      <span className="block mt-1 text-sm leading-relaxed text-ink-muted">{r.metaDescription}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </aside>
+        </div>
       </main>
 
       <SiteFooter />

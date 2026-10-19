@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function ToolsIndex() {
   return (
-    <div className="min-h-screen bg-background-dark font-display text-slate-100">
+    <div className="min-h-screen bg-paper font-ui text-ink">
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -30,23 +30,21 @@ export default function ToolsIndex() {
         }}
       />
       <SiteHeader />
-      <main id="main-content" className="max-w-5xl mx-auto px-4 py-16">
-        <h1 className="text-4xl sm:text-5xl font-bold text-center">Free CSV cleaning tools</h1>
-        <p className="text-lg text-slate-400 text-center mt-5 max-w-2xl mx-auto">
-          Each tool runs entirely in your browser, so your data is never uploaded. Free for files up to 5,000 rows.
+      <main id="main-content" className="max-w-[1200px] mx-auto px-6 py-16 lg:py-20">
+        <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em]">Free CSV cleaning tools</h1>
+        <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[640px]">
+          Each tool runs in your browser, so your data is never uploaded. Free for files up to 5,000 rows.
         </p>
-        <div className="grid sm:grid-cols-2 gap-5 mt-14">
+        <ul className="mt-12 grid md:grid-cols-2 gap-x-12 border-t border-rule">
           {TOOLS.map((t) => (
-            <Link
-              key={t.slug}
-              href={`/${t.slug}`}
-              className="glass-panel rounded-2xl border border-primary/10 hover:border-primary/40 p-6 transition-colors"
-            >
-              <h2 className="text-xl font-bold text-primary">{t.name}</h2>
-              <p className="text-slate-400 mt-2 leading-relaxed">{t.metaDescription}</p>
-            </Link>
+            <li key={t.slug} className="border-b border-rule">
+              <Link href={`/${t.slug}`} className="group block py-6">
+                <h2 className="text-lg font-semibold group-hover:text-accent">{t.name}</h2>
+                <p className="mt-1.5 text-ink-body leading-relaxed">{t.metaDescription}</p>
+              </Link>
+            </li>
           ))}
-        </div>
+        </ul>
       </main>
       <SiteFooter />
     </div>

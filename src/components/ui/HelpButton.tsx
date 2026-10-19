@@ -77,30 +77,30 @@ export function HelpButton({ stage }: HelpButtonProps) {
     <>
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-slate-800 border border-slate-700 hover:border-primary/50 rounded-full flex items-center justify-center text-slate-400 hover:text-primary transition-all shadow-lg hover:shadow-[0_0_20px_rgba(13,242,223,0.15)] group"
+        className="fixed bottom-6 right-6 z-50 w-12 h-12 bg-surface border border-rule hover:border-rule-strong rounded-full flex items-center justify-center text-ink-muted hover:text-accent transition-all shadow-lg group"
         aria-label="Help & tips"
       >
         {open ? (
           <X className="w-5 h-5" />
         ) : (
-          <HelpCircle className="w-5 h-5 group-hover:scale-110 transition-transform" />
+          <HelpCircle className="w-5 h-5 transition-transform" />
         )}
       </button>
 
       {open && (
-        <div className="fixed bottom-20 right-6 z-50 w-80 glass-panel border border-primary/20 rounded-2xl shadow-[0_0_40px_rgba(0,0,0,0.5)] overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-20 right-6 z-50 w-80 bg-paper border border-rule rounded-lg overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
           {/* Stage tips */}
-          <div className="p-5 border-b border-primary/10">
+          <div className="p-5 border-b border-rule">
             <div className="flex items-center gap-2 mb-3">
-              <StageIcon className="w-4 h-4 text-primary" />
-              <h4 className="text-sm font-extrabold text-slate-200 uppercase tracking-wider">
+              <StageIcon className="w-4 h-4 text-accent" />
+              <h4 className="text-sm font-semibold text-ink uppercase tracking-wider">
                 {tip.title}
               </h4>
             </div>
             <ul className="space-y-2.5">
               {tip.tips.map((t, i) => (
-                <li key={i} className="text-sm text-slate-400 font-medium flex items-start gap-2">
-                  <span className="text-primary mt-1 text-xs">•</span>
+                <li key={i} className="text-sm text-ink-muted font-medium flex items-start gap-2">
+                  <span className="text-accent mt-1 text-xs">•</span>
                   {t}
                 </li>
               ))}
@@ -108,18 +108,18 @@ export function HelpButton({ stage }: HelpButtonProps) {
           </div>
 
           {/* Keyboard shortcuts */}
-          <div className="p-5 bg-slate-900/50">
+          <div className="p-5 bg-surface">
             <div className="flex items-center gap-2 mb-3">
-              <Keyboard className="w-4 h-4 text-slate-500" />
-              <h4 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">
+              <Keyboard className="w-4 h-4 text-ink-muted" />
+              <h4 className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
                 Keyboard Shortcuts
               </h4>
             </div>
             <div className="space-y-2">
               {SHORTCUTS.map((s) => (
                 <div key={s.keys} className="flex items-center justify-between text-sm">
-                  <span className="text-slate-400 font-medium">{s.action}</span>
-                  <kbd className="px-2 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs font-mono text-slate-300">
+                  <span className="text-ink-muted font-medium">{s.action}</span>
+                  <kbd className="px-2 py-0.5 bg-surface border border-rule rounded text-xs font-mono text-ink-body">
                     {s.keys}
                   </kbd>
                 </div>
