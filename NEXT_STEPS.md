@@ -11,11 +11,13 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
 ## Where things are
 
 - **Vercel**: project `rowrescue`, team `will-kellys-projects-cad10b2e` (CLI user platospanda-6012).
-  Production is deployed from commit `7a7ac7a` (code identical to `888f305`) and serves
+  Production deploys automatically from `main` via the GitHub integration (last: merge of PR #1,
+  2026-10-19). It serves
   `spreadsheetfix.com` (primary), `www.spreadsheetfix.com` (308 → apex) and `rowrescue.vercel.app`.
   TLS certificates are Let's Encrypt, auto-renewed by Vercel.
-- **GitHub**: `cryptocloudz-ship-it/rowrescue` (public). Branch `seo-growth` holds all recent work
-  (pushed 2026-10-14); `main` is still the original March version.
+- **GitHub**: `cryptocloudz-ship-it/rowrescue` (public). `main` is the production branch and is up to
+  date (PR #1 merged `seo-growth` on 2026-10-19). Ship changes by merging PRs into `main`; pushes to
+  other branches create preview deploys.
 - **Domain**: `spreadsheetfix.com` registered 2026-10-14 via Letshost.ie (registrar Tucows).
   Nameservers are `ns9.dnsireland.com` / `ns10.dnsireland.com`; that is where the editable
   Letshost zone lives. (The domain was first delegated to ns5/ns6/ns7, which serve a parking zone
@@ -45,19 +47,20 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
   `scripts/stripe-setup.mjs --live` with live keys, and enable Stripe Tax if VAT-registered.
 - Not built yet: handling for refunds, disputes and early-fraud-warning events.
 - Housekeeping: re-add the older Stripe/Clerk secrets as "sensitive" in Vercel; revoke the deployment
-  protection bypass token if unused; open a PR to merge `seo-growth` into `main`; decide whether to rename the GitHub repo
-  and Vercel project; the old Letshost DNS zone for rowrescue.com is unused.
+  protection bypass token if unused; decide whether to rename the GitHub repo and Vercel project; the old Letshost DNS zone for rowrescue.com is unused.
 
 ## Gotchas
 
 - Vercel CLI v64 misparses `vercel env run ... -- <cmd>` and can deploy files as a new project.
   Put global flags first (`vercel --scope … env run …`) or avoid `env run` entirely.
 - `robots.ts` decides at **build** time: preview builds block all crawlers, so never promote a
-  preview build to production. Deploy with `vercel deploy --prod` instead.
-- `vercel deploy` from a git **worktree** gets BLOCKED ("commit author doesn't have permission"):
+  preview build to production. Merge to `main` (or, if needed, `vercel deploy --prod`) instead.
+- Manual `vercel deploy` from a git **worktree** gets BLOCKED ("commit author doesn't have permission"):
   the CLI doesn't pick up the GitHub remote there and the author email isn't a team member. Deploy
   from the main checkout, or from a clean `git archive <sha>` export with `.vercel/project.json`
   copied in.
 - Next.js replaces (doesn't merge) `openGraph` per page; spread `DEFAULT_OPEN_GRAPH` from `src/config/site.ts`.
+- Pre-existing lint errors (terms page quotes, `<a>` links in the pricing footer) and two `tsc`
+  errors in `rules.test.ts`; they don't block the Vercel build.
 - Local builds need placeholder env (DATABASE_URL, STRIPE_SECRET_KEY, a fake `pk_test_` Clerk key)
   because the DB and Stripe clients initialise at import.
