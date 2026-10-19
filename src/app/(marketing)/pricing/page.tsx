@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { getUtmParams } from "@/lib/utm";
 import { trackCheckoutStarted } from "@/lib/analytics";
+import { SUPPORT_EMAIL } from "@/config/site";
 
 const FEATURES = [
   { name: "Exports per day", free: "5", pro: "Unlimited", team: "Unlimited" },
@@ -327,6 +328,7 @@ export default function PricingPage() {
             <a href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms</a>
             <a href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy</a>
             <a href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookies</a>
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-primary transition-colors">Contact</a>
           </div>
         </div>
       </footer>

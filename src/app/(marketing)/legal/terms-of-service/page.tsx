@@ -2,6 +2,7 @@
 
 import { Activity } from "lucide-react";
 import Link from "next/link";
+import { SUPPORT_EMAIL } from "@/config/site";
 
 export default function TermsOfServicePage() {
   return (
@@ -71,7 +72,15 @@ export default function TermsOfServicePage() {
             In no event shall SpreadsheetFix, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.
           </p>
         </section>
-        
+
+        <section className="mb-10 text-slate-300">
+          <h2 className="text-2xl font-bold text-slate-200 mb-4">6. Contact Us</h2>
+          <p className="leading-relaxed mb-4">
+            For refund requests or any questions about these Terms, contact us at{" "}
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">{SUPPORT_EMAIL}</a>.
+          </p>
+        </section>
+
         <div className="border-t border-slate-800 pt-8 mt-12">
           <Link href="/pricing" className="text-primary hover:underline font-bold">
             &larr; Back to Pricing

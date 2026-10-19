@@ -2,6 +2,7 @@
 
 import { Activity } from "lucide-react";
 import Link from "next/link";
+import { SUPPORT_EMAIL } from "@/config/site";
 
 export default function PrivacyPolicyPage() {
   return (
@@ -61,7 +62,16 @@ export default function PrivacyPolicyPage() {
         <section className="mb-10 text-slate-300">
           <h2 className="text-2xl font-bold text-slate-200 mb-4">4. Your Rights (GDPR)</h2>
           <p className="leading-relaxed mb-4">
-            If you are a resident of the European Economic Area (EEA), you have certain data protection rights. You may request to access, correct, delete, or restrict the use of your Personal Data. Contact our support team to exercise these rights.
+            If you are a resident of the European Economic Area (EEA), you have certain data protection rights. You may request to access, correct, delete, or restrict the use of your Personal Data. To exercise these rights, email us at{" "}
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">{SUPPORT_EMAIL}</a>.
+          </p>
+        </section>
+
+        <section className="mb-10 text-slate-300">
+          <h2 className="text-2xl font-bold text-slate-200 mb-4">5. Contact Us</h2>
+          <p className="leading-relaxed mb-4">
+            For any questions about this Privacy Policy or your data, contact us at{" "}
+            <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">{SUPPORT_EMAIL}</a>.
           </p>
         </section>
 

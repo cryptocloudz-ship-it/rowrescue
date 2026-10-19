@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Activity } from "lucide-react";
 import { TOOLS } from "@/content/tools";
+import { SUPPORT_EMAIL } from "@/config/site";
 
 export function SiteFooter() {
   return (
@@ -35,6 +36,7 @@ export function SiteFooter() {
             <li><Link href="/legal/terms-of-service" className="hover:text-primary transition-colors">Terms</Link></li>
             <li><Link href="/legal/privacy-policy" className="hover:text-primary transition-colors">Privacy</Link></li>
             <li><Link href="/legal/cookie-policy" className="hover:text-primary transition-colors">Cookies</Link></li>
+            <li><a href={`mailto:${SUPPORT_EMAIL}`} className="hover:text-primary transition-colors">Contact</a></li>
           </ul>
         </nav>
       </div>

@@ -350,7 +350,7 @@ jane.smith@yahoo.com, 2023-12-31, +1-555-567-8901, Jane Smith
               plan="Team"
               price="€29/seat"
               description="Everything in Pro, plus shared presets and team billing."
-              cta="Contact Us"
+              cta="Get Team"
               href="/pricing"
             />
           </div>

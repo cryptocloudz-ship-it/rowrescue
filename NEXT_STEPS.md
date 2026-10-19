@@ -1,6 +1,6 @@
 # SpreadsheetFix — status and next steps
 
-_Last updated 2026-10-14 (evening)._
+_Last updated 2026-10-19._
 
 SpreadsheetFix (formerly RowRescue) is a privacy-first, client-side CSV/Excel cleaner.
 Next.js 16 on Vercel, Clerk auth, Neon Postgres, Stripe billing.
@@ -15,7 +15,7 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
   `spreadsheetfix.com` (primary), `www.spreadsheetfix.com` (308 → apex) and `rowrescue.vercel.app`.
   TLS certificates are Let's Encrypt, auto-renewed by Vercel.
 - **GitHub**: `cryptocloudz-ship-it/rowrescue` (public). Branch `seo-growth` holds all recent work
-  and has **not been pushed**; `main` is still the original March version.
+  (pushed 2026-10-14); `main` is still the original March version.
 - **Domain**: `spreadsheetfix.com` registered 2026-10-14 via Letshost.ie (registrar Tucows).
   Nameservers are `ns9.dnsireland.com` / `ns10.dnsireland.com`; that is where the editable
   Letshost zone lives. (The domain was first delegated to ns5/ns6/ns7, which serve a parking zone
@@ -25,8 +25,11 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
   - `@` A `216.198.79.1` and `64.29.17.1`, `www` CNAME `091d936f2dbc330a.vercel-dns-017.com` (Vercel)
   - `clerk` → `frontend-api.clerk.services`, `accounts` → `accounts.clerk.services`
   - `clkmail`, `clk._domainkey`, `clk2._domainkey` → `*.i3t4gj3g1359.clerk.services` (Clerk email)
-  - Leftovers from Letshost defaults: `@` MX `0 spreadsheetfix.com`, `mail` and `ftp` CNAMEs →
-    apex. These now point at Vercel, so **email to @spreadsheetfix.com does not work**.
+  - Email (iCloud+ Custom Email Domain, owner's Apple account): `@` MX `10 mx01/mx02.mail.icloud.com`,
+    `@` TXT `v=spf1 include:icloud.com ~all` and `apple-domain=…`, `sig1._domainkey` CNAME →
+    `sig1.dkim.spreadsheetfix.com.at.icloudmailadmin.com`. Addresses: hello@, support@, billing@,
+    will@. Send/receive tested 2026-10-19. `SUPPORT_EMAIL` in `src/config/site.ts` is shown in
+    the footers, privacy policy and terms; use it as the Stripe support email when going live.
 - **Clerk**: production instance on `spreadsheetfix.com` (all records verified), application name
   "SpreadsheetFix" (renamed from "TidySheet"). Live keys are in Vercel production env.
 - **Stripe**: Vercel Marketplace sandbox `rowrescue-payments` (test mode, unclaimed).
@@ -38,13 +41,11 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
 ## Next steps
 
 - Google Search Console: add spreadsheetfix.com and submit `/sitemap.xml`.
-- Email: either add a mail provider's MX records or delete the leftover `@` MX, `mail` and `ftp`
-  records.
 - Before taking real money: `vercel integration resource claim rowrescue-payments`, rerun
   `scripts/stripe-setup.mjs --live` with live keys, and enable Stripe Tax if VAT-registered.
 - Not built yet: handling for refunds, disputes and early-fraud-warning events.
 - Housekeeping: re-add the older Stripe/Clerk secrets as "sensitive" in Vercel; revoke the deployment
-  protection bypass token if unused; decide whether to push `seo-growth` and rename the GitHub repo
+  protection bypass token if unused; open a PR to merge `seo-growth` into `main`; decide whether to rename the GitHub repo
   and Vercel project; the old Letshost DNS zone for rowrescue.com is unused.
 
 ## Gotchas
