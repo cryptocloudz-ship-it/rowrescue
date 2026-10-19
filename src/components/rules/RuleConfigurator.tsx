@@ -8,6 +8,7 @@ import { ALL_RULES } from "@/lib/engine/rules";
 import { FREE_RULES } from "@/config/plans";
 import type { RuleCategory, RuleDefinition } from "@/types/rules";
 import type { HealthReport } from "@/types/sheet";
+import { ISSUE_TO_RULE } from "@/lib/engine/issueRules";
 
 const CATEGORY_LABELS: Record<RuleCategory, string> = {
   column_management: "Column Management",
@@ -23,18 +24,6 @@ const CATEGORY_ORDER: RuleCategory[] = [
   "validation",
 ];
 
-// Maps health report issue types to the rule that fixes them
-const ISSUE_TO_RULE: Record<string, string> = {
-  duplicate_rows: "deduplicateRows",
-  encoding_issues: "fixEncoding",
-  empty_rows: "removeEmptyRows",
-  empty_columns: "removeEmptyColumns",
-  inconsistent_headers: "normalizeHeaders",
-  date_inconsistency: "normalizeDate",
-  number_format: "normalizeNumbers",
-  invalid_email: "validateEmail",
-  invalid_phone: "validatePhone",
-};
 
 function getIssueCountForRule(ruleId: string, healthReport: HealthReport | null): number {
   if (!healthReport) return 0;
@@ -281,7 +270,7 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
                           <span className="text-ink-muted md:inline hidden">— {issue.description}</span>
                         </div>
                         <span className="font-mono text-xs font-semibold px-2.5 py-1 bg-accent-tint text-accent border border-rule rounded-lg whitespace-nowrap">
-                          {issue.count} rows
+                          {issue.count} to fix
                         </span>
                       </div>
                     );

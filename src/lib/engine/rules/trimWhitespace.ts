@@ -1,6 +1,11 @@
 import type { Row, CleanResult, CellChange } from "@/types/sheet";
 import type { RuleOptions, TrimWhitespaceOptions } from "@/types/rules";
 
+/** What Trim Whitespace turns a cell into: runs of whitespace become one space, ends are trimmed. */
+export function collapseWhitespace(value: string): string {
+  return value.replace(/\s+/g, " ").trim();
+}
+
 export function trimWhitespace(
   rows: Row[],
   options: RuleOptions = {}
@@ -14,7 +19,7 @@ export function trimWhitespace(
     const newRow: Row = {};
     for (const [key, value] of Object.entries(row)) {
       if (typeof value === "string" && (!targetColumns || targetColumns.includes(key))) {
-        const trimmed = value.replace(/\s+/g, " ").trim();
+        const trimmed = collapseWhitespace(value);
         newRow[key] = trimmed;
         if (trimmed !== value) {
           changes.push({

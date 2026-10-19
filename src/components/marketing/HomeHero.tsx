@@ -4,49 +4,13 @@ import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSheetStore } from "@/store/sheetStore";
 import { ACCEPTED_TYPES, validateFile } from "@/components/upload/fileValidation";
-
-type Cell = string | { before: string; after: string };
-
-interface SampleRow {
-  date: Cell;
-  vendor: Cell;
-  amount: Cell;
-  duplicate?: boolean;
-}
-
-// Every fix shown here is one the engine really makes (normalizeDate, trimWhitespace,
-// normalizeNumbers, deduplicateRows). Amounts are a Pro rule, which the caption says.
-const SAMPLE_ROWS: SampleRow[] = [
-  {
-    date: { before: "03/09/2026", after: "2026-09-03" },
-    vendor: { before: "Acme Supplies  ", after: "Acme Supplies" },
-    amount: { before: "€1.250,00", after: "1250.00" },
-  },
-  {
-    date: "2026-09-04",
-    vendor: "Northwind Ltd",
-    amount: { before: "1,980.50", after: "1980.50" },
-  },
-  {
-    date: { before: "5 Sep 2026", after: "2026-09-05" },
-    vendor: "Harbor Freight Co",
-    amount: "312.00",
-  },
-  { date: "2026-09-04", vendor: "Northwind Ltd", amount: "1,980.50", duplicate: true },
-  {
-    date: "2026-09-08",
-    vendor: "Blue Pine LLC",
-    amount: { before: "$450.00", after: "450.00" },
-  },
-];
-
-const CHANGE_COUNT = 7;
+import { HERO_ROWS, HERO_FIXES, HERO_FILE_NAME, type HeroCell } from "@/content/heroSample";
 
 function showSpaces(value: string) {
   return value.replace(/ +$/, (m) => "␣".repeat(m.length));
 }
 
-function CellValue({ cell }: { cell: Cell }) {
+function CellValue({ cell }: { cell: HeroCell }) {
   if (typeof cell === "string") return <>{cell}</>;
   return (
     <>
@@ -152,8 +116,8 @@ export function HomeHero() {
           <figure className="m-0">
             <div className="rounded-[10px] border border-rule-strong bg-paper shadow-frame overflow-hidden">
               <div className="flex flex-wrap justify-between gap-x-4 gap-y-2 px-4 py-3 border-b border-rule bg-surface text-[13px]">
-                <span className="font-data font-medium">transactions_sept.csv</span>
-                <span className="text-accent font-semibold">{CHANGE_COUNT} changes ready to review</span>
+                <span className="font-data font-medium">{HERO_FILE_NAME}</span>
+                <span className="text-accent font-semibold">{HERO_FIXES.pro} fixes ready to review</span>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[480px] border-collapse font-data text-sm leading-snug">
@@ -165,8 +129,8 @@ export function HomeHero() {
                     </tr>
                   </thead>
                   <tbody>
-                    {SAMPLE_ROWS.map((row, i) => {
-                      const border = i < SAMPLE_ROWS.length - 1 ? "border-b border-rule" : "";
+                    {HERO_ROWS.map((row, i) => {
+                      const border = i < HERO_ROWS.length - 1 ? "border-b border-rule" : "";
                       if (row.duplicate) {
                         return (
                           <tr key={i} className="bg-surface">
@@ -201,7 +165,7 @@ export function HomeHero() {
               </div>
             </div>
             <figcaption className="mt-3.5 text-sm leading-relaxed text-ink-muted">
-              An example file. Date, spacing and duplicate fixes are free; amount formatting is Pro.{" "}
+              An example file. The free plan makes {HERO_FIXES.free} of these {HERO_FIXES.pro} fixes (dates, spacing and the duplicate); amount formatting is Pro.{" "}
               <button
                 type="button"
                 onClick={openSample}

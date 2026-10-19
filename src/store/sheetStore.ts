@@ -14,21 +14,10 @@ import { runEngine, undoRule, type EngineResult } from "@/lib/engine/ruleEngine"
 import { ALL_RULES } from "@/lib/engine/rules";
 import { FREE_RULES } from "@/config/plans";
 import { trackFileUpload, trackDemoLoaded, trackCleaningRun } from "@/lib/analytics";
+import { ISSUE_TO_RULE } from "@/lib/engine/issueRules";
 
 export const FREE_ROW_LIMIT = 5_000;
 
-// Maps health report issue types to rule IDs (shared with RuleConfigurator)
-const ISSUE_TO_RULE: Record<string, string> = {
-  duplicate_rows: "deduplicateRows",
-  encoding_issues: "fixEncoding",
-  empty_rows: "removeEmptyRows",
-  empty_columns: "removeEmptyColumns",
-  inconsistent_headers: "normalizeHeaders",
-  date_inconsistency: "normalizeDate",
-  number_format: "normalizeNumbers",
-  invalid_email: "validateEmail",
-  invalid_phone: "validatePhone",
-};
 
 /** Rules a tool landing page asks to switch on, with optional per-rule options. */
 export interface RulePreset {

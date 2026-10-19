@@ -14,6 +14,7 @@ import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { ArrowLeft, Lock, ShieldAlert, Zap, Check } from "lucide-react";
 import Link from "next/link";
 import { BrandMark } from "@/components/marketing/SiteHeader";
+import { proOnlyIssueCount } from "@/lib/engine/issueRules";
 import { WelcomeModal } from "@/components/ui/WelcomeModal";
 import { OnboardingHint } from "@/components/ui/OnboardingHint";
 import { HelpButton } from "@/components/ui/HelpButton";
@@ -315,17 +316,7 @@ export default function CleanPage() {
 
               {/* Sticky upgrade banner for free users */}
               {!isPro && healthReport && (() => {
-                const proFixCount = healthReport.issues
-                  .filter((i) => {
-                    const ruleId = ({
-                      date_inconsistency: "normalizeDate",
-                      number_format: "normalizeNumbers",
-                      invalid_email: "validateEmail",
-                      invalid_phone: "validatePhone",
-                    } as Record<string, string>)[i.type];
-                    return ruleId !== undefined;
-                  })
-                  .reduce((sum, i) => sum + i.count, 0);
+                const proFixCount = proOnlyIssueCount(healthReport);
                 if (proFixCount === 0) return null;
                 return (
                   <div className="fixed bottom-0 left-0 right-0 z-40 bg-paper border border-t border-rule animate-in slide-in-from-bottom-4 duration-500">
