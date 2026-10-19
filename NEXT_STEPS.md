@@ -28,10 +28,13 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
   - `clerk` → `frontend-api.clerk.services`, `accounts` → `accounts.clerk.services`
   - `clkmail`, `clk._domainkey`, `clk2._domainkey` → `*.i3t4gj3g1359.clerk.services` (Clerk email)
   - Email (iCloud+ Custom Email Domain, owner's Apple account): `@` MX `10 mx01/mx02.mail.icloud.com`,
-    `@` TXT `v=spf1 include:icloud.com ~all` and `apple-domain=…`, `sig1._domainkey` CNAME →
+    `@` TXT `v=spf1 include:icloud.com ~all` and `apple-domain=…` (plus the Google verification TXT), `sig1._domainkey` CNAME →
     `sig1.dkim.spreadsheetfix.com.at.icloudmailadmin.com`. Addresses: hello@, support@, billing@,
     will@. Send/receive tested 2026-10-19. `SUPPORT_EMAIL` in `src/config/site.ts` is shown in
     the footers, privacy policy and terms; use it as the Stripe support email when going live.
+- **Google Search Console**: Domain property `spreadsheetfix.com` (Google account cryptocloudz@gmail.com),
+  verified 2026-10-19 by the `@` TXT `google-site-verification=…` record in the Letshost zone. Keep
+  that record or verification lapses. `/sitemap.xml` submitted 2026-10-19: status Success, 13 URLs.
 - **Clerk**: production instance on `spreadsheetfix.com` (all records verified), application name
   "SpreadsheetFix" (renamed from "TidySheet"). Live keys are in Vercel production env.
 - **Stripe**: Vercel Marketplace sandbox `rowrescue-payments` (test mode, unclaimed).
@@ -42,7 +45,6 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
 
 ## Next steps
 
-- Google Search Console: add spreadsheetfix.com and submit `/sitemap.xml`.
 - Before taking real money: `vercel integration resource claim rowrescue-payments`, rerun
   `scripts/stripe-setup.mjs --live` with live keys, and enable Stripe Tax if VAT-registered.
 - Not built yet: handling for refunds, disputes and early-fraud-warning events.
