@@ -32,6 +32,9 @@ const WEBHOOK_EVENTS = [
   "customer.subscription.deleted",
   "invoice.paid",
   "invoice.payment_failed",
+  "charge.refunded",
+  "charge.dispute.created",
+  "radar.early_fraud_warning.created",
 ];
 
 const CATALOG = [
