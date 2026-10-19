@@ -13,7 +13,7 @@ export default function TermsOfServicePage() {
 
       <main id="main-content" className="max-w-3xl mx-auto px-6 py-16 lg:py-20">
         <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em] mb-2">Terms of Service</h1>
-        <p className="text-sm font-medium text-ink-muted mb-12">Last Updated: March 2026</p>
+        <p className="text-sm font-medium text-ink-muted mb-12">Last Updated: October 2026</p>
 
         <section className="mb-10 text-ink-body">
           <h2 className="text-2xl font-semibold text-ink mb-4">1. Acceptance of Terms</h2>
@@ -33,7 +33,7 @@ export default function TermsOfServicePage() {
           <h2 className="text-2xl font-semibold text-ink mb-4">3. Refund & Fair Use Policy</h2>
           <div className="p-6 my-6 bg-surface border border-rule rounded-lg">
             <p className="leading-relaxed text-ink-body">
-              We offer a <strong>3-day money-back guarantee</strong> on all paid subscriptions. To prevent abuse, this guarantee is strictly subject to a <strong>Fair Use Policy</strong>.
+              We offer a <strong>7-day money-back guarantee</strong> on all paid subscriptions. To prevent abuse, this guarantee is strictly subject to a <strong>Fair Use Policy</strong>.
             </p>
             <p className="leading-relaxed mt-4 text-ink-body">
               We actively monitor account usage patterns. If we determine that the Service has been abused (e.g., executing massive data cleanups immediately followed by a refund request, or sharing a single account credential across multiple users), we reserve the right to <strong>deny your refund request</strong> and instantly terminate your access.

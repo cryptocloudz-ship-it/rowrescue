@@ -132,6 +132,7 @@ export function ExportPanel() {
   };
 
   const handleExportChangeLog = () => {
+    if (!isPro) return;
     const csv = exportChangeLog(allChanges, hasWatermark);
     downloadBlob(csv, `${baseName}_changelog.csv`, "text/csv;charset=utf-8");
   };
@@ -142,6 +143,7 @@ export function ExportPanel() {
   };
 
   const handleExportSummary = () => {
+    if (!isPro) return;
     const summary = exportSummary({
       fileName: parsedSheet.fileName,
       originalRowCount: parsedSheet.rowCount,
@@ -286,13 +288,20 @@ export function ExportPanel() {
 
         <button
           onClick={handleExportChangeLog}
-          className="flex items-center gap-4 p-5 bg-paper border border-rule rounded-lg hover:border-rule-strong hover:bg-surface transition-all duration-300 text-left group"
+          disabled={!isPro}
+          aria-label={isPro ? `Download change log with ${allChanges.length} changes` : "Change log export requires a paid plan"}
+          className="flex items-center gap-4 p-5 bg-paper border border-rule rounded-lg hover:border-rule-strong hover:bg-surface transition-all duration-300 text-left disabled:opacity-50 disabled:cursor-not-allowed group"
         >
           <div className="p-3 bg-surface border border-rule rounded-lg group-hover:border-rule-strong group-hover:bg-accent-tint transition-colors">
-            <FileText className="w-6 h-6 text-accent" />
+            <FileText className={`w-6 h-6 ${isPro ? "text-accent" : "text-ink-muted"}`} aria-hidden="true" />
           </div>
           <div>
-            <p className="font-semibold text-ink text-base group-hover:text-accent transition-colors tracking-tight">Change Log</p>
+            <p className="font-semibold text-ink text-base group-hover:text-accent transition-colors tracking-tight">
+              Change Log{" "}
+              {!isPro && (
+                <span className="text-xs bg-accent-tint text-accent border border-rule px-1.5 py-0.5 rounded ml-1 font-semibold uppercase tracking-wider">Pro</span>
+              )}
+            </p>
             <p className="text-sm text-ink-muted font-medium mt-1">
               {allChanges.length.toLocaleString()} changes
             </p>
@@ -320,14 +329,19 @@ export function ExportPanel() {
 
         <button
           onClick={handleExportSummary}
-          className="flex items-center gap-4 p-5 bg-paper border border-rule rounded-lg hover:border-rule-strong hover:bg-surface transition-all duration-300 text-left group"
+          disabled={!isPro}
+          aria-label={isPro ? "Download summary report" : "Summary report requires a paid plan"}
+          className="flex items-center gap-4 p-5 bg-paper border border-rule rounded-lg hover:border-rule-strong hover:bg-surface transition-all duration-300 text-left disabled:opacity-50 disabled:cursor-not-allowed group"
         >
-          <div className="p-3 bg-surface border border-rule rounded-lg group-hover:border-rule-strong transition-colors">
-            <FileText className="w-6 h-6 text-ink-muted" />
+          <div className="p-3 bg-surface border border-rule rounded-lg group-hover:border-rule-strong group-hover:bg-accent-tint transition-colors">
+            <FileText className={`w-6 h-6 ${isPro ? "text-accent" : "text-ink-muted"}`} aria-hidden="true" />
           </div>
           <div>
-            <p className="font-semibold text-ink text-base group-hover:text-white transition-colors tracking-tight">
-              Summary Report
+            <p className="font-semibold text-ink text-base group-hover:text-accent transition-colors tracking-tight">
+              Summary Report{" "}
+              {!isPro && (
+                <span className="text-xs bg-accent-tint text-accent border border-rule px-1.5 py-0.5 rounded ml-1 font-semibold uppercase tracking-wider">Pro</span>
+              )}
             </p>
             <p className="text-sm text-ink-muted font-medium mt-1">Plain text overview</p>
           </div>
