@@ -3,15 +3,7 @@
 import { useCallback, useRef, useState } from "react";
 import { Upload, FileSpreadsheet, AlertCircle } from "lucide-react";
 import { useSheetStore } from "@/store/sheetStore";
-
-const ACCEPTED_TYPES = [
-  "text/csv",
-  "text/tab-separated-values",
-  "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  "application/vnd.ms-excel",
-];
-const ACCEPTED_EXTENSIONS = [".csv", ".tsv", ".xlsx", ".xls"];
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+import { ACCEPTED_TYPES, validateFile } from "./fileValidation";
 
 export function FileUploader() {
   const { importFile, loadDemoData, error } = useSheetStore();
@@ -20,13 +12,9 @@ export function FileUploader() {
 
   const handleFile = useCallback(
     (file: File) => {
-      const ext = file.name.slice(file.name.lastIndexOf(".")).toLowerCase();
-      if (!ACCEPTED_EXTENSIONS.includes(ext)) {
-        useSheetStore.getState().setError("Unsupported file type. Please upload CSV, TSV, or XLSX.");
-        return;
-      }
-      if (file.size > MAX_FILE_SIZE) {
-        useSheetStore.getState().setError("File too large. Maximum size is 50MB.");
+      const problem = validateFile(file);
+      if (problem) {
+        useSheetStore.getState().setError(problem);
         return;
       }
       importFile(file);

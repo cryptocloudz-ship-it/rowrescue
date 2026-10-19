@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { Geist, Geist_Mono, Space_Grotesk, IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { UtmCapture } from "@/components/ui/UtmCapture";
 import { ConsentedAnalytics } from "@/components/ui/ConsentedAnalytics";
@@ -22,6 +22,19 @@ const spaceGrotesk = Space_Grotesk({
   variable: "--font-space-grotesk",
   subsets: ["latin"],
   weight: ["300", "400", "500", "600", "700"],
+});
+
+// New design system fonts (see DESIGN.md)
+const plexSans = IBM_Plex_Sans({
+  variable: "--font-plex-sans",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+const plexMono = IBM_Plex_Mono({
+  variable: "--font-plex-mono",
+  subsets: ["latin"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -49,7 +62,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" className="dark">
         <body
-          className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${plexSans.variable} ${plexMono.variable} antialiased`}
         >
           {children}
           <UtmCapture />

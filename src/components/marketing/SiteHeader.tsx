@@ -1,22 +1,31 @@
 import Link from "next/link";
-import { Activity } from "lucide-react";
 import { NavAuth } from "./NavAuth";
+
+export function BrandMark({ className = "" }: { className?: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" className={className}>
+      <rect x="1" y="1" width="18" height="18" rx="4" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M1 7.5h18M7.5 7.5V19" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
 
 export function SiteHeader() {
   return (
-    <header className="glass-header sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between gap-4">
-        <Link href="/" className="flex items-center gap-2 sm:gap-3 min-w-0" aria-label="SpreadsheetFix home">
-          <div className="size-8 flex-shrink-0 bg-primary rounded-lg flex items-center justify-center neon-glow">
-            <Activity className="size-5 text-background-dark font-bold" aria-hidden="true" />
-          </div>
-          <span className="text-lg sm:text-xl font-bold tracking-tight text-primary neon-text-glow">SpreadsheetFix</span>
+    <header className="sticky top-0 z-50 bg-paper border-b border-rule font-ui text-ink">
+      <div className="max-w-[1200px] mx-auto px-6 min-h-16 flex items-center justify-between gap-4">
+        <Link href="/" className="flex items-center gap-2.5 min-w-0 font-semibold text-[17px]" aria-label="SpreadsheetFix home">
+          <BrandMark className="shrink-0" />
+          <span>SpreadsheetFix</span>
         </Link>
-        <nav className="flex items-center gap-3 sm:gap-6 text-sm font-medium" aria-label="Main">
-          <Link href="/tools" className="text-slate-300 hover:text-primary transition-colors hidden sm:inline">
+        <nav className="flex items-center gap-4 sm:gap-7 text-[15px]" aria-label="Main">
+          <Link href="/tools" className="text-ink-body hover:text-ink py-3 hidden sm:inline">
             Tools
           </Link>
-          <Link href="/pricing" className="text-slate-300 hover:text-primary transition-colors max-[420px]:hidden">
+          <Link href="/#security" className="text-ink-body hover:text-ink py-3 hidden md:inline">
+            Security
+          </Link>
+          <Link href="/pricing" className="text-ink-body hover:text-ink py-3 max-[420px]:hidden">
             Pricing
           </Link>
           <NavAuth />

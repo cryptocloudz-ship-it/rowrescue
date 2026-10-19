@@ -17,6 +17,22 @@
   --color-background-dark: #0B0F19;
   --color-background-light: #f5f8f8;
   --font-display: var(--font-space-grotesk);
+
+  /* Design system tokens (see DESIGN.md) */
+  --color-paper: #ffffff;
+  --color-surface: #f7f8fa;
+  --color-rule: #e4e7ec;
+  --color-rule-strong: #d5dae1;
+  --color-ink: #0e1525;
+  --color-ink-body: #3a4354;
+  --color-ink-muted: #5f6878;
+  --color-ink-faint: #8a92a0;
+  --color-accent: #1f3d99;
+  --color-accent-strong: #142a6b;
+  --color-accent-tint: #eef2fb;
+  --font-ui: var(--font-plex-sans);
+  --font-data: var(--font-plex-mono);
+  --shadow-frame: 0 1px 2px rgb(14 21 37 / 4%), 0 12px 32px rgb(14 21 37 / 6%);
 }
 
 body {
