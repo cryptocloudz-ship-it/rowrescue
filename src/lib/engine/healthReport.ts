@@ -7,6 +7,8 @@
 
 import type { Row, HealthIssue, HealthReport, Severity } from "@/types/sheet";
 import { repairMojibake } from "./rules/fixEncoding";
+import { collapseWhitespace } from "./rules/trimWhitespace";
+import { normalizeNumbers } from "./rules/normalizeNumbers";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^[+]?[\d\s\-().]{7,20}$/;
@@ -30,6 +32,7 @@ export function generateHealthReport(
   checkInvalidEmails(rows, headers, issues);
   checkInvalidPhones(rows, headers, issues);
   checkEncodingIssues(rows, headers, issues);
+  checkStrayWhitespace(rows, headers, issues);
 
   const highCount = issues.filter((i) => i.severity === "HIGH").length;
   const mediumCount = issues.filter((i) => i.severity === "MEDIUM").length;
@@ -195,7 +198,7 @@ function checkNumberFormats(rows: Row[], headers: string[], issues: HealthIssue[
   );
   if (numColumns.length === 0) return;
 
-  let issueCount = 0;
+  const flagged: string[] = [];
   const examples: string[] = [];
 
   for (const col of numColumns) {
@@ -211,7 +214,7 @@ function checkNumberFormats(rows: Row[], headers: string[], issues: HealthIssue[
     }
 
     if ((hasCurrency || (hasCommaDecimal && hasDotDecimal))) {
-      issueCount++;
+      flagged.push(col);
       if (examples.length < 3) {
         const reasons = [];
         if (hasCurrency) reasons.push("currency symbols");
@@ -220,16 +223,19 @@ function checkNumberFormats(rows: Row[], headers: string[], issues: HealthIssue[
       }
     }
   }
+  if (flagged.length === 0) return;
 
-  if (issueCount > 0) {
+  // Count the cells Normalize Numbers would change, so totals and upsells add up in cells
+  const count = normalizeNumbers(rows, { columns: flagged }).changes.length;
+  if (count > 0) {
     pushIssue(issues, {
       type: "number_format",
       severity: "MEDIUM",
       title: "Number Format Issues",
-      description: `${issueCount} column${issueCount > 1 ? "s have" : " has"} number formatting issues.`,
-      count: issueCount,
+      description: `${count} value${count > 1 ? "s" : ""} in ${flagged.length} column${flagged.length > 1 ? "s" : ""} use currency symbols or mixed decimal separators.`,
+      count,
       examples,
-      affectedColumns: numColumns,
+      affectedColumns: flagged,
     });
   }
 }
@@ -322,6 +328,35 @@ function checkEncodingIssues(rows: Row[], headers: string[], issues: HealthIssue
       severity: "MEDIUM",
       title: "Garbled Characters",
       description: `Found ${count} cell${count > 1 ? "s" : ""} with encoding damage (e.g. "Ã©" instead of "é").`,
+      count,
+      examples,
+      affectedColumns: [...affected],
+    });
+  }
+}
+
+// Flags exactly the cells Trim Whitespace would change, so the rule switches on when it has work to do
+function checkStrayWhitespace(rows: Row[], headers: string[], issues: HealthIssue[]) {
+  let count = 0;
+  const examples: string[] = [];
+  const affected = new Set<string>();
+
+  for (const col of headers) {
+    for (let i = 0; i < rows.length; i++) {
+      const val = rows[i][col];
+      if (typeof val !== "string" || collapseWhitespace(val) === val) continue;
+      count++;
+      affected.add(col);
+      if (examples.length < 3) examples.push(`Row ${i + 1}, ${col}: ${JSON.stringify(val)}`);
+    }
+  }
+
+  if (count > 0) {
+    pushIssue(issues, {
+      type: "stray_whitespace",
+      severity: "LOW",
+      title: "Stray Spaces",
+      description: `Found ${count} cell${count > 1 ? "s" : ""} with leading, trailing or repeated spaces.`,
       count,
       examples,
       affectedColumns: [...affected],

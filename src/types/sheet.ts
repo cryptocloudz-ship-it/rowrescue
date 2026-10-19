@@ -22,6 +22,7 @@ export interface HealthIssue {
   type:
     | "duplicate_rows"
     | "encoding_issues"
+    | "stray_whitespace"
     | "empty_rows"
     | "empty_columns"
     | "inconsistent_headers"
