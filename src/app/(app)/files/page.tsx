@@ -8,7 +8,7 @@ export default function FilesPage() {
         <h2 className="font-semibold">No files are stored</h2>
         <p className="mt-2 leading-relaxed text-ink-body max-w-[560px]">
           SpreadsheetFix reads and cleans files in your browser tab. Nothing is uploaded, so we keep no copies or
-          history. Download the cleaned file and its change log before you close the tab.
+          history. Download the cleaned file before you close the tab.
         </p>
         <Link
           href="/clean"

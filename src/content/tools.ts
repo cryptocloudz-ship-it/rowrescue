@@ -32,7 +32,7 @@ export const TOOLS: ToolPage[] = [
     name: "Remove Duplicates",
     metaTitle: "Remove Duplicates from CSV Online — Free & Private",
     metaDescription:
-      "Delete duplicate rows from a CSV or Excel file in seconds. Exact or key-column matching, a full change log, and your data never leaves your browser.",
+      "Delete duplicate rows from a CSV or Excel file in seconds. Exact or key-column matching, a preview of every removed row, and your data never leaves your browser.",
     h1: "Remove duplicate rows from a CSV",
     intro:
       "Drop a CSV or Excel file below and SpreadsheetFix finds every repeated row, shows you which ones it will remove, and gives you back a clean file. Matching runs entirely in your browser — nothing is uploaded.",
@@ -64,7 +64,7 @@ ben@acme.io,Ben Ode,free
       },
       {
         heading: "The first occurrence is always kept",
-        body: "When SpreadsheetFix finds a repeat, it keeps the first row it saw and removes later copies, so your original ordering is preserved. Every removal is listed in the change log so you can audit exactly what went.",
+        body: "When SpreadsheetFix finds a repeat, it keeps the first row it saw and removes later copies, so your original ordering is preserved. Every removal is shown in the preview before you export, so you can check exactly what went.",
       },
     ],
     faqs: [
@@ -78,7 +78,7 @@ ben@acme.io,Ben Ode,free
       },
       {
         q: "Which duplicate is kept?",
-        a: "The first occurrence in the file is kept and later copies are removed. The change log lists every removed row.",
+        a: "The first occurrence in the file is kept and later copies are removed. The preview shows every removed row before you export.",
       },
       {
         q: "Is my file uploaded to a server?",
@@ -144,7 +144,7 @@ ben@acme.io,Ben Ode,free
       },
       {
         q: "Are non-date values affected?",
-        a: "No. Only cells that parse as valid dates are changed, and every change is recorded in the change log.",
+        a: "No. Only cells that parse as valid dates are changed, and every change is shown in the preview before you export.",
       },
       {
         q: "Is date normalization free?",
@@ -446,7 +446,7 @@ Zoë Smith,Zürich,€50 credit`,
       },
       {
         q: "Will it change text that is already correct?",
-        a: "No. A cell is only modified when it matches the exact pattern of misdecoded UTF-8, and every change appears in the change log.",
+        a: "No. A cell is only modified when it matches the exact pattern of misdecoded UTF-8, and every change is shown in the preview before you export.",
       },
       {
         q: "Is encoding repair free?",

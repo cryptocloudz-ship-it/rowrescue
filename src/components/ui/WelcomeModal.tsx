@@ -51,7 +51,7 @@ export function WelcomeModal() {
           </li>
           <li className="flex gap-4 py-3 border-b border-rule">
             <span className="font-data text-sm text-accent w-4 shrink-0 pt-0.5">3</span>
-            <span className="text-ink-body">Preview every change, then download the cleaned copy and its change log.</span>
+            <span className="text-ink-body">Preview every change, then download the cleaned copy.</span>
           </li>
         </ol>
         <div className="mt-6 flex flex-col-reverse sm:flex-row gap-2 sm:justify-end">

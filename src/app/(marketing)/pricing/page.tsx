@@ -120,7 +120,7 @@ export default function PricingPage() {
                 Yearly · save up to 31%
               </button>
             </div>
-            <p className="text-sm text-ink-muted">14-day money-back guarantee on paid plans.</p>
+            <p className="text-sm text-ink-muted">7-day money-back guarantee on paid plans.</p>
           </div>
         </div>
 
