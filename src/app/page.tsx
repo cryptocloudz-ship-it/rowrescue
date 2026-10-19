@@ -8,6 +8,8 @@ import { TOOLS } from "@/content/tools";
 import { SITE_NAME, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH, absoluteUrl } from "@/config/site";
 import { PLANS, FREE_RULES } from "@/config/plans";
 import { ALL_RULES, RULE_MAP } from "@/lib/engine/rules";
+import { TotalsCheck } from "@/components/ui/TotalsCheck";
+import { heroTotals } from "@/content/heroSample";
 
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
@@ -73,6 +75,9 @@ const RULE_EXAMPLES: { id: string; before: string; after: string }[] = [
   { id: "fixEncoding", before: "CafÃ©", after: "Café" },
   { id: "normalizeHeaders", before: "Invoice Date", after: "invoice_date" },
 ];
+
+// Computed by the real engine at build time from the hero example file
+const HERO_TOTALS = heroTotals();
 
 function formatEuro(cents: number) {
   return `€${(cents / 100).toLocaleString("en-GB", { maximumFractionDigits: 2 })}`;
@@ -196,6 +201,26 @@ export default function LandingPage() {
               {ALL_RULES.length - RULE_EXAMPLES.length} more rules in the cleaner, including phone numbers, email
               validation and required-field checks.
             </p>
+          </div>
+        </section>
+
+        <section id="totals" className="border-t border-rule scroll-mt-16">
+          <div className="max-w-[1200px] mx-auto px-6 py-20 flex flex-col lg:flex-row gap-10 lg:gap-16">
+            <div className="lg:w-[380px] shrink-0">
+              <h2 className="text-[36px] leading-tight font-semibold tracking-[-0.02em]">Totals that still add up</h2>
+              <p className="mt-4 text-lg leading-relaxed text-ink-body">
+                After cleaning, every amount column is totalled before and after. Removed rows are listed, so the
+                difference is accounted for to the cent. If a value itself changed, you see by how much before you
+                export.
+              </p>
+              <p className="mt-4 text-sm text-ink-muted">Included on every plan. Pro adds it to the downloadable summary report.</p>
+            </div>
+            <figure className="m-0 flex-1 min-w-0">
+              <TotalsCheck reconciliation={HERO_TOTALS} />
+              <figcaption className="mt-3 text-sm text-ink-muted">
+                The totals check for the example file at the top of this page.
+              </figcaption>
+            </figure>
           </div>
         </section>
 

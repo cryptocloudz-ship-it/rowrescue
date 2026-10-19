@@ -15,6 +15,8 @@ import { ArrowLeft, Lock, ShieldAlert, Zap, Check } from "lucide-react";
 import Link from "next/link";
 import { BrandMark } from "@/components/marketing/SiteHeader";
 import { proOnlyIssueCount } from "@/lib/engine/issueRules";
+import { reconcile } from "@/lib/engine/reconcile";
+import { TotalsCheck } from "@/components/ui/TotalsCheck";
 import { WelcomeModal } from "@/components/ui/WelcomeModal";
 import { OnboardingHint } from "@/components/ui/OnboardingHint";
 import { HelpButton } from "@/components/ui/HelpButton";
@@ -78,6 +80,15 @@ export default function CleanPage() {
 
   // Warn before closing tab if data is loaded
   useBeforeUnload(stage !== "idle");
+
+  // Totals check: recomputed only when a cleaning run produces a new result
+  const reconciliation = useMemo(
+    () =>
+      parsedSheet && engineResult
+        ? reconcile(parsedSheet.rows, engineResult.cleanedRows, engineResult.snapshots, parsedSheet.headers)
+        : null,
+    [parsedSheet, engineResult]
+  );
 
   const shortcutHandlers = useMemo(
     () => ({
@@ -281,6 +292,8 @@ export default function CleanPage() {
                 <SummaryStat label="Rows flagged" value={allQuarantined.length} />
                 <SummaryStat label="Rules applied" value={engineResult.stats.rulesApplied} />
               </dl>
+
+              {reconciliation && <TotalsCheck reconciliation={reconciliation} />}
 
               <div className="bg-paper border border-rule rounded-lg overflow-hidden shadow-frame">
                 <PreviewGrid

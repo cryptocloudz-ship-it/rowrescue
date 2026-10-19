@@ -1,7 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useSheetStore } from "@/store/sheetStore";
 import { proOnlyIssueCount } from "@/lib/engine/issueRules";
-import { HERO_ROWS, HERO_COLUMNS, HERO_FIXES, HERO_FILE_NAME, cellAfter, heroCsv } from "../heroSample";
+import { HERO_ROWS, HERO_COLUMNS, HERO_FIXES, HERO_FILE_NAME, cellAfter, heroCsv, heroTotals } from "../heroSample";
+import { reconcile } from "@/lib/engine/reconcile";
 
 // Runs the homepage hero example through the same flow as a real upload on /clean.
 async function cleanHeroFile(isPro: boolean) {
@@ -38,6 +39,14 @@ describe.each([
   it("tells free users how many more fixes Pro would make", async () => {
     const state = await cleanHeroFile(isPro);
     expect(proOnlyIssueCount(state.healthReport!)).toBe(HERO_FIXES.pro - HERO_FIXES.free);
+  });
+
+  it("balances its totals, and the homepage shows the same totals as the app", async () => {
+    const state = await cleanHeroFile(isPro);
+    const inApp = reconcile(state.parsedSheet!.rows, state.engineResult!.cleanedRows, state.engineResult!.snapshots, state.parsedSheet!.headers);
+    expect(heroTotals(isPro)).toEqual(inApp);
+    expect(inApp.balanced).toBe(true);
+    expect(inApp.columns.map((c) => [c.column, c.before, c.after])).toEqual([["amount", 4304.5, 3992.5]]);
   });
 
   it("switches on every rule it needs without the user touching anything", async () => {

@@ -8,6 +8,7 @@ import { exportToCSV, exportChangeLog, exportQuarantined } from "@/lib/engine/ex
 import { exportToXLSX } from "@/lib/engine/exporters/xlsxExporter";
 import { exportSummary } from "@/lib/engine/exporters/summaryExporter";
 import { trackExport } from "@/lib/analytics";
+import { reconcile } from "@/lib/engine/reconcile";
 
 function downloadBlob(content: string | Uint8Array, filename: string, mime: string) {
   const blob = content instanceof Uint8Array
@@ -152,6 +153,9 @@ export function ExportPanel() {
       quarantined: allQuarantined,
       healthReport,
       rulesApplied: appliedRules,
+      reconciliation: engineResult
+        ? reconcile(parsedSheet.rows, engineResult.cleanedRows, engineResult.snapshots, parsedSheet.headers)
+        : null,
     });
     downloadBlob(summary, `${baseName}_summary.txt`, "text/plain;charset=utf-8");
   };

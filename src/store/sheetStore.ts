@@ -11,40 +11,14 @@ import type { RuleConfig } from "@/types/rules";
 import { parseFile } from "@/lib/engine/parsers";
 import { generateHealthReport } from "@/lib/engine/healthReport";
 import { runEngine, undoRule, type EngineResult } from "@/lib/engine/ruleEngine";
-import { ALL_RULES } from "@/lib/engine/rules";
 import { FREE_RULES } from "@/config/plans";
 import { trackFileUpload, trackDemoLoaded, trackCleaningRun } from "@/lib/analytics";
-import { ISSUE_TO_RULE } from "@/lib/engine/issueRules";
+import { autoEnableRules, defaultRuleConfigs, type RulePreset } from "@/lib/engine/issueRules";
 
 export const FREE_ROW_LIMIT = 5_000;
 
 
-/** Rules a tool landing page asks to switch on, with optional per-rule options. */
-export interface RulePreset {
-  ruleIds: string[];
-  options?: Record<string, Record<string, unknown>>;
-}
-
-/** Enable rules matching detected issues plus any preset rules, limited to what the plan allows. */
-function autoEnableRules(
-  ruleConfigs: RuleConfig[],
-  report: HealthReport,
-  isPro: boolean,
-  preset: RulePreset | null
-): RuleConfig[] {
-  const wanted = new Set(
-    report.issues
-      .filter((i) => i.count > 0)
-      .map((i) => ISSUE_TO_RULE[i.type])
-      .filter(Boolean)
-  );
-  preset?.ruleIds.forEach((id) => wanted.add(id));
-  return ruleConfigs.map((rc) => {
-    if (!wanted.has(rc.ruleId) || !(isPro || FREE_RULES.includes(rc.ruleId))) return rc;
-    const presetOptions = preset?.options?.[rc.ruleId];
-    return { ...rc, enabled: true, options: presetOptions ? { ...rc.options, ...presetOptions } : rc.options };
-  });
-}
+export type { RulePreset } from "@/lib/engine/issueRules";
 
 interface SheetState {
   // Stage
@@ -87,11 +61,6 @@ interface SheetState {
   getDemoCSV: () => string;
 }
 
-const DEFAULT_RULE_CONFIGS: RuleConfig[] = ALL_RULES.map((rule) => ({
-  ruleId: rule.id,
-  enabled: false,
-  options: {},
-}));
 
 const DEMO_ROWS: Row[] = [
   { Name: "  John Smith  ", Email: "JOHN@EXAMPLE.COM", Phone: "(555) 123-4567", Date: "01/15/2024", Amount: "$1,234.56", Company: "Acme Inc" },
@@ -111,7 +80,7 @@ export const useSheetStore = create<SheetState>((set, get) => ({
   healthReport: null,
   rowLimitHit: false,
   totalRowCount: 0,
-  ruleConfigs: DEFAULT_RULE_CONFIGS,
+  ruleConfigs: defaultRuleConfigs(),
   isPro: false,
   preset: null,
   engineResult: null,
@@ -237,7 +206,7 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       healthReport: null,
       rowLimitHit: false,
       totalRowCount: 0,
-      ruleConfigs: DEFAULT_RULE_CONFIGS,
+      ruleConfigs: defaultRuleConfigs(),
       engineResult: null,
       cleanedRows: [],
       allChanges: [],
