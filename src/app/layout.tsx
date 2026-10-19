@@ -43,6 +43,8 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
+      // No usage telemetry to Clerk; it would also need a CSP exception
+      telemetry={false}
       appearance={{
         variables: { colorPrimary: "#1f3d99", colorText: "#0e1525", fontFamily: "var(--font-plex-sans), system-ui, sans-serif", borderRadius: "6px" },
       }}

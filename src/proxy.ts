@@ -16,6 +16,7 @@ export default clerkMiddleware(async (auth, request) => {
 });
 
 export const config = {
+  // Next.js 16 calls this file the proxy (formerly middleware).
   // Clerk only runs where server-side auth is needed. Marketing and tool pages are static and use
   // client-side auth UI, so skipping them keeps TTFB low and avoids auth redirects for crawlers.
   matcher: [
