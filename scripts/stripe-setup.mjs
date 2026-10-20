@@ -2,27 +2,38 @@
 /**
  * Idempotently create SpreadsheetFix's Stripe catalog and webhook endpoint.
  *
- *   vercel env run -e production -- node scripts/stripe-setup.mjs [--live]
+ *   test:  vercel --scope <team> env run -e production -- node scripts/stripe-setup.mjs
+ *   live:  STRIPE_LIVE_SECRET_KEY=rk_live_… node scripts/stripe-setup.mjs --live
+ *          (the live key is a sensitive Vercel var, so the CLI can't read it; supply it in your shell)
  *
  * - One Product per plan (Pro, Team), monthly + yearly Prices keyed by lookup_key.
  * - Webhook endpoint for the events src/app/api/stripe/webhook/route.ts handles.
  * - Prints price IDs (not secret). A newly created webhook signing secret is written straight
- *   into Vercel as RR_STRIPE_WEBHOOK_SECRET (sensitive) and never printed.
+ *   into Vercel (sensitive) and never printed: STRIPE_LIVE_WEBHOOK_SECRET in production for --live,
+ *   otherwise RR_STRIPE_WEBHOOK_SECRET in production and preview.
  * - Refuses to run against a live key unless --live is passed.
  */
 import Stripe from "stripe";
 import { spawnSync } from "node:child_process";
 
-const key = process.env.RR_STRIPE_SECRET_KEY;
+const live = process.argv.includes("--live");
+const keyVar = live ? "STRIPE_LIVE_SECRET_KEY" : "RR_STRIPE_SECRET_KEY";
+const key = process.env[keyVar];
 if (!key) {
-  console.error("RR_STRIPE_SECRET_KEY is not set. Run via `vercel env run`.");
+  console.error(`${keyVar} is not set.`);
   process.exit(1);
 }
 const isTestKey = /^(sk|rk)_test_/.test(key);
-if (!isTestKey && !process.argv.includes("--live")) {
-  console.error("Refusing to run: RR_STRIPE_SECRET_KEY is not a test-mode key. Pass --live to override.");
+if (!isTestKey && !live) {
+  console.error(`Refusing to run: ${keyVar} is not a test-mode key. Pass --live to override.`);
   process.exit(1);
 }
+if (isTestKey && live) {
+  console.error(`Refusing to run: --live was passed but ${keyVar} is a test-mode key.`);
+  process.exit(1);
+}
+const secretVar = live ? "STRIPE_LIVE_WEBHOOK_SECRET" : "RR_STRIPE_WEBHOOK_SECRET";
+const secretTargets = live ? ["production"] : ["production", "preview"];
 
 const stripe = new Stripe(key);
 const WEBHOOK_URL = process.env.STRIPE_WEBHOOK_URL || "https://spreadsheetfix.com/api/stripe/webhook";
@@ -116,13 +127,13 @@ if (endpoint) {
     description: "SpreadsheetFix subscription lifecycle",
   });
   console.log(`created webhook ${created.id} -> ${WEBHOOK_URL}`);
-  for (const target of ["production", "preview"]) {
+  for (const target of secretTargets) {
     const r = spawnSync(
       "vercel",
-      ["env", "add", "RR_STRIPE_WEBHOOK_SECRET", target, "--sensitive", "--force", "--yes", "--non-interactive"],
+      ["env", "add", secretVar, target, "--sensitive", "--force", "--yes", "--non-interactive"],
       { input: created.secret, stdio: ["pipe", "ignore", "pipe"], encoding: "utf8" }
     );
-    console.log(`  RR_STRIPE_WEBHOOK_SECRET -> ${target}: ${r.status === 0 ? "saved" : "FAILED " + (r.stderr || "").trim().slice(-200)}`);
+    console.log(`  ${secretVar} -> ${target}: ${r.status === 0 ? "saved" : "FAILED " + (r.stderr || "").trim().slice(-200)}`);
   }
 }
 
