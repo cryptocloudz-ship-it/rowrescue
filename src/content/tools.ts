@@ -485,7 +485,7 @@ Eli Park,ask reception`,
     afterNote: "1 row flagged for review: “ask reception” isn’t a phone number. It stays in the file and is listed in a separate quarantine download.",
     steps: [
       "Upload your contact list as CSV or Excel. With Pro, Normalize Phone and Validate Phone are switched on for you.",
-      "Open the column picker on Normalize Phone and tick only your phone columns, so order numbers, dates and other long digit strings are left alone.",
+      "Normalize Phone finds columns with phone, tel, mobile, cell or fax in the header. If yours is called something else, like “contact”, tick it in the column picker.",
       "Run the rules, check the rewritten numbers and flagged rows in the preview, then download.",
     ],
     sections: [
@@ -498,8 +498,8 @@ Eli Park,ask reception`,
         body: "A number like 415.555.0198 doesn’t say which country it belongs to, so SpreadsheetFix assumes +1, the North American code, and drops any leading zeros before adding it. That is right for US and Canadian lists but wrong for local numbers from elsewhere: a UK number written 020 7946 0958 would become +12079460958. If your file has numbers from other countries, make sure they include their country code (+44… or 0044…) before cleaning. Those convert correctly.",
       },
       {
-        heading: "Pick the phone column first",
-        body: "Normalize Phone rewrites any cell with seven or more digits in the columns it is given. Left on all columns, it would also turn an order number like 1002345 into +11002345, or a date like 2024-03-04 into +120240304. Open the column picker on the rule and select only your phone columns. Validate Phone already limits itself to columns whose header contains phone, tel, mobile, cell or fax.",
+        heading: "Only phone columns are touched",
+        body: "Normalize Phone rewrites any cell with seven or more digits in the columns it works on, so it has to know which columns hold phone numbers. Unless you pick columns yourself, both phone rules use only the columns whose header contains phone, tel, mobile, cell or fax, and leave order numbers, dates like 2024-03-04 and other long digit strings in the rest of the file alone. If your numbers sit under a header such as “contact” or “whatsapp”, tick that column in the rule’s column picker; once you pick columns, only those are rewritten.",
       },
       {
         heading: "What gets flagged",
@@ -509,7 +509,7 @@ Eli Park,ask reception`,
     faqs: [
       {
         q: "How do I format phone numbers in a CSV file?",
-        a: "Upload the file above, limit Normalize Phone to your phone column with the column picker, and run it. Every number becomes a + and country code followed by digits, and you download the cleaned CSV. Both phone rules are part of Pro.",
+        a: "Upload the file above and run Normalize Phone. It picks up columns named phone, mobile, tel and similar on its own, and every number in them becomes a + and country code followed by digits. Then you download the cleaned CSV. Both phone rules are part of Pro.",
       },
       {
         q: "What happens to phone extensions?",
@@ -833,7 +833,7 @@ A-102,Wall Light,Brass finish and matte glass`,
       },
       {
         q: "What if two headers end up with the same name?",
-        a: "Rename one of them before cleaning. If “Price” and “PRICE” both become price, the column further to the right replaces the other one in the cleaned file.",
+        a: "Both columns are kept. The first one gets the plain name and later ones get a number added, so “Price” and “PRICE” become price and price_2. Rename them in the preview or afterwards if you want something more descriptive.",
       },
       {
         q: "Does it change my data?",
@@ -871,13 +871,13 @@ INV-105,Elm Studio,,,"Missing required: email, amount"`,
     afterNote: "With email and amount ticked as required. Flagged rows also stay in the cleaned file.",
     steps: [
       "Upload the CSV or Excel file you’re about to import.",
-      "Open the column picker on Validate Required and tick the columns that must never be blank. Until you pick at least one, the rule has nothing to check.",
+      "Open the column picker on Validate Required and tick the columns that must never be blank. Left on “All columns”, every column counts as required.",
       "Run it, review the flagged rows, and download the cleaned file plus a quarantine CSV listing each flagged row and what it’s missing.",
     ],
     sections: [
       {
         heading: "You decide what “required” means",
-        body: "A blank notes field or a missing phone number may be fine; a missing invoice number or amount is not. Validate Required only checks the columns you select, and flags a row when any of them is empty or contains only spaces. Each flagged row records which columns were missing, for example “Missing required: email, amount”.",
+        body: "A blank notes field or a missing phone number may be fine; a missing invoice number or amount is not. Validate Required checks the columns you select, and flags a row when any of them is empty or contains only spaces. If you don’t select any, it treats every column as required. Each flagged row records which columns were missing, for example “Missing required: email, amount”.",
       },
       {
         heading: "Flagged, not deleted",
@@ -898,8 +898,8 @@ INV-105,Elm Studio,,,"Missing required: email, amount"`,
         a: "Yes. A value made only of spaces or tabs is treated as blank.",
       },
       {
-        q: "Why was nothing flagged?",
-        a: "Validate Required only checks the columns you pick. If its column picker still shows “All columns”, no column has been chosen, so tick at least one column and run it again.",
+        q: "Why are so many rows flagged?",
+        a: "With its column picker on “All columns”, Validate Required treats every column as required, so a blank in an optional field like notes or phone flags the row too. Tick only the columns that must be filled in and run it again.",
       },
       {
         q: "Are rows with missing values deleted?",

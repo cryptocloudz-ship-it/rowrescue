@@ -8,8 +8,8 @@ import type { Row } from "@/types/sheet";
 const MIN_WORDS = 240;
 
 /**
- * Column picks a visitor makes on /clean before running. Rules like Validate Required
- * do nothing until columns are chosen, so the sample only holds once these are applied.
+ * Column picks a visitor makes on /clean before running. Without them Validate Required
+ * treats every column as required, so the sample only holds once these are applied.
  */
 const COLUMN_PICKS: Record<string, Record<string, string[]>> = {
   "find-missing-values-csv": { validateRequired: ["email", "amount"] },

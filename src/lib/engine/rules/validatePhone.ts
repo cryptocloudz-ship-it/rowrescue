@@ -2,6 +2,8 @@ import type { Row, CleanResult, CellChange, QuarantinedRow } from "@/types/sheet
 import type { RuleOptions, ValidatePhoneOptions } from "@/types/rules";
 
 const PHONE_REGEX = /^[+]?[\d\s\-().]{7,20}$/;
+/** Headers treated as phone columns when no columns are picked. */
+export const PHONE_HEADER_REGEX = /phone|tel|mobile|cell|fax/i;
 
 export function validatePhone(
   rows: Row[],
@@ -12,7 +14,7 @@ export function validatePhone(
   const now = Date.now();
 
   const opts = options as ValidatePhoneOptions;
-  const phoneColumns = opts.columns ?? detectPhoneColumns(rows);
+  const phoneColumns = opts.columns?.length ? opts.columns : detectPhoneColumns(rows);
   const cleanRows: Row[] = [];
 
   for (let i = 0; i < rows.length; i++) {
@@ -65,6 +67,6 @@ export function validatePhone(
 function detectPhoneColumns(rows: Row[]): string[] {
   if (rows.length === 0) return [];
   return Object.keys(rows[0]).filter(
-    (h) => /phone|tel|mobile|cell|fax/i.test(h)
+    (h) => PHONE_HEADER_REGEX.test(h)
   );
 }
