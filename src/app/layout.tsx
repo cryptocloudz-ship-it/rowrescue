@@ -47,6 +47,9 @@ export default function RootLayout({
       telemetry={false}
       appearance={{
         variables: { colorPrimary: "#1f3d99", colorText: "#0e1525", fontFamily: "var(--font-plex-sans), system-ui, sans-serif", borderRadius: "6px" },
+        // Email sign-in only: Google is enabled in Clerk production but has no OAuth credentials yet.
+        // Remove these two lines once custom Google credentials are added in Clerk.
+        elements: { socialButtonsRoot: { display: "none" }, dividerRow: { display: "none" } },
       }}
     >
       <html lang="en">
