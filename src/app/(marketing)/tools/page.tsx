@@ -9,7 +9,7 @@ import { absoluteUrl, DEFAULT_OPEN_GRAPH } from "@/config/site";
 export const metadata: Metadata = {
   title: "Free CSV Cleaning Tools",
   description:
-    "Free, private tools to remove duplicates, fix dates and encoding, validate emails, trim spaces and merge CSV files. Everything runs in your browser.",
+    "Free, private CSV tools to remove duplicates, fix dates and encoding, validate emails, trim spaces and merge files. Runs in your browser, no upload.",
   alternates: { canonical: "/tools" },
   openGraph: { ...DEFAULT_OPEN_GRAPH, title: "Free CSV Cleaning Tools | SpreadsheetFix", url: "/tools" },
 };
@@ -33,8 +33,9 @@ export default function ToolsIndex() {
       <main id="main-content" className="max-w-[1200px] mx-auto px-6 py-16 lg:py-20">
         <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em]">Free CSV cleaning tools</h1>
         <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[640px]">
-          Each tool runs in your browser, so your data is never uploaded. Most are free for files up to 5,000 rows; the ones
-          marked Pro use rules from the Pro plan.
+          Each tool runs in your browser, so you can clean a CSV or Excel file without uploading it: the contents never
+          reach our servers, which keeps client and bank data GDPR-friendly. Most are free for files up to 5,000 rows;
+          the ones marked Pro use rules from the Pro plan.
         </p>
         <ul className="mt-12 grid md:grid-cols-2 gap-x-12 border-t border-rule">
           {TOOLS.map((t) => (

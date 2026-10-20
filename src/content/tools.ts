@@ -30,7 +30,12 @@ export interface ToolPage {
   sections: { heading: string; body: string }[];
   faqs: ToolFaq[];
   related: string[];
+  /** Last meaningful content change (YYYY-MM-DD), for the sitemap. Defaults to TOOLS_UPDATED. */
+  updated?: string;
 }
+
+/** Sitemap date for tool pages without their own `updated`. Bump it when copy changes across all pages. */
+export const TOOLS_UPDATED = "2026-10-20";
 
 export const TOOLS: ToolPage[] = [
   {
@@ -919,4 +924,8 @@ export const TOOL_MAP = new Map(TOOLS.map((t) => [t.slug, t]));
 /** True when a page's preset includes a rule that only Pro unlocks. */
 export function toolNeedsPro(tool: ToolPage): boolean {
   return tool.preset?.ruleIds.some((id) => !FREE_RULES.includes(id)) ?? false;
+}
+
+export function toolUpdated(tool: ToolPage): string {
+  return tool.updated ?? TOOLS_UPDATED;
 }

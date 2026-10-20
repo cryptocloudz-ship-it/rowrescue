@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { TOOLS, TOOL_MAP, toolNeedsPro } from "@/content/tools";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
+import { PLANS } from "@/config/plans";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -58,7 +59,23 @@ export default async function ToolPage({ params }: Props) {
             description: tool.metaDescription,
             applicationCategory: "BusinessApplication",
             operatingSystem: "Any (web browser)",
-            offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+            // The per-tool OG image path carries a build hash (opengraph-image-<hash>), so use the stable site image
+            image: absoluteUrl("/og-image.png"),
+            // Pro-only pages advertise the Pro price, not a free offer the rule isn't part of
+            offers: needsPro
+              ? {
+                  "@type": "Offer",
+                  name: PLANS.pro.name,
+                  price: String((PLANS.pro.priceMonthly ?? 0) / 100),
+                  priceCurrency: "EUR",
+                  priceSpecification: {
+                    "@type": "UnitPriceSpecification",
+                    price: String((PLANS.pro.priceMonthly ?? 0) / 100),
+                    priceCurrency: "EUR",
+                    billingDuration: "P1M",
+                  },
+                }
+              : { "@type": "Offer", name: PLANS.free.name, price: "0", priceCurrency: "EUR" },
           },
           {
             "@context": "https://schema.org",
