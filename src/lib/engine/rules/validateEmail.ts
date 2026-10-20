@@ -12,7 +12,7 @@ export function validateEmail(
   const now = Date.now();
 
   const opts = options as ValidateEmailOptions;
-  const emailColumns = opts.columns ?? detectEmailColumns(rows);
+  const emailColumns = opts.columns?.length ? opts.columns : detectEmailColumns(rows);
 
   const cleanRows: Row[] = [];
 
