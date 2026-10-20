@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { NavAuth } from "./NavAuth";
 
+// A selected cell with its fill handle; the outline breaks around the handle
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" className={className}>
-      <rect x="1" y="1" width="18" height="18" rx="4" stroke="currentColor" strokeWidth="1.5" />
-      <path d="M1 7.5h18M7.5 7.5V19" stroke="currentColor" strokeWidth="1.5" />
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" className={`text-accent ${className}`}>
+      <path d="M16 11.3V3.8H3v11h9.5" stroke="currentColor" strokeWidth="1.8" />
+      <rect x="13.5" y="12.3" width="5" height="5" fill="currentColor" />
     </svg>
   );
 }
@@ -16,16 +17,16 @@ export function SiteHeader() {
       <div className="max-w-[1200px] mx-auto px-6 min-h-16 flex items-center justify-between gap-4">
         <Link href="/" className="flex items-center gap-2.5 min-w-0 font-semibold text-[17px]" aria-label="SpreadsheetFix home">
           <BrandMark className="shrink-0" />
-          <span>SpreadsheetFix</span>
+          <span className="truncate">SpreadsheetFix</span>
         </Link>
-        <nav className="flex items-center gap-4 sm:gap-7 text-[15px]" aria-label="Main">
+        <nav className="shrink-0 flex items-center gap-4 sm:gap-7 text-[15px]" aria-label="Main">
           <Link href="/tools" className="text-ink-body hover:text-ink py-3 hidden sm:inline">
             Tools
           </Link>
           <Link href="/#security" className="text-ink-body hover:text-ink py-3 hidden md:inline">
             Security
           </Link>
-          <Link href="/pricing" className="text-ink-body hover:text-ink py-3 max-[420px]:hidden">
+          <Link href="/pricing" className="text-ink-body hover:text-ink py-3 max-[519px]:hidden">
             Pricing
           </Link>
           <NavAuth />
