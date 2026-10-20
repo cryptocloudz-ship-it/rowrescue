@@ -71,7 +71,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
   const body = await request.json();
-  const { fileName, rowCount, rulesApplied } = body;
+  const { rowCount, rulesApplied } = body;
 
   // Unauthenticated: enforce free limits without persistence
   if (!userId) {
@@ -88,7 +88,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       allowed: true,
       exportsRemaining: limits.maxExportsPerDay,
-      fileName,
       rulesApplied,
     });
   }
@@ -140,7 +139,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     allowed: true,
     exportsRemaining: limits.maxExportsPerDay - (exportsToday + 1),
-    fileName,
     rulesApplied,
   });
 }
