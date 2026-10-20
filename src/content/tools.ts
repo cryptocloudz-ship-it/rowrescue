@@ -1,4 +1,5 @@
 import type { RulePreset } from "@/store/sheetStore";
+import { FREE_RULES } from "@/config/plans";
 
 export interface ToolFaq {
   q: string;
@@ -19,7 +20,12 @@ export interface ToolPage {
   kind: "cleaner" | "merge";
   preset?: RulePreset;
   before: string;
+  /** Must be exactly what the engine produces from `before` (checked in tools.test.ts) */
   after: string;
+  /** What `after` shows: the cleaned file (default) or the rows flagged for review, with a reason column */
+  afterView?: "cleaned" | "flagged";
+  /** One line under the after sample, e.g. how many rows were removed */
+  afterNote?: string;
   steps: string[];
   sections: { heading: string; body: string }[];
   faqs: ToolFaq[];
@@ -32,7 +38,7 @@ export const TOOLS: ToolPage[] = [
     name: "Remove Duplicates",
     metaTitle: "Remove Duplicates from CSV Online — Free & Private",
     metaDescription:
-      "Delete duplicate rows from a CSV or Excel file in seconds. Exact or key-column matching, a preview of every removed row, and your data never leaves your browser.",
+      "Delete duplicate rows from a CSV or Excel file in seconds. Exact or key-column matching, a preview of removals, and your data never leaves your browser.",
     h1: "Remove duplicate rows from a CSV",
     intro:
       "Drop a CSV or Excel file below and SpreadsheetFix finds every repeated row, shows you which ones it will remove, and gives you back a clean file. Matching runs entirely in your browser — nothing is uploaded.",
@@ -45,9 +51,8 @@ ana@acme.io,Ana Ruiz,pro
 ana@acme.io ,Ana Ruiz ,pro`,
     after: `email,name,plan
 ana@acme.io,Ana Ruiz,pro
-ben@acme.io,Ben Ode,free
-
-# 2 duplicate rows removed`,
+ben@acme.io,Ben Ode,free`,
+    afterNote: "2 duplicate rows removed: an exact copy, and one that only differed by trailing spaces.",
     steps: [
       "Upload your CSV, TSV or XLSX file (or try the demo data).",
       "SpreadsheetFix trims stray spaces first, so “ana@acme.io ” and “ana@acme.io” count as the same value.",
@@ -89,7 +94,7 @@ ben@acme.io,Ben Ode,free
         a: "The free plan processes up to 5,000 rows per file. Pro handles up to 500,000 rows.",
       },
     ],
-    related: ["trim-whitespace-csv", "merge-csv-files", "validate-emails-csv"],
+    related: ["trim-whitespace-csv", "validate-emails-csv", "remove-blank-rows-csv"],
   },
   {
     slug: "normalize-dates-csv",
@@ -151,7 +156,7 @@ ben@acme.io,Ben Ode,free
         a: "Yes, for files up to 5,000 rows. Pro raises the limit to 500,000 rows and adds Excel export.",
       },
     ],
-    related: ["csv-to-excel-cleaner", "trim-whitespace-csv", "fix-csv-encoding"],
+    related: ["convert-comma-decimal-csv", "csv-to-excel-cleaner", "clean-csv-headers"],
   },
   {
     slug: "validate-emails-csv",
@@ -161,7 +166,7 @@ ben@acme.io,Ben Ode,free
       "Find and quarantine invalid email addresses in a CSV before you import it. Lowercases and trims emails, flags bad formats. Private: runs in your browser.",
     h1: "Validate and clean email addresses in a CSV",
     intro:
-      "Before you import a list into your CRM or email platform, upload it here. SpreadsheetFix trims and lowercases every address, then moves rows with malformed emails into a separate quarantine so they don’t pollute your import.",
+      "Before you import a list into your CRM or email platform, upload it here. SpreadsheetFix trims and lowercases every address, then flags rows with malformed emails and lists them in a separate quarantine file, so you can fix them before they pollute your import.",
     kind: "cleaner",
     preset: { ruleIds: ["trimWhitespace", "normalizeEmail", "validateEmail", "deduplicateRows"] },
     before: `email,first_name
@@ -171,14 +176,13 @@ kim@example.org,Kim
 sam@example.com,Sam`,
     after: `email,first_name
 sam@example.com,Sam
-kim@example.org,Kim
-
-# quarantined: lee@example (no domain suffix)
-# 1 duplicate removed`,
+lee@example,Lee
+kim@example.org,Kim`,
+    afterNote: "lee@example is flagged for review (no domain suffix) and listed in a separate quarantine file. 1 duplicate removed.",
     steps: [
       "Upload the contact list as CSV or Excel. SpreadsheetFix detects email columns automatically.",
       "Addresses are trimmed and lowercased so duplicates match, then checked for a valid format.",
-      "Rows with invalid emails move to quarantine for review; download the clean list.",
+      "Rows with invalid emails are flagged for review; download the cleaned list and, separately, the flagged rows.",
     ],
     sections: [
       {
@@ -187,7 +191,7 @@ kim@example.org,Kim
       },
       {
         heading: "Quarantine instead of delete",
-        body: "Invalid rows aren’t silently thrown away. They’re set aside in a quarantine list so you can fix a typo and keep the contact, or confirm the row should go.",
+        body: "Invalid rows aren’t silently thrown away. They stay in the file and are also listed in a quarantine download, so you can fix a typo and keep the contact, or confirm the row should go.",
       },
       {
         heading: "Lowercase first, then de-duplicate",
@@ -197,7 +201,7 @@ kim@example.org,Kim
     faqs: [
       {
         q: "How do I check if emails in a CSV are valid?",
-        a: "Upload the CSV above. SpreadsheetFix flags every address with an invalid format and moves those rows to a quarantine list you can review before downloading.",
+        a: "Upload the CSV above. SpreadsheetFix flags every address with an invalid format and lists those rows in a quarantine file you can review and download separately.",
       },
       {
         q: "Does SpreadsheetFix verify that the mailbox exists?",
@@ -216,7 +220,7 @@ kim@example.org,Kim
         a: "Up to 5,000 rows per file on the free plan, or 500,000 rows with Pro.",
       },
     ],
-    related: ["remove-duplicates-csv", "trim-whitespace-csv", "merge-csv-files"],
+    related: ["remove-duplicates-csv", "format-phone-numbers-csv", "find-missing-values-csv"],
   },
   {
     slug: "trim-whitespace-csv",
@@ -273,7 +277,7 @@ A-101,Floor Lamp,white`,
         a: "Yes, rows where every cell is empty are removed. Rows that are only partly empty are kept.",
       },
     ],
-    related: ["remove-duplicates-csv", "fix-csv-encoding", "csv-to-excel-cleaner"],
+    related: ["remove-blank-rows-csv", "remove-html-tags-csv", "remove-duplicates-csv"],
   },
   {
     slug: "merge-csv-files",
@@ -333,7 +337,7 @@ ben@acme.io,Ben,Lyon`,
         a: "No. Files are read and merged in your browser. Nothing is sent to a server.",
       },
     ],
-    related: ["remove-duplicates-csv", "csv-to-excel-cleaner", "fix-csv-encoding"],
+    related: ["remove-duplicates-csv", "clean-csv-headers", "csv-to-excel-cleaner"],
   },
   {
     slug: "csv-to-excel-cleaner",
@@ -393,7 +397,7 @@ Mia Chen,2024-02-01`,
         a: "Yes. SpreadsheetFix accepts .xlsx and .xls as well as CSV and TSV.",
       },
     ],
-    related: ["normalize-dates-csv", "fix-csv-encoding", "trim-whitespace-csv"],
+    related: ["normalize-dates-csv", "convert-comma-decimal-csv", "fix-csv-encoding"],
   },
   {
     slug: "fix-csv-encoding",
@@ -453,8 +457,466 @@ Zoë Smith,Zürich,€50 credit`,
         a: "Yes, for files up to 5,000 rows. Pro supports files up to 500,000 rows.",
       },
     ],
-    related: ["csv-to-excel-cleaner", "trim-whitespace-csv", "merge-csv-files"],
+    related: ["remove-html-tags-csv", "csv-to-excel-cleaner", "trim-whitespace-csv"],
+  },
+  {
+    slug: "format-phone-numbers-csv",
+    name: "Format Phone Numbers",
+    metaTitle: "Format Phone Numbers in a CSV to E.164 (+14155550132)",
+    metaDescription:
+      "Turn (415) 555-0132, 415.555.0198 and 0044 numbers into one +E.164 format and flag cells that aren’t phone numbers. Runs in your browser, no upload.",
+    h1: "Format phone numbers in a CSV",
+    intro:
+      "Contact exports mix (415) 555-0132, 415.555.0198 and +44 20 7946 0958 in the same column, which trips up SMS tools, dialers and CRM matching. Upload the file and SpreadsheetFix rewrites each number in E.164 form (a plus sign, the country code and the digits, nothing else) and flags cells that can’t be a phone number. It all runs in your browser. Normalize Phone and Validate Phone are Pro rules.",
+    kind: "cleaner",
+    preset: { ruleIds: ["normalizePhone", "validatePhone"] },
+    before: `name,phone
+Ana Ruiz,(415) 555-0132
+Ben Ode,415.555.0198
+Cara Lin,+44 20 7946 0958
+Dev Rao,0044 161 496 0753
+Eli Park,ask reception`,
+    after: `name,phone
+Ana Ruiz,+14155550132
+Ben Ode,+14155550198
+Cara Lin,+442079460958
+Dev Rao,+441614960753
+Eli Park,ask reception`,
+    afterNote: "1 row flagged for review: “ask reception” isn’t a phone number. It stays in the file and is listed in a separate quarantine download.",
+    steps: [
+      "Upload your contact list as CSV or Excel. With Pro, Normalize Phone and Validate Phone are switched on for you.",
+      "Open the column picker on Normalize Phone and tick only your phone columns, so order numbers, dates and other long digit strings are left alone.",
+      "Run the rules, check the rewritten numbers and flagged rows in the preview, then download.",
+    ],
+    sections: [
+      {
+        heading: "What E.164 looks like",
+        body: "E.164 is the international standard for writing phone numbers: a +, the country code, then the national number with no spaces, dashes or brackets. It’s +14155550132 rather than (415) 555-0132. Twilio, most SMS and calling platforms and many CRMs expect it, and because each number has exactly one spelling, duplicate contacts become easy to spot. SpreadsheetFix removes every character except digits and a leading +, turns a 00 international prefix into +, and leaves numbers that already start with + otherwise as they are.",
+      },
+      {
+        heading: "Numbers without a country code are treated as US or Canadian",
+        body: "A number like 415.555.0198 doesn’t say which country it belongs to, so SpreadsheetFix assumes +1, the North American code, and drops any leading zeros before adding it. That is right for US and Canadian lists but wrong for local numbers from elsewhere: a UK number written 020 7946 0958 would become +12079460958. If your file has numbers from other countries, make sure they include their country code (+44… or 0044…) before cleaning. Those convert correctly.",
+      },
+      {
+        heading: "Pick the phone column first",
+        body: "Normalize Phone rewrites any cell with seven or more digits in the columns it is given. Left on all columns, it would also turn an order number like 1002345 into +11002345, or a date like 2024-03-04 into +120240304. Open the column picker on the rule and select only your phone columns. Validate Phone already limits itself to columns whose header contains phone, tel, mobile, cell or fax.",
+      },
+      {
+        heading: "What gets flagged",
+        body: "After formatting, Validate Phone checks each phone cell: an optional + followed by 7 to 20 characters made only of digits, spaces, dashes, dots and brackets. Cells containing words, like “ask reception” or “n/a”, fail, and the row is flagged. Flagged rows stay in the cleaned file and are also listed in a quarantine file you can download, so you can fix them by hand.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I format phone numbers in a CSV file?",
+        a: "Upload the file above, limit Normalize Phone to your phone column with the column picker, and run it. Every number becomes a + and country code followed by digits, and you download the cleaned CSV. Both phone rules are part of Pro.",
+      },
+      {
+        q: "What happens to phone extensions?",
+        a: "Extensions aren’t recognised. Their digits are appended to the number, so 415-555-0101 ext. 12 becomes +1415555010112. Move extensions into their own column before cleaning.",
+      },
+      {
+        q: "Can I format numbers for a country other than the US?",
+        a: "Numbers that already include a country code, written as +44 or 0044, are converted correctly for any country. Numbers without one are assumed to be +1 (US and Canada), and there’s currently no setting to change that default.",
+      },
+      {
+        q: "Does it check that a number is real?",
+        a: "No. It checks that the cell looks like a phone number, not that the number exists or has the right length for its country. Nothing is looked up online, so your contacts never leave your browser.",
+      },
+      {
+        q: "Is phone formatting free?",
+        a: "No. Normalize Phone and Validate Phone are Pro rules (€12/month). On the free plan you can still upload a file, and the health report counts the invalid phone numbers it finds.",
+      },
+    ],
+    related: ["validate-emails-csv", "proper-case-csv", "find-missing-values-csv"],
+  },
+  {
+    slug: "convert-comma-decimal-csv",
+    name: "Convert Comma Decimals",
+    metaTitle: "Convert European Numbers in a CSV: 1.234,56 → 1234.56",
+    metaDescription:
+      "Change comma decimals and European formats like €1.234,56 to 1234.56 so Excel, databases and accounting imports read them as numbers. Runs in your browser.",
+    h1: "Convert comma decimals and European number formats in a CSV",
+    intro:
+      "A bank or ERP export from Germany, France or Spain writes one thousand two hundred and thirty-four euros fifty as 1.234,50, and an English-locale spreadsheet, database or accounting import reads that as text, or worse, as 1.2345. Upload the file and SpreadsheetFix converts amounts to plain dot-decimal numbers, removing currency symbols and thousands separators on the way. It runs in your browser without uploading anything. Normalize Numbers is a Pro rule.",
+    kind: "cleaner",
+    preset: { ruleIds: ["normalizeNumbers"] },
+    before: `date,payee,amount,balance
+2024-03-01,Stripe payout,"1.234,50","€12.480,75"
+2024-03-02,Office rent,"-850,00","€11.630,75"
+2024-03-04,Card refund,"1 299,00","€12.929,75"
+2024-03-05,US client,"$1,050.00","€13.979,75"`,
+    after: `date,payee,amount,balance
+2024-03-01,Stripe payout,1234.50,12480.75
+2024-03-02,Office rent,-850.00,11630.75
+2024-03-04,Card refund,1299.00,12929.75
+2024-03-05,US client,1050.00,13979.75`,
+    steps: [
+      "Upload the CSV or Excel export. With Pro, Normalize Numbers is switched on for you.",
+      "If the file has other numeric columns, such as phone numbers or reference codes, use the column picker to limit the rule to your amount columns.",
+      "Check the converted values in the preview and download a file that sums correctly.",
+    ],
+    sections: [
+      {
+        heading: "How each value is read",
+        body: "SpreadsheetFix looks at the separators in each cell. When a dot is followed by three digits and the cell also has a comma (1.234,50 or 1.234.567,89), the dots are thousands separators and the comma is the decimal point. When commas group digits in threes before an optional dot decimal (1,050.00), the commas are dropped. A single comma with no dot, as in 89,90 or -850,00, is read as the decimal point. Spaces between digit groups, the French and Nordic style 1 299,00, are removed first.",
+      },
+      {
+        heading: "Currency symbols are stripped",
+        body: "The symbols €, $, £, ¥, ₹, ₽, ₩ and ₪ are removed, so “€12.480,75” becomes 12480.75 and adds up in a SUM or pivot table. Currency codes written as letters, such as EUR or USD, are not removed, and a cell that still isn’t a valid number after cleaning (“12,50 EUR”, “n/a”) is left exactly as it was.",
+      },
+      {
+        heading: "The one value it can’t tell apart",
+        body: "On its own, 1,234 could mean one thousand two hundred and thirty-four (US) or one point two three four (European). SpreadsheetFix reads a comma followed by exactly three digits as a thousands separator, so it becomes 1234. Likewise, 1.234 with no comma is left as it is, which dot-decimal software reads as 1.234. If your file has three-decimal values such as exchange rates, fuel prices or weights in kilograms, check those columns in the preview.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I change comma decimals to dots in a CSV?",
+        a: "Upload the file above and run Normalize Numbers. Values like 89,90 and 1.234,50 become 89.90 and 1234.50, and you download a CSV that English-locale tools read as numbers. The rule is part of Pro.",
+      },
+      {
+        q: "Why does Excel show my European numbers as text?",
+        a: "When your computer uses a dot as the decimal separator, Excel can’t read 1.234,50 as a number, so it keeps it as text and leaves it out of SUM and pivot tables. Converting the file to dot decimals first saves you from changing your system’s regional settings.",
+      },
+      {
+        q: "Will it change dates, phone numbers or IDs?",
+        a: "Dates like 2024-03-01 or 03.04.2024 aren’t valid numbers, so they’re left alone. Values that are numeric once spaces are removed do change: a phone number written +44 20 7946 0958 loses its spaces. Limit the rule to your amount columns if the file has other numeric columns.",
+      },
+      {
+        q: "Can I convert dots to commas instead?",
+        a: "Not from this page. It converts to dot decimals, which is what most databases, accounting imports and APIs expect, and the app doesn’t currently offer a switch for comma output.",
+      },
+      {
+        q: "Is my bank export uploaded?",
+        a: "No. The file is read and converted in your browser, so amounts, payees and balances never reach SpreadsheetFix’s servers.",
+      },
+    ],
+    related: ["normalize-dates-csv", "csv-to-excel-cleaner", "find-missing-values-csv"],
+  },
+  {
+    slug: "proper-case-csv",
+    name: "Proper Case Text",
+    metaTitle: "Convert CSV Text to Proper Case (Title Case) Online",
+    metaDescription:
+      "Fix names, cities and product titles typed in ALL CAPS or all lowercase. SpreadsheetFix converts chosen columns to Title Case in your browser, no upload.",
+    h1: "Convert CSV text to proper case",
+    intro:
+      "Sign-up forms and older systems leave you with ANA RUIZ, ben ode and sAN fRANCISCO in the same list, which looks careless in a mail merge, on a shipping label or on an invoice. Upload the file and SpreadsheetFix gives every word a capital first letter and lower-cases the rest, in the columns you choose. It runs in your browser without uploading your list. Normalize Case is a Pro rule.",
+    kind: "cleaner",
+    preset: { ruleIds: ["normalizeCase"], options: { normalizeCase: { caseType: "title" } } },
+    before: `first_name,last_name,city
+ANA,RUIZ,SAN FRANCISCO
+ben,ode,new york
+émile,zola,PARIS
+cARA,lIN,los angeles`,
+    after: `first_name,last_name,city
+Ana,Ruiz,San Francisco
+Ben,Ode,New York
+Émile,Zola,Paris
+Cara,Lin,Los Angeles`,
+    steps: [
+      "Upload the CSV or Excel file. With Pro, Normalize Case opens already set to Title Case.",
+      "Use the column picker to choose the columns to convert (names, cities, product titles) and leave out emails, codes and IDs.",
+      "Preview every changed cell, then download.",
+    ],
+    sections: [
+      {
+        heading: "What Title Case does here",
+        body: "Each word, meaning a run of characters that starts with a letter or digit and ends at the next space, gets an upper-case first letter and the rest in lower case. “SAN FRANCISCO” becomes San Francisco, and accented letters work too, so “émile” becomes Émile. Punctuation inside a word doesn’t start a new word, so JEAN-LUC becomes Jean-luc and O’NEIL becomes O’neil.",
+      },
+      {
+        heading: "Choose columns before you run it",
+        body: "With no columns selected, Normalize Case changes every text column in the file. That would turn ana@acme.io into Ana@acme.io and an invoice number like INV-101 into Inv-101. Open the column picker on the rule and tick only the columns that hold names or titles; everything else is left exactly as it was.",
+      },
+      {
+        heading: "Names that need a second look",
+        body: "Title Case is a rule, not a dictionary. It can’t know that McDonald has a second capital, that van der Berg is often written with lower-case particles, or that IBM should stay in capitals; those come out as Mcdonald, Van Der Berg and Ibm. It gets the bulk of a list right in one pass, and the preview highlights every changed cell so you can spot the few names worth fixing by hand.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I change text to proper case in a CSV?",
+        a: "Upload the file, pick the name or title columns in the Normalize Case column picker, and run it. Every word in those columns starts with a capital and the rest is lower case. This needs Pro.",
+      },
+      {
+        q: "Is this the same as Excel’s PROPER function?",
+        a: "It does a similar job across whole columns at once, without a helper column or a formula to fill down. One difference: PROPER capitalises after any non-letter, giving Jean-Luc and O’Neil, while SpreadsheetFix only starts a new word after a space, giving Jean-luc and O’neil.",
+      },
+      {
+        q: "Will it change numbers or dates?",
+        a: "Digits have no case, so values like 2024-03-01 or 1299.00 come out the same. Codes that mix letters and digits, such as AB-100X, do change, which is another reason to choose your columns first.",
+      },
+      {
+        q: "Is my customer list uploaded?",
+        a: "No. The conversion runs in your browser with JavaScript, and names and addresses never leave your computer.",
+      },
+      {
+        q: "Is proper-case conversion free?",
+        a: "No. Normalize Case is a Pro rule (€12/month). Pro also raises the row limit from 5,000 to 500,000 rows per file.",
+      },
+    ],
+    related: ["trim-whitespace-csv", "format-phone-numbers-csv", "clean-csv-headers"],
+  },
+  {
+    slug: "remove-blank-rows-csv",
+    name: "Remove Blank Rows",
+    metaTitle: "Remove Blank Rows and Empty Columns from a CSV — Free",
+    metaDescription:
+      "Delete empty rows and columns from a CSV or Excel file, including rows that only hold spaces or commas. Free, instant and runs in your browser, no upload.",
+    h1: "Remove blank rows and empty columns from a CSV",
+    intro:
+      "Exports pick up blank lines between sections, rows of bare commas, and columns that have a header but nothing underneath. They inflate row counts, break formulas that look for the last row and trip up imports that expect every row to hold data. Upload the file and SpreadsheetFix drops every fully empty row and column, free and without uploading anything.",
+    kind: "cleaner",
+    preset: { ruleIds: ["removeEmptyRows", "removeEmptyColumns"] },
+    before: `date,description,amount,notes,
+2024-03-01,Stripe payout,1200.00,,
+,,,,
+2024-03-02,Office rent,-850.00,,
+"   ",,,,
+
+2024-03-04,Card refund,45.90,,`,
+    after: `date,description,amount
+2024-03-01,Stripe payout,1200.00
+2024-03-02,Office rent,-850.00
+2024-03-04,Card refund,45.90`,
+    afterNote: "The 3 blank lines are dropped as the file is read. The notes column and an unnamed column created by the trailing comma are removed because no row has a value in them.",
+    steps: [
+      "Upload your CSV, TSV or Excel file.",
+      "SpreadsheetFix removes rows where every cell is empty or only whitespace, and columns where no row has a value, including unnamed columns left by trailing commas.",
+      "Check the result in the preview, then download the compacted file.",
+    ],
+    sections: [
+      {
+        heading: "What counts as empty",
+        body: "A row is removed only when every cell in it is blank or holds nothing but spaces or tabs. A row with a single value, such as a lone date or a stray “x”, is kept because it may still matter. Columns get the same test: a column is dropped only when no row has a value in it, even if it has a header.",
+      },
+      {
+        heading: "Where blank rows and columns come from",
+        body: "Accounting and banking exports often insert empty lines between sections or after a totals block. Excel can save trailing commas when cells beyond your data were once edited or formatted, which creates unnamed columns, and clearing rows instead of deleting them leaves rows of empty cells behind. You don’t see any of this in a spreadsheet grid, but it shows up as phantom rows and Column1, Column2 fields in imports and Power Query.",
+      },
+      {
+        heading: "Partly empty rows are a different problem",
+        body: "A row that is missing one important value, such as an invoice with no amount or a contact with no email, isn’t blank, so it stays. To catch those, use Find Missing Values, which flags rows with gaps in the columns you say are required.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I delete blank rows in a CSV file?",
+        a: "Drop the file into the box above. Fully empty rows and empty columns are removed automatically, and you download the cleaned CSV. There are no formulas, filters or sorting involved.",
+      },
+      {
+        q: "Will it delete rows that are only partly empty?",
+        a: "No. A row is only removed when every cell is blank. Rows with at least one value stay exactly as they are.",
+      },
+      {
+        q: "Does it remove empty columns that have a header?",
+        a: "Yes. If a column has a header but no values in any row, it’s removed. Columns with even one value are kept.",
+      },
+      {
+        q: "Is this quicker than filtering for blanks in Excel?",
+        a: "In Excel you filter for blanks, select the visible rows and delete them, then deal with empty columns separately, and a cell holding a single space doesn’t count as blank there. Here it’s one step, and whitespace-only cells count as empty.",
+      },
+      {
+        q: "Is it free?",
+        a: "Yes. Removing blank rows and empty columns is free for files up to 5,000 rows, with no account. Pro raises the limit to 500,000 rows.",
+      },
+    ],
+    related: ["trim-whitespace-csv", "remove-duplicates-csv", "find-missing-values-csv"],
+  },
+  {
+    slug: "remove-html-tags-csv",
+    name: "Remove HTML Tags",
+    metaTitle: "Remove HTML Tags from a CSV — Strip HTML Online",
+    metaDescription:
+      "Strip <p>, <br>, <b> and other HTML tags from product descriptions and CMS exports, leaving plain text. Runs in your browser; your file isn’t uploaded.",
+    h1: "Remove HTML tags from a CSV",
+    intro:
+      "Shopify, WooCommerce and most CMS exports store descriptions as HTML, so a CSV meant for a marketplace feed, a spreadsheet review or a translator arrives full of <p>, <br/> and <span class=…>. Upload it and SpreadsheetFix strips the tags and keeps the text, entirely in your browser. Strip HTML is a Pro rule.",
+    kind: "cleaner",
+    preset: { ruleIds: ["stripHtml", "trimWhitespace"] },
+    before: `sku,title,description
+A-100,<b>Desk Lamp</b>,"<p>Adjustable arm, <em>warm</em> LED.</p>"
+A-101,Floor Lamp,"<p>Linen shade,<br/> oak base.</p>"
+A-102,"<span class=""new"">Wall Light</span>",Brass finish and matte glass`,
+    after: `sku,title,description
+A-100,Desk Lamp,"Adjustable arm, warm LED."
+A-101,Floor Lamp,"Linen shade, oak base."
+A-102,Wall Light,Brass finish and matte glass`,
+    steps: [
+      "Upload the product or content export as CSV or Excel. With Pro, Strip HTML is switched on for you.",
+      "If some columns should keep their markup, use the column picker to apply Strip HTML only to the description fields.",
+      "Preview the plain-text result and download it.",
+    ],
+    sections: [
+      {
+        heading: "What gets removed",
+        body: "Anything from a < to the next > is treated as a tag and removed: opening and closing tags, self-closing tags like <br/>, and tags with attributes such as <span class=\"new\">. The text between the tags is kept, and spaces at the start and end of each cell are trimmed, so “<p>Linen shade,<br/> oak base.</p>” becomes “Linen shade, oak base.”",
+      },
+      {
+        heading: "What it doesn’t do",
+        body: "HTML entities aren’t decoded, so &amp; and &nbsp; stay as written. Tags are removed rather than replaced with spaces, so <p>One.</p><p>Two.</p> becomes One.Two. with nothing in between. And a literal less-than sign followed later by a greater-than sign, as in “size < 10 and > 5”, is also read as a tag. Check descriptions like these in the preview before you export.",
+      },
+      {
+        heading: "Limit it to the HTML columns",
+        body: "By default every text column is cleaned. If a column should keep its angle brackets, such as code snippets or email templates you want to keep as HTML, use the column picker to apply Strip HTML only to the fields that need it.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I remove HTML tags from a CSV file?",
+        a: "Upload the CSV above and run Strip HTML. Every tag is removed from the cells, the text is kept, and you download a plain-text CSV. Strip HTML is part of Pro.",
+      },
+      {
+        q: "Can I do this in Excel instead?",
+        a: "Excel’s Find and Replace with the wildcard <*> also removes tags, but it changes cells without showing you what it did, and it’s easy to run on the wrong columns of a large sheet. Here you see every changed cell in a preview before anything is downloaded.",
+      },
+      {
+        q: "Are HTML entities like &amp; converted?",
+        a: "No. Entities are left as they are. If your export uses them, replace the common ones (&amp;, &nbsp;, &quot;) after cleaning.",
+      },
+      {
+        q: "Is my product catalogue uploaded?",
+        a: "No. The file is parsed and cleaned in your browser, and nothing is sent to a server.",
+      },
+      {
+        q: "Is Strip HTML free?",
+        a: "No, Strip HTML is a Pro rule (€12/month). Free users can still trim whitespace, remove duplicates and fix encoding on files up to 5,000 rows.",
+      },
+    ],
+    related: ["fix-csv-encoding", "trim-whitespace-csv", "proper-case-csv"],
+  },
+  {
+    slug: "clean-csv-headers",
+    name: "Clean Column Headers",
+    metaTitle: "Clean CSV Column Headers — Convert to snake_case Online",
+    metaDescription:
+      "Turn headers like “Customer ID”, “E-mail Address” and “Amount (EUR)” into clean snake_case names for SQL, pandas and imports. Free, runs in your browser.",
+    h1: "Clean up CSV column headers",
+    intro:
+      "Headers written for people, like “Customer ID ”, “E-mail Address” or “Amount (EUR)”, are awkward for software. Spaces and brackets have to be quoted in SQL, break attribute access in pandas and confuse import mappers. Upload a file and SpreadsheetFix rewrites every header as lower-case snake_case, free and without uploading your data.",
+    kind: "cleaner",
+    preset: { ruleIds: ["normalizeHeaders"] },
+    before: `Customer ID ,First Name,E-mail Address,Amount (EUR),Sign-up Date
+1001,Ana,ana@acme.io,120.00,2024-03-01
+1002,Ben,ben@acme.io,85.50,2024-03-04`,
+    after: `customer_id,first_name,e_mail_address,amount_eur,sign_up_date
+1001,Ana,ana@acme.io,120.00,2024-03-01
+1002,Ben,ben@acme.io,85.50,2024-03-04`,
+    steps: [
+      "Upload the CSV or Excel file whose headers need tidying.",
+      "SpreadsheetFix trims each header, lower-cases it, turns spaces and hyphens into underscores and drops other punctuation.",
+      "Check the new names in the preview and download. The data underneath is unchanged.",
+    ],
+    sections: [
+      {
+        heading: "The rules it applies",
+        body: "Every header is trimmed and lower-cased, and each run of spaces or hyphens becomes a single underscore. Any remaining character that isn’t a–z, 0–9 or an underscore is removed, so brackets, slashes, # and % disappear: “Amount (EUR)” becomes amount_eur and “Sign-up Date” becomes sign_up_date. A header that ends up empty, such as one made only of symbols, is named column_ followed by its position, counting from 0.",
+      },
+      {
+        heading: "Why snake_case",
+        body: "Lower-case names with underscores work unquoted in PostgreSQL, MySQL and SQLite, as attribute names in pandas (df.amount_eur), and as keys in JSON and most import tools. They also make column names predictable, so a script written against one month’s export keeps working on the next, even if someone added a trailing space or changed the capitalisation.",
+      },
+      {
+        heading: "Accents and symbols are dropped, not translated",
+        body: "Characters outside a–z are removed rather than converted, so “Prénom” becomes prnom and “Größe” becomes gre. If your headers use accented letters, check the preview and rename those columns by hand after cleaning.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I clean column names in a CSV?",
+        a: "Upload the file above. Every header is rewritten as lower-case snake_case and you download the CSV with the new header row. Data rows aren’t touched.",
+      },
+      {
+        q: "Can I choose camelCase or kebab-case instead?",
+        a: "Not at the moment. The app always uses snake_case (customer_id), the most widely accepted style for databases and data tools.",
+      },
+      {
+        q: "What if two headers end up with the same name?",
+        a: "Rename one of them before cleaning. If “Price” and “PRICE” both become price, the column further to the right replaces the other one in the cleaned file.",
+      },
+      {
+        q: "Does it change my data?",
+        a: "No. Only the header row changes; every value stays in its column. Header cleaning runs after the other rules, so column choices you made on the original header names still apply.",
+      },
+      {
+        q: "Is header cleaning free?",
+        a: "Yes. Normalize Headers is a free rule for files up to 5,000 rows, with no account needed.",
+      },
+    ],
+    related: ["merge-csv-files", "csv-to-excel-cleaner", "remove-blank-rows-csv"],
+  },
+  {
+    slug: "find-missing-values-csv",
+    name: "Find Missing Values",
+    metaTitle: "Find Missing Values in a CSV — Flag Blank Required Fields",
+    metaDescription:
+      "Flag every row with a blank email, amount or ID before you import a CSV. Choose the required columns and review the flagged rows. Runs in your browser.",
+    h1: "Find rows with missing values in a CSV",
+    intro:
+      "An import that fails on row 4,182 because one invoice has no amount is a slow way to find gaps. Upload the file, tell SpreadsheetFix which columns must always be filled in, and it flags every row with a blank in any of them, so you can fix them before the import rather than after. The check runs in your browser without uploading the file. Validate Required is a Pro rule.",
+    kind: "cleaner",
+    preset: { ruleIds: ["validateRequired", "removeEmptyRows"] },
+    before: `invoice,customer,email,amount
+INV-101,Acme Ltd,ap@acme.io,1200.00
+INV-102,Birch & Co,,640.00
+INV-103,Cobalt GmbH,billing@cobalt.de,
+INV-104,Dune LLC,ops@dune.io,310.00
+INV-105,Elm Studio,,`,
+    after: `invoice,customer,email,amount,reason
+INV-102,Birch & Co,,640.00,Missing required: email
+INV-103,Cobalt GmbH,billing@cobalt.de,,Missing required: amount
+INV-105,Elm Studio,,,"Missing required: email, amount"`,
+    afterView: "flagged",
+    afterNote: "With email and amount ticked as required. Flagged rows also stay in the cleaned file.",
+    steps: [
+      "Upload the CSV or Excel file you’re about to import.",
+      "Open the column picker on Validate Required and tick the columns that must never be blank. Until you pick at least one, the rule has nothing to check.",
+      "Run it, review the flagged rows, and download the cleaned file plus a quarantine CSV listing each flagged row and what it’s missing.",
+    ],
+    sections: [
+      {
+        heading: "You decide what “required” means",
+        body: "A blank notes field or a missing phone number may be fine; a missing invoice number or amount is not. Validate Required only checks the columns you select, and flags a row when any of them is empty or contains only spaces. Each flagged row records which columns were missing, for example “Missing required: email, amount”.",
+      },
+      {
+        heading: "Flagged, not deleted",
+        body: "Rows with gaps aren’t removed. They stay in the cleaned file in their original order and are also collected in a quarantine file with the reason, so you can fill in the blanks or drop the rows deliberately. Fully empty rows are different: they hold no data at all, so SpreadsheetFix removes them before checking, and they don’t show up as hundreds of false alarms.",
+      },
+      {
+        heading: "Check before the import, not after",
+        body: "Accounting tools, CRMs and e-commerce platforms usually reject an import at the first bad row, or accept it and leave empty fields that surface weeks later. Running the check first gives you the full list of incomplete rows at once, which is much quicker to work through than one error message at a time.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I find blank cells in a CSV?",
+        a: "Upload the file above, select the columns that must be filled in on the Validate Required rule, and run it. Every row with a blank in those columns is flagged and listed with the columns it’s missing.",
+      },
+      {
+        q: "Does a cell with only spaces count as missing?",
+        a: "Yes. A value made only of spaces or tabs is treated as blank.",
+      },
+      {
+        q: "Why was nothing flagged?",
+        a: "Validate Required only checks the columns you pick. If its column picker still shows “All columns”, no column has been chosen, so tick at least one column and run it again.",
+      },
+      {
+        q: "Are rows with missing values deleted?",
+        a: "No. They stay in the cleaned file and are also listed in a separate quarantine CSV you can download, so nothing disappears without you deciding.",
+      },
+      {
+        q: "Is it free?",
+        a: "Validate Required is a Pro rule (€12/month). Free users can still remove fully blank rows and validate email addresses on files up to 5,000 rows.",
+      },
+    ],
+    related: ["remove-blank-rows-csv", "validate-emails-csv", "format-phone-numbers-csv"],
   },
 ];
 
 export const TOOL_MAP = new Map(TOOLS.map((t) => [t.slug, t]));
+
+/** True when a page's preset includes a rule that only Pro unlocks. */
+export function toolNeedsPro(tool: ToolPage): boolean {
+  return tool.preset?.ruleIds.some((id) => !FREE_RULES.includes(id)) ?? false;
+}

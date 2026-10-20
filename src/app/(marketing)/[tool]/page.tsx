@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ALL_RULES } from "@/lib/engine/rules";
-import { TOOLS, TOOL_MAP } from "@/content/tools";
+import { TOOLS, TOOL_MAP, toolNeedsPro } from "@/content/tools";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
@@ -44,6 +44,7 @@ export default async function ToolPage({ params }: Props) {
 
   const url = absoluteUrl(`/${tool.slug}`);
   const related = tool.related.map((s) => TOOL_MAP.get(s)).filter((t) => t !== undefined);
+  const needsPro = toolNeedsPro(tool);
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink relative overflow-x-hidden">
@@ -93,7 +94,11 @@ export default async function ToolPage({ params }: Props) {
           <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em] max-w-[820px]">{tool.h1}</h1>
           <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[680px]">{tool.intro}</p>
           <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm">
-            <div><dt className="text-ink-muted">Free up to</dt><dd className="mt-0.5 font-medium">5,000 rows</dd></div>
+            {needsPro ? (
+              <div><dt className="text-ink-muted">Plan</dt><dd className="mt-0.5 font-medium">Pro rule</dd></div>
+            ) : (
+              <div><dt className="text-ink-muted">Free up to</dt><dd className="mt-0.5 font-medium">5,000 rows</dd></div>
+            )}
             <div><dt className="text-ink-muted">Account</dt><dd className="mt-0.5 font-medium">Not required</dd></div>
             <div><dt className="text-ink-muted">Upload</dt><dd className="mt-0.5 font-medium">None</dd></div>
           </dl>
@@ -112,8 +117,11 @@ export default async function ToolPage({ params }: Props) {
                 <pre className="font-data text-xs sm:text-sm text-ink-body whitespace-pre overflow-x-auto leading-relaxed">{tool.before}</pre>
               </figure>
               <figure className="m-0 rounded-lg border border-rule bg-paper p-5">
-                <figcaption className="text-[13px] font-medium text-accent mb-3">After</figcaption>
+                <figcaption className="text-[13px] font-medium text-accent mb-3">
+                  {tool.afterView === "flagged" ? "Flagged for review" : "After"}
+                </figcaption>
                 <pre className="font-data text-xs sm:text-sm text-accent whitespace-pre overflow-x-auto leading-relaxed">{tool.after}</pre>
+                {tool.afterNote && <p className="mt-3 text-[13px] leading-relaxed text-ink-muted">{tool.afterNote}</p>}
               </figure>
             </div>
           </div>

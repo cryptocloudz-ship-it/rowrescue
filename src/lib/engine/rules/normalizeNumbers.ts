@@ -2,8 +2,9 @@ import type { Row, CleanResult, CellChange } from "@/types/sheet";
 import type { RuleOptions, NormalizeNumbersOptions } from "@/types/rules";
 
 const CURRENCY_REGEX = /[$€£¥₹₽₩₪]/g;
-const THOUSANDS_DOT = /(\d)\.(\d{3}(?:[.,]|$))/g;
-const THOUSANDS_COMMA = /(\d),(\d{3}(?:[.,]|$))/g;
+// No /g flag: these are only used with .test(), and a global regex carries lastIndex between cells.
+const THOUSANDS_DOT = /(\d)\.(\d{3}(?:[.,]|$))/;
+const THOUSANDS_COMMA = /(\d),(\d{3}(?:[.,]|$))/;
 
 export function normalizeNumbers(
   rows: Row[],
