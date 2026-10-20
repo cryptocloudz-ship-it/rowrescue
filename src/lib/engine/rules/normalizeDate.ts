@@ -95,7 +95,7 @@ export function normalizeDate(
   const opts = { targetFormat: "YYYY-MM-DD", ...options } as NormalizeDateOptions;
   const changes: CellChange[] = [];
   const now = Date.now();
-  const targetColumns = opts.columns;
+  const targetColumns = opts.columns?.length ? opts.columns : undefined; // [] is the picker's "All columns"
   const requestedOrder = opts.dateOrder ?? "auto";
 
   const columnOrder = new Map<string, DateOrder>();

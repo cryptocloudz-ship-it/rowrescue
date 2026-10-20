@@ -13,7 +13,7 @@ export function trimWhitespace(
   const opts = options as TrimWhitespaceOptions;
   const changes: CellChange[] = [];
   const now = Date.now();
-  const targetColumns = opts.columns;
+  const targetColumns = opts.columns?.length ? opts.columns : undefined; // [] is the picker's "All columns"
 
   const newRows = rows.map((row, rowIndex) => {
     const newRow: Row = {};

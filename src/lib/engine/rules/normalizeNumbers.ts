@@ -13,7 +13,7 @@ export function normalizeNumbers(
   const opts = { decimalSeparator: "." as const, removeCurrency: true, ...options } as NormalizeNumbersOptions;
   const changes: CellChange[] = [];
   const now = Date.now();
-  const targetColumns = opts.columns;
+  const targetColumns = opts.columns?.length ? opts.columns : undefined; // [] is the picker's "All columns"
 
   const newRows = rows.map((row, rowIndex) => {
     const newRow: Row = { ...row };

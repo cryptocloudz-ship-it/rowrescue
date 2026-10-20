@@ -17,6 +17,7 @@ import { validateRequired } from "../validateRequired";
 import { validateRange } from "../validateRange";
 import { renameColumns } from "../renameColumns";
 import { reorderColumns } from "../reorderColumns";
+import { fixEncoding } from "../fixEncoding";
 
 // ─── trimWhitespace ──────────────────────────────────────────────────────────
 
@@ -52,6 +53,11 @@ describe("trimWhitespace", () => {
     const rows = [{ name: "Alice" }];
     const result = trimWhitespace(rows);
     expect(result.changes).toHaveLength(0);
+  });
+
+  it("trims every column when the picker is on All columns", () => {
+    const result = trimWhitespace([{ name: "  Alice  " }], { columns: [] });
+    expect(result.rows[0].name).toBe("Alice");
   });
 });
 
@@ -258,6 +264,13 @@ describe("validateEmail", () => {
     expect(result.rows).toHaveLength(1);
     expect(result.stats.rowsRemoved).toBe(0);
   });
+
+  it("auto-detects email columns when the picker is on All columns", () => {
+    const rows = [{ email: "not-an-email", notes: "not-an-email" }];
+    const result = validateEmail(rows, { columns: [] });
+    expect(result.changes.map((c) => c.column)).toEqual(["email"]);
+    expect(result.quarantined).toHaveLength(1);
+  });
 });
 
 // ─── stripHtml ───────────────────────────────────────────────────────────────
@@ -293,6 +306,11 @@ describe("stripHtml", () => {
     const rows = [{ name: "Alice" }];
     const result = stripHtml(rows);
     expect(result.changes).toHaveLength(0);
+  });
+
+  it("strips every column when the picker is on All columns", () => {
+    const result = stripHtml([{ bio: "<p>Hello</p>" }], { columns: [] });
+    expect(result.rows[0].bio).toBe("Hello");
   });
 });
 
@@ -337,6 +355,11 @@ describe("normalizeDate", () => {
     const rows = [{ date: "2023-01-15" }];
     const result = normalizeDate(rows, { columns: ["date"] });
     expect(result.changes).toHaveLength(0);
+  });
+
+  it("normalizes every column when the picker is on All columns", () => {
+    const result = normalizeDate([{ date: "January 15, 2023" }], { columns: [] });
+    expect(result.rows[0].date).toBe("2023-01-15");
   });
 });
 
@@ -385,6 +408,11 @@ describe("normalizeNumbers", () => {
     const rows = [{ price: "1.234,50", total: "2.469,00" }, { price: "3.100,00", total: "6.200,00" }];
     const result = normalizeNumbers(rows);
     expect(result.rows).toEqual([{ price: "1234.50", total: "2469.00" }, { price: "3100.00", total: "6200.00" }]);
+  });
+
+  it("normalizes every column when the picker is on All columns", () => {
+    const result = normalizeNumbers([{ price: "$1,234.56" }], { columns: [] });
+    expect(result.rows[0].price).toBe("1234.56");
   });
 });
 
@@ -472,6 +500,11 @@ describe("normalizeEmail", () => {
     expect(result.rows[0].email).toBe("a@b.com");
     expect(result.rows[0].backup).toBe("C@D.COM");
   });
+
+  it("normalizes every column when the picker is on All columns", () => {
+    const result = normalizeEmail([{ email: "Alice@Example.COM" }], { columns: [] });
+    expect(result.rows[0].email).toBe("alice@example.com");
+  });
 });
 
 // ─── normalizeCase ───────────────────────────────────────────────────────────
@@ -512,6 +545,11 @@ describe("normalizeCase", () => {
     const rows = [{ name: "émile ZOLA", city: "östersund" }];
     const result = normalizeCase(rows, { caseType: "title" });
     expect(result.rows[0]).toEqual({ name: "Émile Zola", city: "Östersund" });
+  });
+
+  it("changes every column when the picker is on All columns", () => {
+    const result = normalizeCase([{ name: "ALICE" }], { columns: [] });
+    expect(result.rows[0].name).toBe("alice");
   });
 });
 
@@ -718,5 +756,14 @@ describe("reorderColumns", () => {
     const result = reorderColumns(rows, { order: ["z", "a", "b"] });
     const keys = Object.keys(result.rows[0]);
     expect(keys).toEqual(["a", "b"]);
+  });
+});
+
+// ─── fixEncoding ─────────────────────────────────────────────────────────────
+
+describe("fixEncoding", () => {
+  it("repairs every column when the picker is on All columns", () => {
+    const result = fixEncoding([{ city: "CafÃ©" }], { columns: [] });
+    expect(result.rows[0].city).toBe("Café");
   });
 });
