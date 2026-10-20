@@ -37,7 +37,13 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
   that record or verification lapses. `/sitemap.xml` submitted 2026-10-19: status Success, 13 URLs.
 - **Clerk**: production instance on `spreadsheetfix.com` (all records verified), application name
   "SpreadsheetFix" (renamed from "TidySheet"). Live keys are in Vercel production env.
-- **Stripe**: Vercel Marketplace sandbox `rowrescue-payments` (test mode, unclaimed).
+- **Stripe live** (created 2026-10-20, account acct_1USZZrDEmZ9GYoP4): a normal Stripe account, not the
+  Marketplace sandbox (its claim link kept returning "This claim is invalid"). Production only reads
+  `STRIPE_LIVE_SECRET_KEY` (restricted `rk_live_` key) and `STRIPE_LIVE_WEBHOOK_SECRET`, both sensitive,
+  which take precedence over the `RR_` sandbox vars. Live webhook `we_1USa5gDEmZ9GYoP4Tlc4IsM8`. Production
+  `NEXT_PUBLIC_STRIPE_*_PRICE_ID` point at the live prices; preview/development still use test prices.
+  Rerun setup with `zsh` + `read -rs` (see `scripts/stripe-setup.mjs` header); the CLI can't read sensitive vars.
+- **Stripe test**: Vercel Marketplace sandbox `rowrescue-payments` (test mode, unclaimed), used by preview/dev.
   Keys are `RR_`-prefixed env vars. Products "SpreadsheetFix Pro" and "SpreadsheetFix Team" with
   monthly/yearly EUR prices (price IDs in `NEXT_PUBLIC_STRIPE_*_PRICE_ID`). Webhook
   `we_1UPpiRAMuW35ARQqVsgV8zXK` → `https://spreadsheetfix.com/api/stripe/webhook`,
@@ -49,9 +55,10 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
 
 ## Next steps
 
-- Before taking real money: `vercel integration resource claim rowrescue-payments`, rerun
-  `scripts/stripe-setup.mjs --live` with live keys, and enable Stripe Tax if VAT-registered.
-  Also rerun `scripts/stripe-setup.mjs` against the test sandbox so its existing webhook subscribes to
+- Enable Stripe Tax (and `automatic_tax` in checkout) once VAT-registered.
+- Users who bought Pro in test mode keep test customer IDs, which the live key can't open (billing
+  portal will error); reset them to free or clear their Stripe IDs.
+- Rerun `scripts/stripe-setup.mjs` against the test sandbox so its existing webhook subscribes to
   the refund/dispute/fraud events, then try them with `stripe trigger charge.dispute.created` etc.
 - Housekeeping: re-add the older Stripe/Clerk secrets as "sensitive" in Vercel; revoke the deployment
   protection bypass token if unused; decide whether to rename the GitHub repo and Vercel project; the old Letshost DNS zone for rowrescue.com is unused.
