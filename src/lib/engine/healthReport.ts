@@ -9,6 +9,7 @@ import type { Row, HealthIssue, HealthReport, Severity } from "@/types/sheet";
 import { repairMojibake } from "./rules/fixEncoding";
 import { collapseWhitespace } from "./rules/trimWhitespace";
 import { normalizeNumbers } from "./rules/normalizeNumbers";
+import { normalizeDate } from "./rules/normalizeDate";
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/;
 const PHONE_REGEX = /^[+]?[\d\s\-().]{7,20}$/;
@@ -157,7 +158,7 @@ function checkDateInconsistencies(rows: Row[], headers: string[], issues: Health
   const dateColumns = headers.filter((h) => /date|time|created|updated|born|dob/i.test(h));
   if (dateColumns.length === 0) return;
 
-  let inconsistentCount = 0;
+  const flagged: string[] = [];
   const examples: string[] = [];
 
   for (const col of dateColumns) {
@@ -172,22 +173,25 @@ function checkDateInconsistencies(rows: Row[], headers: string[], issues: Health
       else if (/^[A-Za-z]/.test(val)) formats.add("Text");
     }
     if (formats.size > 1) {
-      inconsistentCount++;
+      flagged.push(col);
       if (examples.length < 3) {
         examples.push(`"${col}" has mixed formats: ${[...formats].join(", ")}`);
       }
     }
   }
+  if (flagged.length === 0) return;
 
-  if (inconsistentCount > 0) {
+  // Count the cells Normalize Dates would change, so issue counts are in cells like the other checks
+  const count = normalizeDate(rows, { targetFormat: "YYYY-MM-DD", columns: flagged }).changes.length;
+  if (count > 0) {
     pushIssue(issues, {
       type: "date_inconsistency",
       severity: "HIGH",
       title: "Date Format Inconsistencies",
-      description: `${inconsistentCount} date column${inconsistentCount > 1 ? "s have" : " has"} mixed formats.`,
-      count: inconsistentCount,
+      description: `${count} date${count > 1 ? "s" : ""} in ${flagged.length} column${flagged.length > 1 ? "s" : ""} use a different format from the rest.`,
+      count,
       examples,
-      affectedColumns: dateColumns,
+      affectedColumns: flagged,
     });
   }
 }

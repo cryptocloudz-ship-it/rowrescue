@@ -1,3 +1,9 @@
+import type { Row } from "@/types/sheet";
+import { generateHealthReport } from "@/lib/engine/healthReport";
+import { autoEnableRules, defaultRuleConfigs } from "@/lib/engine/issueRules";
+import { runEngine } from "@/lib/engine/ruleEngine";
+import { reconcile, type Reconciliation } from "@/lib/engine/reconcile";
+
 // The example file shown in the homepage hero. src/content/__tests__/heroSample.test.ts runs it
 // through the real import → auto-enable → clean flow, so the hero can't claim more than the app does.
 
@@ -56,4 +62,18 @@ export function heroCsv(): string {
   const quote = (v: string) => (/[",\n]/.test(v) ? `"${v.replace(/"/g, '""')}"` : v);
   const lines = HERO_ROWS.map((row) => HERO_COLUMNS.map((c) => quote(cellBefore(row[c]))).join(","));
   return [HERO_COLUMNS.join(","), ...lines].join("\n");
+}
+
+/** The hero file as parsed rows. */
+export function heroRows(): Row[] {
+  return HERO_ROWS.map((row) => Object.fromEntries(HERO_COLUMNS.map((c) => [c, cellBefore(row[c])])));
+}
+
+/** The totals check the cleaner shows for the hero file, run through the real engine. */
+export function heroTotals(isPro = true): Reconciliation {
+  const rows = heroRows();
+  const headers = [...HERO_COLUMNS];
+  const configs = autoEnableRules(defaultRuleConfigs(), generateHealthReport(rows, headers), isPro, null);
+  const result = runEngine(rows, configs);
+  return reconcile(rows, result.cleanedRows, result.snapshots, headers);
 }
