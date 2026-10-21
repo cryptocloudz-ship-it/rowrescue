@@ -2,14 +2,20 @@
 export const SITE_URL = "https://spreadsheetfix.com";
 export const SITE_NAME = "SpreadsheetFix";
 export const SUPPORT_EMAIL = "support@spreadsheetfix.com";
-export const SITE_TITLE = "SpreadsheetFix — Clean Messy CSVs in Seconds";
+/** Homepage title: keyword first, brand comes from og:site_name and the WebSite JSON-LD. Keep ≤60 chars. */
+export const SITE_TITLE = "CSV Cleaner for Bank & Transaction Exports — Free & Private";
+/** Keep ≤160 chars */
 export const SITE_DESCRIPTION =
-  "Remove duplicates, fix formatting, normalize dates, validate emails — all without uploading your data. Privacy-first spreadsheet cleaning, 100% client-side.";
+  "Clean CSV and Excel bank exports without uploading them: remove duplicates, fix dates and amounts, then check the totals still match. Free to start.";
+/** Shorter line for social cards */
+export const SOCIAL_DESCRIPTION = "A CSV and Excel cleaner for bank and transaction exports. Runs in your browser; nothing is uploaded.";
+/** Square logo for Organization JSON-LD (served by src/app/logo.png/route.tsx) */
+export const LOGO_PATH = "/logo.png";
 
 /** Base Open Graph tags. Next replaces (not merges) openGraph per page, so pages spread this in. */
 export const DEFAULT_OPEN_GRAPH = {
   title: SITE_TITLE,
-  description: "Privacy-first spreadsheet cleaning. 100% client-side data processing.",
+  description: SOCIAL_DESCRIPTION,
   siteName: SITE_NAME,
   type: "website" as const,
   locale: "en",
@@ -18,7 +24,7 @@ export const DEFAULT_OPEN_GRAPH = {
       url: "/og-image.png",
       width: 1200,
       height: 630,
-      alt: `${SITE_NAME} — Clean messy spreadsheets in seconds`,
+      alt: `${SITE_NAME} — clean transaction exports before they reach your books`,
     },
   ],
 };

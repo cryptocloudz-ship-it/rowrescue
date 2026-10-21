@@ -4,7 +4,7 @@ import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { UtmCapture } from "@/components/ui/UtmCapture";
 import { ConsentedAnalytics } from "@/components/ui/ConsentedAnalytics";
-import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH } from "@/config/site";
+import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SOCIAL_DESCRIPTION, DEFAULT_OPEN_GRAPH } from "@/config/site";
 import "./globals.css";
 
 // Self-hosted by next/font, so the CSP needs no Google Fonts allowance (see DESIGN.md)
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: SITE_TITLE,
-    description: "Privacy-first spreadsheet cleaning. 100% client-side data processing.",
+    description: SOCIAL_DESCRIPTION,
     images: ["/og-image.png"],
   },
 };

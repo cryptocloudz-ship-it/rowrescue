@@ -53,8 +53,8 @@ export function HomeHero() {
             Clean transaction exports before they reach your books.
           </h1>
           <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[500px]">
-            Dates, amounts, duplicates and spacing, standardised in your browser. Review every
-            change before you export.
+            A CSV and spreadsheet cleaner for bank and card exports. Dates, amounts, duplicates
+            and spacing, standardised in your browser. Review every change before you export.
           </p>
 
           <label

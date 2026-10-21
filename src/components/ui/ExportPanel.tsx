@@ -78,8 +78,8 @@ export function ExportPanel() {
       const res = await fetch("/api/entitlements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        // Only what plan limits need; the file name stays in the browser (see the privacy policy)
         body: JSON.stringify({
-          fileName: parsedSheet.fileName,
           rowCount: cleanedRows.length,
           rulesApplied: appliedRules,
         }),

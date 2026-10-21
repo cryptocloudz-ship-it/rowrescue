@@ -53,7 +53,17 @@ were confirmed working on 2026-10-14. Payments are still Stripe **test mode**, s
   fraud warning also refunds the charge (reason `fraudulent`). Partial refunds leave the plan alone.
   Dispute evidence is handled in the Stripe Dashboard.
 
+- **IndexNow** (Bing, Yandex, Seznam, Naver): key file `public/4f73d82c029d13b8e4e0da14cf738847.txt`.
+  After a production deploy that adds or changes pages, run `node scripts/indexnow.mjs` (use `--dry-run`
+  first to see the URL list). It reads the live sitemap, so never run it for a preview build.
+- **llms.txt**: `/llms.txt` is generated from `src/content/tools.ts` and `src/config/plans.ts` (`src/lib/seo/llmsTxt.ts`).
+- **Sitemap dates**: `lastModified` comes from the `UPDATED` dates in `src/app/sitemap.ts` and `TOOLS_UPDATED`
+  (or a page's own `updated`) in `src/content/tools.ts`. Bump them when page copy changes.
+
 ## Next steps
+
+- **Bing Webmaster Tools** (owner, manual): sign in at bing.com/webmasters and use "Import from Google Search
+  Console" to add spreadsheetfix.com with its sitemap, then run `node scripts/indexnow.mjs` once.
 
 - Enable Stripe Tax (and `automatic_tax` in checkout) once VAT-registered.
 - Users who bought Pro in test mode keep test customer IDs, which the live key can't open (billing
