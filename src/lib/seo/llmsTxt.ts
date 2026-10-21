@@ -1,4 +1,5 @@
 import { TOOLS, toolNeedsPro } from "@/content/tools";
+import { GUIDES } from "@/content/guides";
 import { PLANS, FREE_RULES } from "@/config/plans";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { SITE_NAME, SUPPORT_EMAIL, absoluteUrl } from "@/config/site";
@@ -17,6 +18,7 @@ export function buildLlmsTxt(): string {
   const tools = TOOLS.map(
     (t) => `- [${t.name}](${absoluteUrl(`/${t.slug}`)})${toolNeedsPro(t) ? " (Pro)" : ""}: ${t.metaDescription}`
   );
+  const guides = GUIDES.map((g) => `- [${g.h1}](${absoluteUrl(`/guides/${g.slug}`)}): ${g.metaDescription}`);
 
   return [
     `# ${SITE_NAME}`,
@@ -41,10 +43,15 @@ export function buildLlmsTxt(): string {
     "",
     ...tools,
     "",
+    "## Guides",
+    "",
+    ...guides,
+    "",
     "## Main pages",
     "",
     `- [Home](${absoluteUrl("/")}): what the cleaner fixes, where your data goes, and the totals check`,
     `- [All tools](${absoluteUrl("/tools")}): single-purpose cleaning tools`,
+    `- [Guides](${absoluteUrl("/guides")}): causes and fixes for common CSV and Excel problems`,
     `- [Pricing](${absoluteUrl("/pricing")})`,
     "",
     "## Optional",

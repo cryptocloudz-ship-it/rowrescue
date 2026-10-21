@@ -30,6 +30,8 @@ export interface ToolPage {
   sections: { heading: string; body: string }[];
   faqs: ToolFaq[];
   related: string[];
+  /** Problem guides (/guides/<slug>) that use this tool, linked from the page */
+  guides?: string[];
   /** Last meaningful content change (YYYY-MM-DD), for the sitemap. Defaults to TOOLS_UPDATED. */
   updated?: string;
 }
@@ -100,6 +102,7 @@ ben@acme.io,Ben Ode,free`,
       },
     ],
     related: ["trim-whitespace-csv", "validate-emails-csv", "remove-blank-rows-csv"],
+    guides: ["duplicate-transactions-bank-csv"],
   },
   {
     slug: "normalize-dates-csv",
@@ -162,6 +165,7 @@ ben@acme.io,Ben Ode,free`,
       },
     ],
     related: ["convert-comma-decimal-csv", "csv-to-excel-cleaner", "clean-csv-headers"],
+    guides: ["csv-dates-day-month-swapped"],
   },
   {
     slug: "validate-emails-csv",
@@ -283,6 +287,7 @@ A-101,Floor Lamp,white`,
       },
     ],
     related: ["remove-blank-rows-csv", "remove-html-tags-csv", "remove-duplicates-csv"],
+    guides: ["vlookup-na-hidden-spaces"],
   },
   {
     slug: "merge-csv-files",
@@ -463,6 +468,7 @@ Zoë Smith,Zürich,€50 credit`,
       },
     ],
     related: ["remove-html-tags-csv", "csv-to-excel-cleaner", "trim-whitespace-csv"],
+    guides: ["csv-garbled-characters-excel"],
   },
   {
     slug: "format-phone-numbers-csv",
@@ -598,6 +604,7 @@ Eli Park,ask reception`,
       },
     ],
     related: ["normalize-dates-csv", "csv-to-excel-cleaner", "find-missing-values-csv"],
+    guides: ["excel-european-number-format"],
   },
   {
     slug: "proper-case-csv",
