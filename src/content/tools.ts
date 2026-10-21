@@ -158,10 +158,10 @@ ben@acme.io,Ben Ode,free
     name: "Validate Emails",
     metaTitle: "Validate Email Addresses in a CSV — Free Email List Cleaner",
     metaDescription:
-      "Find and quarantine invalid email addresses in a CSV before you import it. Lowercases and trims emails, flags bad formats. Private: runs in your browser.",
+      "Find invalid email addresses in a CSV before you import it. Lowercases and trims emails, flags bad formats. Private: runs in your browser.",
     h1: "Validate and clean email addresses in a CSV",
     intro:
-      "Before you import a list into your CRM or email platform, upload it here. SpreadsheetFix trims and lowercases every address, then moves rows with malformed emails into a separate quarantine so they don’t pollute your import.",
+      "Before you import a list into your CRM or email platform, upload it here. SpreadsheetFix trims and lowercases every address, then flags every row with a malformed email so you can fix or delete it before your import.",
     kind: "cleaner",
     preset: { ruleIds: ["trimWhitespace", "normalizeEmail", "validateEmail", "deduplicateRows"] },
     before: `email,first_name
@@ -171,14 +171,15 @@ kim@example.org,Kim
 sam@example.com,Sam`,
     after: `email,first_name
 sam@example.com,Sam
+lee@example,Lee
 kim@example.org,Kim
 
-# quarantined: lee@example (no domain suffix)
+# flagged: lee@example (no domain suffix)
 # 1 duplicate removed`,
     steps: [
       "Upload the contact list as CSV or Excel. SpreadsheetFix detects email columns automatically.",
       "Addresses are trimmed and lowercased so duplicates match, then checked for a valid format.",
-      "Rows with invalid emails move to quarantine for review; download the clean list.",
+      "Rows with invalid emails are flagged and listed for review. Fix or delete them, then download the clean list.",
     ],
     sections: [
       {
@@ -186,8 +187,8 @@ kim@example.org,Kim
         body: "SpreadsheetFix checks syntax: a local part, a single @, a domain and a top-level domain of at least two letters. That catches typos like “lee@example”, “ana.gmail.com” and stray characters from copy-paste. It does not contact mail servers, so it won’t tell you whether a mailbox exists — that also means no address ever leaves your machine.",
       },
       {
-        heading: "Quarantine instead of delete",
-        body: "Invalid rows aren’t silently thrown away. They’re set aside in a quarantine list so you can fix a typo and keep the contact, or confirm the row should go.",
+        heading: "Flag instead of delete",
+        body: "Invalid rows aren’t silently thrown away. They stay in the file and are listed as flagged, so you can fix a typo and keep the contact, or confirm the row should go.",
       },
       {
         heading: "Lowercase first, then de-duplicate",
@@ -197,7 +198,7 @@ kim@example.org,Kim
     faqs: [
       {
         q: "How do I check if emails in a CSV are valid?",
-        a: "Upload the CSV above. SpreadsheetFix flags every address with an invalid format and moves those rows to a quarantine list you can review before downloading.",
+        a: "Upload the CSV above. SpreadsheetFix flags every address with an invalid format and lists those rows so you can review them before downloading.",
       },
       {
         q: "Does SpreadsheetFix verify that the mailbox exists?",
@@ -454,6 +455,362 @@ Zoë Smith,Zürich,€50 credit`,
       },
     ],
     related: ["csv-to-excel-cleaner", "trim-whitespace-csv", "merge-csv-files"],
+  },
+  {
+    slug: "remove-blank-rows-csv",
+    name: "Remove Blank Rows",
+    metaTitle: "Remove Blank Rows and Empty Columns from a CSV",
+    metaDescription:
+      "Delete empty rows and empty columns from a CSV or Excel file, including rows that only contain spaces. Free, private, runs in your browser.",
+    h1: "Remove blank rows and empty columns from a CSV",
+    intro:
+      "Exports often arrive with spacer rows between sections and trailing columns with no data. Upload the file and SpreadsheetFix removes every row and column that has nothing in it, so sorting, filtering and imports work as expected.",
+    kind: "cleaner",
+    preset: { ruleIds: ["trimWhitespace", "removeEmptyRows", "removeEmptyColumns"] },
+    before: `date,description,amount,,
+2026-09-01,Office rent,1200.00,,
+,,,,
+2026-09-02,Software,49.00,,
+   ,  ,,,`,
+    after: `date,description,amount
+2026-09-01,Office rent,1200.00
+2026-09-02,Software,49.00
+
+# 2 blank rows and 2 empty columns removed`,
+    steps: [
+      "Upload your CSV, TSV or Excel file.",
+      "Whitespace is trimmed first, so a row of cells that only contain spaces counts as blank.",
+      "Rows where every cell is empty and columns with no values are removed. Check the preview, then download.",
+    ],
+    sections: [
+      {
+        heading: "What counts as blank",
+        body: "A row is removed only when every one of its cells is empty after trimming spaces, tabs and non-breaking spaces. A row with a single value in any column is kept. The same test applies to columns: a column is removed only when no row has a value in it.",
+      },
+      {
+        heading: "Why blank rows break things",
+        body: "Excel treats a blank row as the edge of a table, so sorting, filters and pivot tables can silently stop at it. Import tools often reject the file or create empty records. Removing them before the file goes anywhere avoids both problems.",
+      },
+      {
+        heading: "Empty trailing columns",
+        body: "Files saved from spreadsheets frequently carry extra commas at the end of each line, which appear as unnamed empty columns. SpreadsheetFix drops them, so the cleaned file has exactly the columns that hold data.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I delete blank rows from a CSV?",
+        a: "Upload the file above and download the result. Rows where every cell is empty, or only contains spaces, are removed. It's free for files up to 5,000 rows.",
+      },
+      {
+        q: "Will it remove rows that are only partly empty?",
+        a: "No. A row is kept if any of its cells has a value. Only completely empty rows are removed.",
+      },
+      {
+        q: "Does it also remove empty columns?",
+        a: "Yes. Columns with no value in any row are removed, including the unnamed columns created by trailing commas.",
+      },
+      {
+        q: "Is my file uploaded?",
+        a: "No. The file is read and cleaned in your browser. Its contents are never sent to SpreadsheetFix.",
+      },
+    ],
+    related: ["trim-whitespace-csv", "csv-to-excel-cleaner", "remove-duplicates-csv"],
+  },
+  {
+    slug: "clean-csv-headers",
+    name: "Clean Column Headers",
+    metaTitle: "Clean CSV Column Headers — snake_case, kebab-case, camelCase",
+    metaDescription:
+      "Turn messy CSV headers like “ Invoice Date ” and “Amount (EUR)” into consistent column names: snake_case, kebab-case or camelCase. Free and in-browser.",
+    h1: "Clean up CSV column headers",
+    intro:
+      "Headers with spaces, capitals, brackets and stray punctuation make a file awkward to load into a database, a script or Power Query. Upload it here and SpreadsheetFix rewrites every header into one predictable style.",
+    kind: "cleaner",
+    preset: { ruleIds: ["normalizeHeaders"], options: { normalizeHeaders: { style: "lowercase_underscore" } } },
+    before: ` Invoice Date ,Customer Name,Amount (EUR),VAT-Rate
+2026-09-01,Acme Ltd,1200.00,23`,
+    after: `invoice_date,customer_name,amount_eur,vat_rate
+2026-09-01,Acme Ltd,1200.00,23`,
+    steps: [
+      "Upload your CSV or Excel file.",
+      "Choose a header style: lowercase_with_underscores (the default), lowercase-with-dashes or camelCase.",
+      "Check the renamed headers in the preview and download the file. Cell values are not changed.",
+    ],
+    sections: [
+      {
+        heading: "What the rule does to each header",
+        body: "Leading and trailing spaces are removed, the text is lowercased, spaces and separators become the chosen joiner, and characters other than letters and digits are dropped. A header that would end up empty becomes column_1, column_2 and so on, so every column keeps a name.",
+      },
+      {
+        heading: "Why consistent headers matter",
+        body: "SQL databases, pandas, R and most import tools either reject or quietly rewrite column names with spaces and symbols. Fixing them once in the file means your queries and formulas reference the same names every time the export is refreshed.",
+      },
+      {
+        heading: "When not to rename",
+        body: "Some import templates, such as accounting or CRM imports, expect their own exact header names. If you're preparing a file for one of those, leave this rule off and keep the template's headers.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I convert CSV headers to snake_case?",
+        a: "Upload the file above. The default style is lowercase with underscores, so “Invoice Date” becomes invoice_date.",
+      },
+      {
+        q: "Can I use camelCase or kebab-case instead?",
+        a: "Yes. The Normalize Headers rule has a style option with lowercase_underscore, lowercase-dash and camelCase.",
+      },
+      {
+        q: "Does it change the data in the rows?",
+        a: "No. Only the header row is rewritten.",
+      },
+      {
+        q: "Can I rename columns to specific names?",
+        a: "Renaming columns with your own map is a Pro rule. Normalize Headers, which applies one style to every header, is free.",
+      },
+    ],
+    related: ["csv-to-excel-cleaner", "remove-blank-rows-csv", "trim-whitespace-csv"],
+  },
+  {
+    slug: "clean-bank-statement-csv",
+    name: "Clean Bank Statement CSV",
+    metaTitle: "Clean a Bank Statement CSV Export — Private, In-Browser",
+    metaDescription:
+      "Tidy bank statement and card exports: fix dates, garbled payee names, stray spaces and blank rows, with a totals check that proves amounts didn't change.",
+    h1: "Clean a bank statement CSV export",
+    intro:
+      "Bank and card exports mix date formats, carry spacer rows and garble accented payee names. Upload the statement and SpreadsheetFix tidies it in your browser, so transaction data never leaves your computer, then checks that the amount columns still add up to the same totals.",
+    kind: "cleaner",
+    preset: {
+      ruleIds: ["fixEncoding", "trimWhitespace", "removeEmptyRows", "removeEmptyColumns", "normalizeDate"],
+      options: { normalizeDate: { targetFormat: "YYYY-MM-DD", dateOrder: "auto" } },
+    },
+    before: `Date,Description,Amount,Balance
+03/09/2026,  CAFÃ‰ NERO   DUBLIN ,-4.50,1820.10
+,,,
+04/09/2026,Salary  ACME LTD,2400.00,4220.10`,
+    after: `Date,Description,Amount,Balance
+2026-09-03,CAFÉ NERO DUBLIN,-4.50,1820.10
+2026-09-04,Salary ACME LTD,2400.00,4220.10`,
+    steps: [
+      "Download the statement from your bank as CSV or Excel and upload it here.",
+      "SpreadsheetFix repairs garbled characters, trims spacing in descriptions, removes blank rows and converts dates to one format.",
+      "The totals check adds up every amount column before and after cleaning and shows that the figures match to the cent. Then download.",
+    ],
+    sections: [
+      {
+        heading: "Your statement stays on your computer",
+        body: "Statements contain account numbers, balances and a record of where you spend money. SpreadsheetFix parses and cleans the file with JavaScript in your browser tab; the contents are never uploaded, stored or seen by us.",
+      },
+      {
+        heading: "Proof that the numbers didn't change",
+        body: "For columns such as Amount, Debit, Credit and Balance, the totals check sums the values before cleaning, subtracts any rows that were removed, and compares the result with the cleaned file. If a single value changed, it says which column and by how much.",
+      },
+      {
+        heading: "Duplicates are off by default here",
+        body: "Two identical transactions on the same day, such as two coffees at the same price, are legitimate. This page doesn't remove duplicate rows. If your export really does repeat rows, for example after combining overlapping downloads, turn on Remove Duplicates and review each removed row in the preview.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Is it safe to clean a bank statement online?",
+        a: "With SpreadsheetFix the file isn't sent anywhere: cleaning runs in your browser. You can confirm this by opening your browser's developer tools and watching the Network tab while you clean a file.",
+      },
+      {
+        q: "Which date format should I choose?",
+        a: "YYYY-MM-DD sorts correctly everywhere and is what most databases expect. If you're importing into accounting software, use the format its import template asks for; DD/MM/YYYY and MM/DD/YYYY are also available.",
+      },
+      {
+        q: "Will it change my amounts?",
+        a: "The rules on this page don't touch amount values. The totals check confirms that by comparing column totals before and after cleaning.",
+      },
+      {
+        q: "Can I combine several months of statements?",
+        a: "Yes. Use the Merge CSV Files tool to stack monthly exports into one file, then clean the result.",
+      },
+    ],
+    related: ["normalize-dates-csv", "merge-csv-files", "prepare-csv-for-accounting-import"],
+  },
+  {
+    slug: "prepare-csv-for-accounting-import",
+    name: "Prepare CSV for Accounting Import",
+    metaTitle: "Prepare a CSV for Xero, QuickBooks or Sage Import",
+    metaDescription:
+      "Fix the dates, spacing, blank rows and garbled characters that make Xero, QuickBooks and Sage reject a CSV import. Free and private, in your browser.",
+    h1: "Prepare a CSV for import into accounting software",
+    intro:
+      "Accounting imports reject files for small reasons: a date in the wrong order, a blank line, a stray space in a reference, a character the importer can't read. Upload the file here, fix those in one pass, and import a file that matches what the template expects.",
+    kind: "cleaner",
+    preset: {
+      ruleIds: ["fixEncoding", "trimWhitespace", "removeEmptyRows", "removeEmptyColumns", "normalizeDate"],
+      options: { normalizeDate: { targetFormat: "DD/MM/YYYY", dateOrder: "auto" } },
+    },
+    before: `*InvoiceNumber,*ContactName,*InvoiceDate,*UnitAmount
+INV-0041 ,Müller GmbH,2026-09-03,450.00
+,,,
+INV-0042,MÃ¼ller GmbH,Sept 5 2026,120.00`,
+    after: `*InvoiceNumber,*ContactName,*InvoiceDate,*UnitAmount
+INV-0041,Müller GmbH,03/09/2026,450.00
+INV-0042,Müller GmbH,05/09/2026,120.00`,
+    steps: [
+      "Upload the CSV you want to import. Keep the header row exactly as the import template gives it.",
+      "Choose the date format your software expects. This page starts with DD/MM/YYYY; switch to MM/DD/YYYY or YYYY-MM-DD if your template uses those.",
+      "Review the changes, download the cleaned CSV and import it.",
+    ],
+    sections: [
+      {
+        heading: "The usual reasons an import fails",
+        body: "Mixed date formats in one column, dates in the wrong day/month order for the organisation's region, references with trailing spaces that no longer match existing records, empty lines in the middle of the file, and names garbled by an encoding mismatch. Each of these is a rule in SpreadsheetFix.",
+      },
+      {
+        heading: "Headers are left alone",
+        body: "Import templates rely on exact header names, often with asterisks marking required fields. This preset doesn't rename headers, so the importer can still map every column.",
+      },
+      {
+        heading: "Contact names that match",
+        body: "When “Müller GmbH” appears correctly on one row and as “MÃ¼ller GmbH” on another, most software creates two contacts. Repairing the encoding first means both rows match the same contact.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Which date format does my accounting software need?",
+        a: "It depends on the product and the organisation's region settings. Check the sample file in the import screen and pick the same format here.",
+      },
+      {
+        q: "Does SpreadsheetFix connect to Xero or QuickBooks?",
+        a: "No. It cleans the file in your browser; you then import the downloaded CSV using your software's own import screen.",
+      },
+      {
+        q: "Will amounts with currency symbols be fixed?",
+        a: "Removing currency symbols and fixing decimal separators is the Normalize Numbers rule, which is part of Pro. This free preset doesn't change amounts.",
+      },
+      {
+        q: "Is my data uploaded?",
+        a: "No. The file is processed entirely in your browser.",
+      },
+    ],
+    related: ["clean-bank-statement-csv", "normalize-dates-csv", "fix-csv-encoding"],
+  },
+  {
+    slug: "clean-email-list",
+    name: "Clean an Email List",
+    metaTitle: "Clean an Email List CSV Before Importing — Free",
+    metaDescription:
+      "Lowercase and trim email addresses, remove duplicate subscribers and flag invalid emails before importing a list into Mailchimp or another email tool.",
+    h1: "Clean an email list before you import it",
+    intro:
+      "Mailing lists collected from forms, events and old exports carry duplicates, capitalised and padded addresses, and entries that aren't email addresses at all. Upload the list and SpreadsheetFix tidies it in your browser before it reaches your email platform.",
+    kind: "cleaner",
+    preset: { ruleIds: ["trimWhitespace", "normalizeEmail", "deduplicateRows", "validateEmail"] },
+    before: `email,first_name
+Ana@Example.com ,Ana
+ana@example.com,Ana
+ben@example,Ben
+cara@example.ie,Cara`,
+    after: `email,first_name
+ana@example.com,Ana
+ben@example,Ben
+cara@example.ie,Cara
+
+# 1 duplicate removed · flagged: ben@example (no domain suffix)`,
+    steps: [
+      "Upload your list as CSV or Excel.",
+      "Addresses are trimmed and lowercased, then duplicate rows are removed. Normalising first means “Ana@Example.com ” and “ana@example.com” are recognised as the same subscriber.",
+      "Rows with invalid addresses are flagged and listed for review. Fix or delete them, then download the list and import it.",
+    ],
+    sections: [
+      {
+        heading: "Why clean before importing",
+        body: "Most email platforms charge by the number of contacts, so duplicates cost money. Invalid addresses bounce, and a high bounce rate can hurt delivery for the whole list. Fixing both before import is cheaper than cleaning up afterwards.",
+      },
+      {
+        heading: "What “invalid” means here",
+        body: "SpreadsheetFix checks that each address has the shape of an email: a name, an @, a domain and a top-level domain such as .com or .ie. It doesn't contact mail servers, so it can't tell whether a correctly formed mailbox actually exists.",
+      },
+      {
+        heading: "Duplicates by email only",
+        body: "If the same person appears with different names or signup dates, open the column picker on Remove Duplicates and select only the email column. Rows with the same address are then treated as duplicates, and the first one is kept.",
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I remove duplicate emails from a list?",
+        a: "Upload the list above. Addresses are normalised and duplicate rows removed. To de-duplicate on the email column alone, select it in the Remove Duplicates column picker.",
+      },
+      {
+        q: "Does it verify that the mailbox exists?",
+        a: "No. It checks the address format only and never contacts mail servers, which keeps your list private.",
+      },
+      {
+        q: "Is it OK to lowercase email addresses?",
+        a: "In practice, yes. Email providers treat addresses case-insensitively, and email platforms compare them that way too.",
+      },
+      {
+        q: "Is my list uploaded anywhere?",
+        a: "No. Everything runs in your browser.",
+      },
+    ],
+    related: ["validate-emails-csv", "remove-duplicates-csv", "clean-crm-export"],
+  },
+  {
+    slug: "clean-crm-export",
+    name: "Clean a CRM Export",
+    metaTitle: "Clean a CRM Contact Export (HubSpot, Salesforce) — Free",
+    metaDescription:
+      "Tidy contacts exported from HubSpot, Salesforce or Pipedrive: fix names, emails and dates, remove duplicates and blank rows. Runs privately in your browser.",
+    h1: "Clean a contact export from your CRM",
+    intro:
+      "Contact exports collect years of inconsistent data entry: padded names, garbled accents, mixed date formats, duplicate records. Upload the export and SpreadsheetFix tidies it before you re-import, migrate or analyse it.",
+    kind: "cleaner",
+    preset: {
+      ruleIds: ["fixEncoding", "trimWhitespace", "normalizeEmail", "removeEmptyRows", "removeEmptyColumns", "deduplicateRows", "normalizeDate"],
+      options: { normalizeDate: { targetFormat: "YYYY-MM-DD", dateOrder: "auto" } },
+    },
+    before: `First Name,Last Name,Email,Created
+JosÃ©,  MÃ¼ller,Jose@Acme.io ,03/14/2024
+,,,
+José,Müller,jose@acme.io,2024-03-14`,
+    after: `First Name,Last Name,Email,Created
+José,Müller,jose@acme.io,2024-03-14
+
+# 1 blank row and 1 duplicate removed`,
+    steps: [
+      "Export contacts, companies or deals from your CRM as CSV and upload the file.",
+      "SpreadsheetFix repairs encoding, trims spacing, lowercases emails, standardises dates and removes blank rows.",
+      "Duplicates are removed after the values are normalised, so records that differed only in spacing or case are caught. Review and download.",
+    ],
+    sections: [
+      {
+        heading: "Before a migration",
+        body: "Moving between CRMs is the best time to clean data, because every record passes through a file anyway. Cleaning the export first means the new system starts without the old one's duplicates and formatting problems.",
+      },
+      {
+        heading: "Duplicates that differ slightly",
+        body: "Two records that differ only by a trailing space, an uppercase letter in the email or a garbled accent are normalised to the same values first, then matched. To match on email alone, choose the email column in the Remove Duplicates column picker.",
+      },
+      {
+        heading: "Customer data stays private",
+        body: "Contact exports hold personal data. SpreadsheetFix processes the file in your browser and never uploads it, so you're not sending your customer list to another processor.",
+      },
+    ],
+    faqs: [
+      {
+        q: "Does SpreadsheetFix connect to my CRM?",
+        a: "No. Export a CSV from your CRM, clean it here, and import the downloaded file back or into another tool.",
+      },
+      {
+        q: "Can it merge duplicate records field by field?",
+        a: "No. When it finds a duplicate it keeps the first row and removes later ones, and shows each removal in the preview. Use your CRM's merge feature if you need to combine fields from both records.",
+      },
+      {
+        q: "Will it change the header names my CRM expects?",
+        a: "Not with this preset. Header normalisation is off, so the export's headers are kept for re-import.",
+      },
+      {
+        q: "How many contacts can I clean for free?",
+        a: "Up to 5,000 rows per file. Pro handles up to 500,000.",
+      },
+    ],
+    related: ["clean-email-list", "remove-duplicates-csv", "fix-csv-encoding"],
   },
 ];
 

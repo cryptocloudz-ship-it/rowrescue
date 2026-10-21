@@ -67,3 +67,19 @@ describe("normalizeDate date order", () => {
     expect(result.rows[0].d).toBe("2024-03-04");
   });
 });
+
+describe("normalizeDate leaves non-dates alone", () => {
+  it.each(["1820.10", "4220.10", "INV-0041", "SKU 2041", "12345", "-4.50", "Order 7", "v2.1"])("%s", (value) => {
+    const result = normalizeDate([{ v: value }], { targetFormat: "YYYY-MM-DD" });
+    expect(result.rows[0].v).toBe(value);
+    expect(result.changes).toHaveLength(0);
+  });
+
+  it("still converts month names and ISO datetimes", () => {
+    const result = normalizeDate(
+      [{ a: "Sept 5 2026", b: "5 March 2024", c: "Tue, 03 Sep 2026", d: "2024-03-04T10:00:00" }],
+      { targetFormat: "YYYY-MM-DD" }
+    );
+    expect(result.rows[0]).toEqual({ a: "2026-09-05", b: "2024-03-05", c: "2026-09-03", d: "2024-03-04" });
+  });
+});

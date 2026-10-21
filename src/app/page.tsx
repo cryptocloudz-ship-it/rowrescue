@@ -5,7 +5,7 @@ import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { HomeHero } from "@/components/marketing/HomeHero";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TOOLS } from "@/content/tools";
-import { SITE_NAME, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH, absoluteUrl } from "@/config/site";
+import { SITE_NAME, SITE_DESCRIPTION, SUPPORT_EMAIL, DEFAULT_OPEN_GRAPH, absoluteUrl } from "@/config/site";
 import { PLANS, FREE_RULES } from "@/config/plans";
 import { ALL_RULES, RULE_MAP } from "@/lib/engine/rules";
 import { TotalsCheck } from "@/components/ui/TotalsCheck";
@@ -56,7 +56,8 @@ const STRUCTURED_DATA = [
     "@type": "Organization",
     name: SITE_NAME,
     url: absoluteUrl("/"),
-    logo: absoluteUrl("/og-image.png"),
+    logo: absoluteUrl("/apple-icon.png"),
+    email: SUPPORT_EMAIL,
   },
   {
     "@context": "https://schema.org",
@@ -161,6 +162,9 @@ export default function LandingPage() {
                 </dd>
               </div>
             </dl>
+            <Link href="/security" className="mt-10 inline-block text-accent font-medium hover:text-accent-strong">
+              How SpreadsheetFix handles your data
+            </Link>
           </div>
         </section>
 
