@@ -126,12 +126,12 @@ ben@acme.io,Ben Ode,free`,
     steps: [
       "Upload the CSV or Excel file containing your dates.",
       "SpreadsheetFix checks each column to work out whether it is month-first (US) or day-first (European).",
-      "Pick the output format — YYYY-MM-DD, DD/MM/YYYY or MM/DD/YYYY — preview the changes and download.",
+      "Every date is rewritten as YYYY-MM-DD, which Excel, Google Sheets and databases all read the same way. Preview the changes and download.",
     ],
     sections: [
       {
         heading: "Is 03/04/2024 March or April?",
-        body: "It depends on where the data came from. SpreadsheetFix looks at the whole column: if any value has a day above 12 in the first position (25/12/2024), the column is day-first; if it appears in the second position (12/25/2024), it is month-first. Each column is judged separately, so a US order date and a European delivery date in the same file both convert correctly. If a column gives no evidence either way, SpreadsheetFix reads it day-first, and you can force US or European order in the rule settings.",
+        body: "It depends on where the data came from. SpreadsheetFix looks at the whole column: if any value has a day above 12 in the first position (25/12/2024), the column is day-first; if it appears in the second position (12/25/2024), it is month-first. Each column is judged separately, so a US order date and a European delivery date in the same file both convert correctly. If a column gives no evidence either way, SpreadsheetFix reads it day-first, so check the preview if a column only holds dates like 03/04/2024.",
       },
       {
         heading: "Formats SpreadsheetFix understands",
