@@ -33,6 +33,13 @@ function getIssueCountForRule(ruleId: string, healthReport: HealthReport | null)
   return issue?.count ?? 0;
 }
 
+/** Spells out what "All columns" does for rules where it isn't obvious. */
+const ALL_COLUMNS_HINTS: Record<string, string> = {
+  normalizePhone: "Only columns named like phone, tel, mobile, cell or fax. Tick columns to choose others.",
+  validatePhone: "Only columns named like phone, tel, mobile, cell or fax. Tick columns to choose others.",
+  validateRequired: "Every column must be filled in. Tick the columns that are required to check only those.",
+};
+
 interface RuleConfiguratorProps {
   onRunCleaning: () => void;
 }
@@ -74,6 +81,9 @@ function ColumnPicker({
         {allSelected ? "All columns" : `${selectedColumns.length} column${selectedColumns.length !== 1 ? "s" : ""}`}
         <ChevronDown className={`w-3 h-3 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
+      {allSelected && ALL_COLUMNS_HINTS[ruleId] && (
+        <p className="mt-1 text-xs text-ink-muted">{ALL_COLUMNS_HINTS[ruleId]}</p>
+      )}
       {open && (
         <div className="mt-2 p-3 bg-surface border border-rule rounded-lg max-h-48 overflow-y-auto custom-scrollbar relative z-10 w-64">
           <label className="flex items-center gap-3 text-xs text-ink py-1.5 cursor-pointer hover:bg-surface rounded px-2 transition-colors">

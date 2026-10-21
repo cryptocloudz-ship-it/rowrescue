@@ -17,6 +17,7 @@ import { validateRequired } from "../validateRequired";
 import { validateRange } from "../validateRange";
 import { renameColumns } from "../renameColumns";
 import { reorderColumns } from "../reorderColumns";
+import { fixEncoding } from "../fixEncoding";
 
 // ─── trimWhitespace ──────────────────────────────────────────────────────────
 
@@ -52,6 +53,11 @@ describe("trimWhitespace", () => {
     const rows = [{ name: "Alice" }];
     const result = trimWhitespace(rows);
     expect(result.changes).toHaveLength(0);
+  });
+
+  it("trims every column when the picker is on All columns", () => {
+    const result = trimWhitespace([{ name: "  Alice  " }], { columns: [] });
+    expect(result.rows[0].name).toBe("Alice");
   });
 });
 
@@ -208,6 +214,17 @@ describe("normalizeHeaders", () => {
     const result = normalizeHeaders(rows);
     expect(result.changes).toHaveLength(0);
   });
+
+  it("suffixes headers that normalize to the same name instead of dropping a column", () => {
+    const rows = [{ Price: "10", PRICE: "12", " price ": "14" }];
+    const result = normalizeHeaders(rows);
+    expect(result.rows[0]).toEqual({ price: "10", price_2: "12", price_3: "14" });
+  });
+
+  it("uses the style's separator for the suffix", () => {
+    const rows = [{ "Unit Price": "10", "unit-price": "12" }];
+    expect(normalizeHeaders(rows, { style: "lowercase_dash" }).rows[0]).toEqual({ "unit-price": "10", "unit-price-2": "12" });
+  });
 });
 
 // ─── validateEmail ───────────────────────────────────────────────────────────
@@ -247,6 +264,13 @@ describe("validateEmail", () => {
     expect(result.rows).toHaveLength(1);
     expect(result.stats.rowsRemoved).toBe(0);
   });
+
+  it("auto-detects email columns when the picker is on All columns", () => {
+    const rows = [{ email: "not-an-email", notes: "not-an-email" }];
+    const result = validateEmail(rows, { columns: [] });
+    expect(result.changes.map((c) => c.column)).toEqual(["email"]);
+    expect(result.quarantined).toHaveLength(1);
+  });
 });
 
 // ─── stripHtml ───────────────────────────────────────────────────────────────
@@ -282,6 +306,11 @@ describe("stripHtml", () => {
     const rows = [{ name: "Alice" }];
     const result = stripHtml(rows);
     expect(result.changes).toHaveLength(0);
+  });
+
+  it("strips every column when the picker is on All columns", () => {
+    const result = stripHtml([{ bio: "<p>Hello</p>" }], { columns: [] });
+    expect(result.rows[0].bio).toBe("Hello");
   });
 });
 
@@ -326,6 +355,11 @@ describe("normalizeDate", () => {
     const rows = [{ date: "2023-01-15" }];
     const result = normalizeDate(rows, { columns: ["date"] });
     expect(result.changes).toHaveLength(0);
+  });
+
+  it("normalizes every column when the picker is on All columns", () => {
+    const result = normalizeDate([{ date: "January 15, 2023" }], { columns: [] });
+    expect(result.rows[0].date).toBe("2023-01-15");
   });
 });
 
@@ -375,6 +409,11 @@ describe("normalizeNumbers", () => {
     const result = normalizeNumbers(rows);
     expect(result.rows).toEqual([{ price: "1234.50", total: "2469.00" }, { price: "3100.00", total: "6200.00" }]);
   });
+
+  it("normalizes every column when the picker is on All columns", () => {
+    const result = normalizeNumbers([{ price: "$1,234.56" }], { columns: [] });
+    expect(result.rows[0].price).toBe("1234.56");
+  });
 });
 
 // ─── normalizePhone ──────────────────────────────────────────────────────────
@@ -411,6 +450,20 @@ describe("normalizePhone", () => {
     expect(result.rows[0].phone).toBe("+15551234567");
     expect(result.rows[0].fax).toBe("(555) 999-8888");
   });
+
+  it("only touches phone-like columns when no columns are picked", () => {
+    const rows = [{ order_id: "1002345", date: "2024-03-04", "Mobile Number": "(555) 123-4567" }];
+    for (const options of [{}, { columns: [] }]) {
+      const result = normalizePhone(rows, options);
+      expect(result.rows[0]).toEqual({ order_id: "1002345", date: "2024-03-04", "Mobile Number": "+15551234567" });
+      expect(result.changes).toHaveLength(1);
+    }
+  });
+
+  it("leaves a file with no phone-like columns unchanged", () => {
+    const rows = [{ id: "1002345", created: "2024-03-04" }];
+    expect(normalizePhone(rows).changes).toHaveLength(0);
+  });
 });
 
 // ─── normalizeEmail ──────────────────────────────────────────────────────────
@@ -446,6 +499,11 @@ describe("normalizeEmail", () => {
     const result = normalizeEmail(rows, { columns: ["email"] });
     expect(result.rows[0].email).toBe("a@b.com");
     expect(result.rows[0].backup).toBe("C@D.COM");
+  });
+
+  it("normalizes every column when the picker is on All columns", () => {
+    const result = normalizeEmail([{ email: "Alice@Example.COM" }], { columns: [] });
+    expect(result.rows[0].email).toBe("alice@example.com");
   });
 });
 
@@ -488,6 +546,11 @@ describe("normalizeCase", () => {
     const result = normalizeCase(rows, { caseType: "title" });
     expect(result.rows[0]).toEqual({ name: "Émile Zola", city: "Östersund" });
   });
+
+  it("changes every column when the picker is on All columns", () => {
+    const result = normalizeCase([{ name: "ALICE" }], { columns: [] });
+    expect(result.rows[0].name).toBe("alice");
+  });
 });
 
 // ─── validatePhone ───────────────────────────────────────────────────────────
@@ -524,6 +587,12 @@ describe("validatePhone", () => {
     expect(result.rows).toHaveLength(1);
     expect(result.stats.rowsRemoved).toBe(0);
   });
+
+  it("auto-detects phone columns when the picker is on All columns", () => {
+    const rows = [{ phone: "call me", notes: "call me" }];
+    const result = validatePhone(rows, { columns: [] });
+    expect(result.changes.map((c) => c.column)).toEqual(["phone"]);
+  });
 });
 
 // ─── validateRequired ────────────────────────────────────────────────────────
@@ -552,11 +621,21 @@ describe("validateRequired", () => {
     expect(result.quarantined).toHaveLength(0);
   });
 
-  it("returns early if no columns specified", () => {
-    const rows = [{ name: "" }];
-    const result = validateRequired(rows);
-    expect(result.quarantined).toHaveLength(0);
-    expect(result.changes).toHaveLength(0);
+  it("treats every column as required when none are picked", () => {
+    const rows = [
+      { name: "Alice", email: "a@b.com" },
+      { name: "Bob", email: "" },
+      { name: "", email: "" },
+    ];
+    for (const options of [{}, { columns: [] }]) {
+      const result = validateRequired(rows, options);
+      expect(result.quarantined.map((q) => q.originalIndex)).toEqual([1, 2]);
+      expect(result.quarantined[1].reason).toBe("Missing required: name, email");
+    }
+  });
+
+  it("handles empty input with no columns picked", () => {
+    expect(validateRequired([], { columns: [] }).quarantined).toHaveLength(0);
   });
 
   it("includes missing column names in reason", () => {
@@ -677,5 +756,14 @@ describe("reorderColumns", () => {
     const result = reorderColumns(rows, { order: ["z", "a", "b"] });
     const keys = Object.keys(result.rows[0]);
     expect(keys).toEqual(["a", "b"]);
+  });
+});
+
+// ─── fixEncoding ─────────────────────────────────────────────────────────────
+
+describe("fixEncoding", () => {
+  it("repairs every column when the picker is on All columns", () => {
+    const result = fixEncoding([{ city: "CafÃ©" }], { columns: [] });
+    expect(result.rows[0].city).toBe("Café");
   });
 });

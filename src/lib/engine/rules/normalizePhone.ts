@@ -1,5 +1,6 @@
 import type { Row, CleanResult, CellChange } from "@/types/sheet";
 import type { RuleOptions, NormalizePhoneOptions } from "@/types/rules";
+import { PHONE_HEADER_REGEX } from "./validatePhone";
 
 export function normalizePhone(
   rows: Row[],
@@ -8,12 +9,14 @@ export function normalizePhone(
   const opts = { format: "e164" as const, defaultCountryCode: "+1", ...options } as NormalizePhoneOptions;
   const changes: CellChange[] = [];
   const now = Date.now();
-  const targetColumns = opts.columns;
+  // Without a column pick, only touch columns whose header looks like a phone column.
+  // Rewriting every 7+ digit cell would turn dates and order IDs into +1… numbers.
+  const targetColumns = opts.columns?.length ? opts.columns : detectPhoneColumns(rows);
 
   const newRows = rows.map((row, rowIndex) => {
     const newRow: Row = { ...row };
     for (const [key, value] of Object.entries(row)) {
-      if (typeof value !== "string" || (targetColumns && !targetColumns.includes(key))) continue;
+      if (typeof value !== "string" || !targetColumns.includes(key)) continue;
 
       const trimmed = value.trim();
       if (!trimmed) continue;
@@ -65,4 +68,9 @@ export function normalizePhone(
       rowsQuarantined: 0,
     },
   };
+}
+
+function detectPhoneColumns(rows: Row[]): string[] {
+  if (rows.length === 0) return [];
+  return Object.keys(rows[0]).filter((h) => PHONE_HEADER_REGEX.test(h));
 }

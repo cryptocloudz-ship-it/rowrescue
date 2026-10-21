@@ -15,6 +15,8 @@ export function normalizeHeaders(
 
   const originalHeaders = Object.keys(rows[0]);
   const headerMap: Record<string, string> = {};
+  const usedNames = new Set<string>();
+  const suffixSeparator = opts.style === "camelCase" ? "" : opts.style === "lowercase_dash" ? "-" : "_";
 
   for (const header of originalHeaders) {
     let normalized: string;
@@ -37,7 +39,13 @@ export function normalizeHeaders(
     }
 
     if (!normalized) normalized = `column_${originalHeaders.indexOf(header)}`;
-    headerMap[header] = normalized;
+    // "Price" and "PRICE" both become price; suffix the later one so neither column is lost
+    let unique = normalized;
+    for (let n = 2; usedNames.has(unique); n++) {
+      unique = `${normalized}${suffixSeparator}${n}`;
+    }
+    usedNames.add(unique);
+    headerMap[header] = unique;
   }
 
   const newRows = rows.map((row, rowIndex) => {

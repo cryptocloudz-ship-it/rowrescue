@@ -11,13 +11,14 @@ export function validateRequired(
   const now = Date.now();
   const cleanRows: Row[] = [];
 
-  if (!opts.columns) return { rows: [...rows], changes: [], quarantined: [], stats: { rowsAffected: 0, cellsChanged: 0, rowsRemoved: 0, rowsQuarantined: 0 } };
+  // No pick (the picker's "All columns") means every column is required
+  const requiredColumns = opts.columns?.length ? opts.columns : Object.keys(rows[0] ?? {});
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
     const missingCols: string[] = [];
 
-    for (const col of opts.columns) {
+    for (const col of requiredColumns) {
       const value = row[col];
       if (value === null || value === undefined || String(value).trim() === "") {
         missingCols.push(col);
