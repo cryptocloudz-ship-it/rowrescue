@@ -36,9 +36,9 @@ const SECTIONS: { heading: string; body: React.ReactNode }[] = [
     heading: "What reaches our server",
     body: (
       <>
-        When you download a cleaned file, the page tells our server the file’s name, its row count and which rules ran,
-        so that plan limits can be applied. We don’t store the file name or the rules. If you’re signed in, we keep a
-        count of today’s exports. For accounts we also store your email address and plan, and Stripe holds billing
+        When you download a cleaned file, the page tells our server its row count and which rules ran, so that plan
+        limits can be applied. The file name stays in your browser, and the rules aren’t stored. If you’re signed in,
+        we keep a count of today’s exports. For accounts we also store your email address and plan, and Stripe holds billing
         details.
       </>
     ),
@@ -47,7 +47,8 @@ const SECTIONS: { heading: string; body: React.ReactNode }[] = [
     heading: "Third parties",
     body: (
       <>
-        Clerk handles sign-in and Stripe handles payments; neither receives anything from your files. Google Analytics
+        Clerk handles sign-in, and may show a Cloudflare bot check when you sign up, and Stripe handles payments;
+        none of them receives anything from your files. Google Analytics
         loads only if you accept cookies, and records usage events such as file type, row count and number of changes,
         never cell contents or file names.
       </>
@@ -69,7 +70,7 @@ const SECTIONS: { heading: string; body: React.ReactNode }[] = [
       <>
         Open your browser’s developer tools, go to the Network tab and clean a file. You’ll see the page load and,
         when you download, one small request to <code className="font-data text-[0.95em]">/api/entitlements</code>{" "}
-        with the file name and row count. There is no upload.
+        with the row count and the rules that ran. There is no upload.
       </>
     ),
   },

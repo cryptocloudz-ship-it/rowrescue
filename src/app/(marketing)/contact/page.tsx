@@ -59,7 +59,7 @@ export default function ContactPage() {
             <dt className="font-semibold">Billing and refunds</dt>
             <dd className="mt-1.5 text-ink-body leading-relaxed">
               Signed-in customers can manage their plan from the <Link href="/billing" className="text-accent underline underline-offset-2">billing page</Link>.
-              The refund terms are on the <Link href="/pricing" className="text-accent underline underline-offset-2">pricing page</Link>.
+              The refund terms are in the <Link href="/legal/terms-of-service" className="text-accent underline underline-offset-2">terms of service</Link>.
             </dd>
           </div>
           <div className="py-5 border-b border-rule">
