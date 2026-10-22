@@ -32,7 +32,7 @@ export function buildLlmsTxt(): string {
     "",
     `- ${free.name}: ${euro(0)}. Up to ${rows(free.limits.maxRows)} rows per file, ${FREE_RULES.length} of ${ALL_RULES.length} rules, CSV export, ${free.limits.maxExportsPerDay} exports a day, watermark on exports. No account needed.`,
     `- ${pro.name}: ${euro(pro.priceMonthly)} per month or ${euro(pro.priceYearly)} a year. Up to ${rows(pro.limits.maxRows)} rows, all ${ALL_RULES.length} rules, CSV and Excel export, change log and PDF report, no watermark.`,
-    `- ${team.name}: ${euro(team.priceMonthly)} per seat per month or ${euro(team.priceYearly)} per seat a year. Everything in Pro plus shared presets, an audit log and team billing.`,
+    `- ${team.name}: ${euro(team.priceMonthly)} per seat per month or ${euro(team.priceYearly)} per seat a year, from ${team.seats?.min} seats. Everything in Pro plus shared presets, an audit log and team billing.`,
     `- Full comparison: ${absoluteUrl("/pricing")}`,
     "",
     "## Tools",

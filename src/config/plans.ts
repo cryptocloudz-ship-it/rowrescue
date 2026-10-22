@@ -53,6 +53,7 @@ export const PLANS: Record<string, PlanDefinition> = {
     description: "Shared cleaning for your organisation.",
     priceMonthly: 2900, // €29.00/seat
     priceYearly: 24900, // €249.00/seat
+    seats: { min: 2, max: 100 },
     stripePriceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_TEAM_MONTHLY_PRICE_ID,
     stripePriceIdYearly: process.env.NEXT_PUBLIC_STRIPE_TEAM_YEARLY_PRICE_ID,
     limits: {
@@ -129,3 +130,4 @@ export const PRO_PRICE_MONTHLY = formatEuro(PLANS.pro.priceMonthly);
 export const PRO_PRICE_YEARLY = formatEuro(PLANS.pro.priceYearly);
 export const TEAM_PRICE_MONTHLY = formatEuro(PLANS.team.priceMonthly);
 export const TEAM_PRICE_YEARLY = formatEuro(PLANS.team.priceYearly);
+export const TEAM_MIN_SEATS = PLANS.team.seats!.min;

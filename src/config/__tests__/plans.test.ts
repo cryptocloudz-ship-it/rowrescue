@@ -23,6 +23,15 @@ describe("plan figures in copy", () => {
     expect(formatRows(500_000)).toBe("500,000");
   });
 
+  it("gives per-seat plans a valid seat range", () => {
+    for (const plan of Object.values(PLANS)) {
+      if (!plan.seats) continue;
+      expect(plan.seats.min, plan.id).toBeGreaterThanOrEqual(1);
+      expect(plan.seats.max, plan.id).toBeGreaterThanOrEqual(plan.seats.min);
+    }
+    expect(PLANS.team.seats).toBeDefined();
+  });
+
   // Limits and prices are set once in PLANS; copy that types them out goes stale when they change
   it("aren't written out by hand anywhere in src", () => {
     const figures = new Set<string>();
@@ -41,6 +50,7 @@ describe("plan figures in copy", () => {
         const escaped = figure.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         expect(source, `${file} contains ${figure}`).not.toMatch(new RegExp(`(?<![\\d.,])${escaped}(?![\\d]|[.,]\\d)`));
       }
+      expect(source, `${file} states a seat count`).not.toMatch(/\b(minimum|min\.?|from|at least) \d+ seats\b/i);
     }
   });
 });

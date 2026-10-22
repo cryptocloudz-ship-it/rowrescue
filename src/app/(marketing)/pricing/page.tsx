@@ -7,7 +7,7 @@ import { getUtmParams } from "@/lib/utm";
 import { trackCheckoutStarted } from "@/lib/analytics";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
-import { PLANS, FREE_MAX_ROWS, PRO_MAX_ROWS, PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY, TEAM_PRICE_MONTHLY, TEAM_PRICE_YEARLY, formatEuro, formatRows } from "@/config/plans";
+import { PLANS, FREE_MAX_ROWS, PRO_MAX_ROWS, PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY, TEAM_PRICE_MONTHLY, TEAM_PRICE_YEARLY, formatEuro, formatRows, TEAM_MIN_SEATS } from "@/config/plans";
 
 // What a year of monthly Pro costs, minus the yearly price
 const PRO_YEARLY_SAVING = formatEuro((PLANS.pro.priceMonthly ?? 0) * 12 - (PLANS.pro.priceYearly ?? 0));
@@ -188,7 +188,7 @@ export default function PricingPage() {
               <span className="ml-2 text-base font-normal text-ink-muted">{yearly ? "per seat, per year" : "per seat, per month"}</span>
             </p>
             <p className="mt-2 min-h-10 text-sm text-ink-muted">
-              {yearly ? `${formatEuro(Math.round((PLANS.team.priceYearly ?? 0) / 12))} a month per seat, billed yearly.` : "Minimum 2 seats."}
+              {yearly ? `${formatEuro(Math.round((PLANS.team.priceYearly ?? 0) / 12))} a month per seat, billed yearly.` : `Minimum ${TEAM_MIN_SEATS} seats.`}
             </p>
             <button
               type="button"

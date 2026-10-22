@@ -1,11 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
 import { stripe } from "@/lib/stripe";
-import { planForPriceId } from "@/config/plans";
+import { PLANS, planForPriceId } from "@/config/plans";
 import { ensureUser } from "@/lib/billing/ensureUser";
 import type Stripe from "stripe";
-
-const TEAM_MIN_SEATS = 2;
 
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
@@ -31,11 +29,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "User not found" }, { status: 404 });
   }
 
+  const seats = PLANS[plan].seats;
   const sessionParams: Stripe.Checkout.SessionCreateParams = {
     mode: "subscription",
     line_items: [
-      plan === "team"
-        ? { price: priceId, quantity: TEAM_MIN_SEATS, adjustable_quantity: { enabled: true, minimum: TEAM_MIN_SEATS, maximum: 100 } }
+      seats
+        ? { price: priceId, quantity: seats.min, adjustable_quantity: { enabled: true, minimum: seats.min, maximum: seats.max } }
         : { price: priceId, quantity: 1 },
     ],
     allow_promotion_codes: true,

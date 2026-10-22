@@ -32,6 +32,8 @@ export interface PlanDefinition {
   priceMonthly: number | null; // cents, null = free
   priceYearly: number | null;
   limits: PlanLimits;
+  /** Seats a checkout can buy, for plans priced per seat */
+  seats?: { min: number; max: number };
   stripePriceIdMonthly?: string;
   stripePriceIdYearly?: string;
 }

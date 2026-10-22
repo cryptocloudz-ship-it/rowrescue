@@ -6,7 +6,7 @@ import { HomeHero } from "@/components/marketing/HomeHero";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TOOLS } from "@/content/tools";
 import { SITE_NAME, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH, LOGO_PATH, SUPPORT_EMAIL, absoluteUrl } from "@/config/site";
-import { PLANS, FREE_RULES } from "@/config/plans";
+import { PLANS, FREE_RULES, TEAM_MIN_SEATS, formatEuro, formatRows } from "@/config/plans";
 import { ALL_RULES, RULE_MAP } from "@/lib/engine/rules";
 import { TotalsCheck } from "@/components/ui/TotalsCheck";
 import { heroTotals } from "@/content/heroSample";
@@ -87,14 +87,6 @@ const RULE_EXAMPLES: { id: string; before: string; after: string }[] = [
 // Computed by the real engine at build time from the hero example file
 const HERO_TOTALS = heroTotals();
 
-function formatEuro(cents: number) {
-  return `€${(cents / 100).toLocaleString("en-GB", { maximumFractionDigits: 2 })}`;
-}
-
-function formatCount(n: number) {
-  return n.toLocaleString("en-GB");
-}
-
 const free = PLANS.free.limits;
 const pro = PLANS.pro;
 const team = PLANS.team;
@@ -105,7 +97,7 @@ const PRICING = [
     price: "€0",
     period: "",
     items: [
-      `Up to ${formatCount(free.maxRows)} rows`,
+      `Up to ${formatRows(free.maxRows)} rows`,
       `${FREE_RULES.length} of ${ALL_RULES.length} rules`,
       "CSV export",
       `${free.maxExportsPerDay} exports a day`,
@@ -118,7 +110,7 @@ const PRICING = [
     price: formatEuro(pro.priceMonthly ?? 0),
     period: `per month, or ${formatEuro(pro.priceYearly ?? 0)} a year`,
     items: [
-      `Up to ${formatCount(pro.limits.maxRows)} rows`,
+      `Up to ${formatRows(pro.limits.maxRows)} rows`,
       `All ${ALL_RULES.length} rules`,
       "CSV and Excel export",
       "Change log and PDF report",
@@ -130,7 +122,7 @@ const PRICING = [
     name: team.name,
     price: formatEuro(team.priceMonthly ?? 0),
     period: "per seat, per month",
-    items: ["Everything in Pro", "Shared presets", "Audit log", "Team billing"],
+    items: [`From ${TEAM_MIN_SEATS} seats`, "Everything in Pro", "Shared presets", "Audit log", "Team billing"],
     link: { href: "/pricing", label: "Choose Team" },
   },
 ];
