@@ -25,9 +25,13 @@ export function InviteForm({ disabled }: { disabled: boolean }) {
     setBusy(true);
     setMessage(null);
     try {
-      const { invite } = await call("/api/team/invites", { method: "POST", body: JSON.stringify({ email }) });
+      const { invite, emailed } = await call("/api/team/invites", { method: "POST", body: JSON.stringify({ email }) });
       await navigator.clipboard?.writeText(inviteLink(invite.token)).catch(() => {});
-      setMessage({ text: `Invite created for ${invite.email}. The join link is copied: send it to them.` });
+      setMessage({
+        text: emailed
+          ? `Invite emailed to ${invite.email}. The join link is also copied if you'd rather send it yourself.`
+          : `Invite created for ${invite.email}, but we couldn't email it. The join link is copied: send it to them.`,
+      });
       setEmail("");
       router.refresh();
     } catch (err) {

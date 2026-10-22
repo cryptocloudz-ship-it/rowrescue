@@ -109,9 +109,9 @@ export default async function TeamPage() {
         <section className="mt-10">
           <h2 className="text-[13px] font-medium text-ink-muted">Invite people</h2>
           <p className="mt-2 text-sm text-ink-body max-w-[600px]">
-            Each invite holds a seat until it&apos;s accepted or revoked. We don&apos;t email invites: copy the link and
-            send it yourself. Only the invited address can accept it, and they can also find it on this page after
-            signing in with that address.
+            Each invite holds a seat until it&apos;s accepted or revoked. We email the invite with your team name and
+            a join link, and you can also copy the link to send it yourself. Only the invited address can accept it,
+            and they can also find it on this page after signing in with that address.
           </p>
           <InviteForm disabled={inactive || used >= team.seatCount} />
           {used >= team.seatCount && !inactive && (
