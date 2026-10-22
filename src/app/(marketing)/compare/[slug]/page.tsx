@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { COMPARISONS, COMPARISON_MAP } from "@/content/comparisons";
 import { TOOL_MAP } from "@/content/tools";
+import { GUIDES } from "@/content/guides";
 import { SITE_NAME } from "@/config/site";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
@@ -42,6 +43,8 @@ export default async function ComparisonPage({ params }: Props) {
     { name: `vs ${c.competitor}`, path: `/compare/${c.slug}` },
   ];
   const tools = c.tools.map((s) => TOOL_MAP.get(s)).filter((t) => t !== undefined);
+  const guides = GUIDES.filter((g) => c.tools.includes(g.tool));
+  const others = COMPARISONS.filter((o) => o.slug !== c.slug);
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink">
@@ -136,7 +139,7 @@ export default async function ComparisonPage({ params }: Props) {
             </section>
           </div>
 
-          <aside className="lg:w-[320px] shrink-0">
+          <aside className="lg:w-[320px] shrink-0 space-y-10">
             <nav aria-label="Try a tool">
               <h2 className="text-[13px] font-medium text-ink-muted">Try it on your file</h2>
               <ul className="mt-3 border-t border-rule">
@@ -145,6 +148,30 @@ export default async function ComparisonPage({ params }: Props) {
                     <Link href={`/${t.slug}`} className="group block py-4">
                       <span className="font-semibold group-hover:text-accent">{t.name}</span>
                       <span className="block mt-1 text-sm leading-relaxed text-ink-muted">{t.metaDescription}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+            {guides.length > 0 && (
+              <nav aria-label="Guides">
+                <h2 className="text-[13px] font-medium text-ink-muted">Guides</h2>
+                <ul className="mt-3 border-t border-rule">
+                  {guides.map((g) => (
+                    <li key={g.slug} className="border-b border-rule">
+                      <Link href={`/guides/${g.slug}`} className="block py-4 font-semibold hover:text-accent">{g.title}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+            <nav aria-label="Other comparisons">
+              <h2 className="text-[13px] font-medium text-ink-muted">Other comparisons</h2>
+              <ul className="mt-3 border-t border-rule">
+                {others.map((o) => (
+                  <li key={o.slug} className="border-b border-rule">
+                    <Link href={`/compare/${o.slug}`} className="block py-4 font-semibold hover:text-accent">
+                      {SITE_NAME} vs {o.competitor}
                     </Link>
                   </li>
                 ))}

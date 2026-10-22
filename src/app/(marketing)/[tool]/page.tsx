@@ -3,6 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { TOOLS, TOOL_MAP } from "@/content/tools";
+import { GUIDES } from "@/content/guides";
+import { COMPARISONS } from "@/content/comparisons";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
@@ -44,6 +46,8 @@ export default async function ToolPage({ params }: Props) {
 
   const url = absoluteUrl(`/${tool.slug}`);
   const related = tool.related.map((s) => TOOL_MAP.get(s)).filter((t) => t !== undefined);
+  const guides = GUIDES.filter((g) => g.tool === tool.slug);
+  const comparisons = COMPARISONS.filter((c) => c.tools.includes(tool.slug));
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink relative overflow-x-hidden">
@@ -183,6 +187,32 @@ export default async function ToolPage({ params }: Props) {
                 ))}
               </ul>
             </nav>
+            {guides.length > 0 && (
+              <nav aria-label="Guides">
+                <h2 className="text-[13px] font-medium text-ink-muted">Guides</h2>
+                <ul className="mt-3 border-t border-rule">
+                  {guides.map((g) => (
+                    <li key={g.slug} className="border-b border-rule">
+                      <Link href={`/guides/${g.slug}`} className="block py-4 font-semibold hover:text-accent">{g.title}</Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+            {comparisons.length > 0 && (
+              <nav aria-label="Comparisons">
+                <h2 className="text-[13px] font-medium text-ink-muted">Compared with</h2>
+                <ul className="mt-3 border-t border-rule">
+                  {comparisons.map((c) => (
+                    <li key={c.slug} className="border-b border-rule">
+                      <Link href={`/compare/${c.slug}`} className="block py-4 font-semibold hover:text-accent">
+                        {SITE_NAME} vs {c.competitor}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
           </aside>
         </div>
       </main>
