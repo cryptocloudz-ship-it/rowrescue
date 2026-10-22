@@ -4,11 +4,15 @@ import sitemap from "@/app/sitemap";
 import { buildLlmsTxt } from "@/lib/seo/llmsTxt";
 import { TOOLS, toolUpdated } from "@/content/tools";
 import { GUIDES } from "@/content/guides";
+import { COMPARISONS } from "@/content/comparisons";
 import { SITE_URL, SITE_TITLE, SITE_DESCRIPTION, absoluteUrl } from "@/config/site";
 import { metadata as rootMeta } from "@/app/layout";
 import { metadata as homeMeta } from "@/app/page";
 import { metadata as toolsMeta } from "@/app/(marketing)/tools/page";
 import { metadata as guidesMeta } from "@/app/(marketing)/guides/page";
+import { metadata as compareMeta } from "@/app/(marketing)/compare/page";
+import { metadata as securityMeta } from "@/app/(marketing)/security/page";
+import { metadata as contactMeta } from "@/app/(marketing)/contact/page";
 import { metadata as pricingMeta } from "@/app/(marketing)/pricing/layout";
 import { metadata as termsMeta } from "@/app/(marketing)/legal/terms-of-service/layout";
 import { metadata as privacyMeta } from "@/app/(marketing)/legal/privacy-policy/layout";
@@ -18,6 +22,7 @@ import { metadata as appMeta } from "@/app/(app)/layout";
 import { metadata as authMeta } from "@/app/(auth)/layout";
 import { generateMetadata as toolMeta } from "@/app/(marketing)/[tool]/page";
 import { generateMetadata as guideMeta } from "@/app/(marketing)/guides/[slug]/page";
+import { generateMetadata as comparisonMeta } from "@/app/(marketing)/compare/[slug]/page";
 
 // next/font only works inside the Next compiler; the root layout calls it at import
 vi.mock("next/font/google", () => ({ IBM_Plex_Sans: () => ({ variable: "" }), IBM_Plex_Mono: () => ({ variable: "" }) }));
@@ -37,7 +42,10 @@ async function indexablePages(): Promise<Page[]> {
     ["/", homeMeta],
     ["/tools", toolsMeta],
     ["/guides", guidesMeta],
+    ["/compare", compareMeta],
     ["/pricing", pricingMeta],
+    ["/security", securityMeta],
+    ["/contact", contactMeta],
     ["/legal/terms-of-service", termsMeta],
     ["/legal/privacy-policy", privacyMeta],
     ["/legal/cookie-policy", cookieMeta],
@@ -50,7 +58,13 @@ async function indexablePages(): Promise<Page[]> {
       async (g) => [`/guides/${g.slug}`, await guideMeta({ params: Promise.resolve({ slug: g.slug }) })] as [string, Metadata]
     )
   );
-  return [...fixed, ...tools, ...guides].map(([path, m]) => ({
+  const comparisons = await Promise.all(
+    COMPARISONS.map(
+      async (c) =>
+        [`/compare/${c.slug}`, await comparisonMeta({ params: Promise.resolve({ slug: c.slug }) })] as [string, Metadata]
+    )
+  );
+  return [...fixed, ...tools, ...guides, ...comparisons].map(([path, m]) => ({
     path,
     title: titleOf(m),
     description: String(m.description ?? rootMeta.description),
@@ -102,11 +116,13 @@ describe("on-page SEO", () => {
     }
   });
 
-  it("llms.txt links every tool and guide page and describes the privacy model", () => {
+  it("llms.txt links every tool, guide and comparison page and describes the privacy model", () => {
     const txt = buildLlmsTxt();
     expect(txt.startsWith("# SpreadsheetFix\n")).toBe(true);
     for (const t of TOOLS) expect(txt).toContain(absoluteUrl(`/${t.slug}`));
     for (const g of GUIDES) expect(txt).toContain(absoluteUrl(`/guides/${g.slug}`));
+    for (const c of COMPARISONS) expect(txt).toContain(absoluteUrl(`/compare/${c.slug}`));
+    for (const path of ["/compare", "/security", "/contact"]) expect(txt).toContain(`(${absoluteUrl(path)})`);
     expect(txt).toContain("client-side");
     expect(txt).not.toMatch(/undefined|NaN/);
   });

@@ -6,6 +6,7 @@ import { RULE_MAP } from "@/lib/engine/rules";
 import { reconcile } from "@/lib/engine/reconcile";
 import { useSheetStore } from "@/store/sheetStore";
 import type { Row } from "@/types/sheet";
+import { GUIDE_REDIRECTS } from "@/config/redirects";
 
 // Guides compete with long-form answers, so they need real substance, not a tool page with a new title.
 const MIN_WORDS = 700;
@@ -104,6 +105,13 @@ describe("guides", () => {
   it("every guide is linked from another guide", () => {
     const linked = new Set(GUIDES.flatMap((g) => g.relatedGuides));
     for (const g of GUIDES) expect(linked.has(g.slug), `${g.slug} has no incoming guide links`).toBe(true);
+  });
+
+  it("redirect retired slugs to guides that exist", () => {
+    for (const [from, to] of Object.entries(GUIDE_REDIRECTS)) {
+      expect(GUIDE_MAP.has(from), `${from} is still a live guide`).toBe(false);
+      expect(GUIDE_MAP.has(to), `${from} → ${to}`).toBe(true);
+    }
   });
 
   it("only preset rules that exist", () => {

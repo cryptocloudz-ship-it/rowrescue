@@ -23,7 +23,7 @@ export function SiteHeader() {
           <Link href="/tools" className="text-ink-body hover:text-ink py-3 hidden sm:inline">
             Tools
           </Link>
-          <Link href="/#security" className="text-ink-body hover:text-ink py-3 hidden md:inline">
+          <Link href="/security" className="text-ink-body hover:text-ink py-3 hidden md:inline">
             Security
           </Link>
           <Link href="/pricing" className="text-ink-body hover:text-ink py-3 max-[519px]:hidden">

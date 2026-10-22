@@ -170,6 +170,9 @@ export default function LandingPage() {
                 </dd>
               </div>
             </dl>
+            <Link href="/security" className="mt-10 inline-block text-accent font-medium hover:text-accent-strong">
+              How SpreadsheetFix handles your data
+            </Link>
           </div>
         </section>
 

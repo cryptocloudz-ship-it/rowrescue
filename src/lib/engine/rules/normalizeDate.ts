@@ -27,7 +27,7 @@ type DateOrder = "DMY" | "MDY";
 const MONTHS: Record<string, number> = {
   january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
   july: 7, august: 8, september: 9, october: 10, november: 11, december: 12,
-  jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+  jan: 1, feb: 2, mar: 3, apr: 4, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12,
 };
 
 function safeDate(year: number, month: number, day: number): Date | null {
@@ -79,10 +79,19 @@ function tryParseDate(value: string, order: DateOrder = "DMY"): Date | null {
       if (d) return d;
     }
   }
-  // Fallback: try native Date parsing
+  // Fallback: native parsing, but only for values that clearly are dates. Unrestricted, V8 reads
+  // amounts ("1820.10") and references ("INV-0041") as dates and the rule would overwrite them.
+  if (!ISO_DATETIME.test(trimmed) && !hasMonthName(trimmed)) return null;
   const native = new Date(trimmed);
-  if (!isNaN(native.getTime()) && trimmed.length >= 6) return native;
+  if (!isNaN(native.getTime())) return native;
   return null;
+}
+
+// 2024-03-04T10:00:00Z, 2024-03-04 10:00
+const ISO_DATETIME = /^\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}/;
+
+function hasMonthName(value: string): boolean {
+  return (value.toLowerCase().match(/[a-z]+/g) ?? []).some((word) => word in MONTHS);
 }
 
 function formatDate(d: Date, format: string): string {

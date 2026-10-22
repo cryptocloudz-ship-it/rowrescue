@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ToolLauncher } from "@/components/tools/ToolLauncher";
+import { Breadcrumbs, breadcrumbJsonLd } from "@/components/seo/Breadcrumbs";
 
 export const dynamicParams = false;
 
@@ -58,6 +59,11 @@ export default async function GuidePage({ params }: Props) {
   const relatedGuides = guide.relatedGuides.map((s) => GUIDE_MAP.get(s)).filter((g) => g !== undefined);
   const needsPro = guideNeedsPro(guide);
   const orgId = absoluteUrl("/#organization");
+  const crumbs = [
+    { name: "Home", path: "/" },
+    { name: "Guides", path: "/guides" },
+    { name: guide.name, path: `/guides/${guide.slug}` },
+  ];
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink relative overflow-x-hidden">
@@ -87,28 +93,14 @@ export default async function GuidePage({ params }: Props) {
               acceptedAnswer: { "@type": "Answer", text: f.a },
             })),
           },
-          {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-              { "@type": "ListItem", position: 2, name: "Guides", item: absoluteUrl("/guides") },
-              { "@type": "ListItem", position: 3, name: guide.name, item: url },
-            ],
-          },
+          breadcrumbJsonLd(crumbs),
         ]}
       />
       <SiteHeader />
 
       <main id="main-content">
         <section className="max-w-[1200px] mx-auto px-6 pt-14 pb-10">
-          <nav aria-label="Breadcrumb" className="text-sm text-ink-muted mb-6">
-            <Link href="/" className="hover:text-ink">Home</Link>
-            <span className="mx-2" aria-hidden="true">/</span>
-            <Link href="/guides" className="hover:text-ink">Guides</Link>
-            <span className="mx-2" aria-hidden="true">/</span>
-            <span aria-current="page">{guide.name}</span>
-          </nav>
+          <Breadcrumbs crumbs={crumbs} />
           <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em] max-w-[820px]">{guide.h1}</h1>
           <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[680px]">{guide.summary}</p>
           <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm">

@@ -1,5 +1,6 @@
 import { TOOLS, toolNeedsPro } from "@/content/tools";
 import { GUIDES } from "@/content/guides";
+import { COMPARISONS } from "@/content/comparisons";
 import { PLANS, FREE_RULES } from "@/config/plans";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { SITE_NAME, SUPPORT_EMAIL, absoluteUrl } from "@/config/site";
@@ -19,6 +20,9 @@ export function buildLlmsTxt(): string {
     (t) => `- [${t.name}](${absoluteUrl(`/${t.slug}`)})${toolNeedsPro(t) ? " (Pro)" : ""}: ${t.metaDescription}`
   );
   const guides = GUIDES.map((g) => `- [${g.h1}](${absoluteUrl(`/guides/${g.slug}`)}): ${g.metaDescription}`);
+  const comparisons = COMPARISONS.map(
+    (c) => `- [${SITE_NAME} vs ${c.competitor}](${absoluteUrl(`/compare/${c.slug}`)}): ${c.metaDescription}`
+  );
 
   return [
     `# ${SITE_NAME}`,
@@ -47,12 +51,19 @@ export function buildLlmsTxt(): string {
     "",
     ...guides,
     "",
+    "## Comparisons",
+    "",
+    ...comparisons,
+    "",
     "## Main pages",
     "",
     `- [Home](${absoluteUrl("/")}): what the cleaner fixes, where your data goes, and the totals check`,
     `- [All tools](${absoluteUrl("/tools")}): single-purpose cleaning tools`,
     `- [Guides](${absoluteUrl("/guides")}): causes and fixes for common CSV and Excel problems`,
+    `- [Compare](${absoluteUrl("/compare")}): ${SITE_NAME} next to Excel, Google Sheets, OpenRefine and Power Query`,
+    `- [Security](${absoluteUrl("/security")}): how files are processed in the browser and what the server stores`,
     `- [Pricing](${absoluteUrl("/pricing")})`,
+    `- [Contact](${absoluteUrl("/contact")}): support and billing contact`,
     "",
     "## Optional",
     "",

@@ -46,14 +46,14 @@ export interface GuidePage {
 
 export const GUIDES: GuidePage[] = [
   {
-    slug: "csv-garbled-characters-excel",
+    slug: "fix-garbled-characters-in-csv",
     name: "Garbled characters (Ã©, â€™)",
     metaTitle: "Ã© or â€™ in a CSV Opened in Excel? How to Fix It",
     metaDescription:
       "Why a CSV shows Ã©, â€™ or Ã¼ in Excel, how to import it with the right encoding by hand, and how to repair text that is already garbled.",
     h1: "Why your CSV shows Ã© and â€™ in Excel, and how to fix it",
     published: "2026-10-21",
-    updated: "2026-10-21",
+    updated: "2026-10-22",
     summary:
       "You open a bank or CRM export in Excel and “Café” reads “CafÃ©”, “don’t” reads “donâ€™t”, and a euro sign has turned into “â‚¬”. In most cases nothing is wrong with the data: the file was saved as UTF-8 and Excel read it as a different encoding. This guide shows how to tell which of two situations you are in, how to fix each one in Excel or Google Sheets, and how SpreadsheetFix repairs both without you mapping characters by hand.",
     cause: [
@@ -133,24 +133,25 @@ export const GUIDES: GuidePage[] = [
       },
     ],
     relatedTools: ["fix-csv-encoding", "csv-to-excel-cleaner", "remove-html-tags-csv"],
-    relatedGuides: ["vlookup-na-hidden-spaces", "excel-european-number-format"],
+    relatedGuides: ["vlookup-na-hidden-spaces", "excel-european-number-format", "csv-vs-xlsx"],
   },
   {
-    slug: "csv-dates-day-month-swapped",
-    name: "Day and month swapped",
-    metaTitle: "CSV Dates With Day and Month Swapped? How to Fix Them",
+    slug: "stop-excel-changing-dates-in-csv",
+    name: "Excel changing dates",
+    metaTitle: "Stop Excel Changing Dates in a CSV (Day and Month Swapped)",
     metaDescription:
-      "Why Excel reads 03/04/2024 as 4 March instead of 3 April, how to reimport a bank CSV with the right date order, and how to fix every date at once.",
-    h1: "Fix CSV dates with the day and month swapped",
+      "Why Excel reads 03/04/2024 as 4 March, not 3 April, when it opens a CSV, how to import it with the right date order, and how to fix every date at once.",
+    h1: "How to stop Excel changing dates in a CSV, and fix swapped days and months",
     published: "2026-10-21",
-    updated: "2026-10-21",
+    updated: "2026-10-22",
     summary:
-      "Your bank statement says the insurance went out on 3 April, but the spreadsheet says 4 March. A few rows down, 15/04/2024 sits on the left of its cell as text while the dates above it sit on the right. This is the most common date problem with bank exports: the file and your spreadsheet disagree about whether the day or the month comes first. Here is why it happens, how to fix it by hand in Excel and Google Sheets before an accounting import, and how SpreadsheetFix works out the order for each column.",
+      "You open a CSV in Excel and the dates are no longer what the file says. Your bank statement says the insurance went out on 3 April, but the spreadsheet says 4 March. A few rows down, 15/04/2024 sits on the left of its cell as text while the dates above it sit on the right. This is the most common date problem with bank exports: the file and your spreadsheet disagree about whether the day or the month comes first. Here is why it happens, how to fix it by hand in Excel and Google Sheets before an accounting import, and how SpreadsheetFix works out the order for each column.",
     cause: [
       "A date written as 03/04/2024 has no single meaning. In the UK, Ireland, most of Europe, Australia and much of the rest of the world it is 3 April. In the US it is 4 March. A CSV stores it as plain text, with nothing to say which convention the bank used.",
       "When Excel opens a CSV, it reads dates using the regional settings of your computer, not of the file. On a computer set to US English, it reads 03/04/2024 as 4 March. Then it reaches 15/04/2024, which can’t be month 15, so it gives up and keeps that cell as text. The result is a column in which every date that could be read either way has been converted wrongly and silently, and the rest are text. Sorting, filtering and date arithmetic give nonsense, and an accounting import either rejects the text dates or books the converted ones to the wrong month.",
       "The reverse happens when a day-first computer opens a US export. And once Excel has converted the wrong dates, they are real date values, so saving the file locks the mistake in: the original text is gone and the saved CSV contains the swapped dates. That is why every fix below starts from the original export, not from a copy that has been opened and saved.",
       "Mixed formats add a second layer. Files merged from two sources, or exports where someone has edited a few rows by hand, can hold 2024-04-16, 16 Apr 2024 and 16/04/2024 in the same column. An import screen asks you for one date format and applies it to every row, so a single stray format is enough to fail the import or move a payment into a different period.",
+      "The same guessing reaches beyond date columns. Product and part codes such as 1-10 or MAR1 are turned into dates, IDs like 00123 lose their leading zeros, and account or card numbers longer than 15 digits are shown in scientific notation with the trailing digits replaced by zeros. None of these can be reversed after the file has been saved, which is another reason to fix the file before Excel opens it.",
     ],
     manualFix: [
       {
@@ -186,6 +187,15 @@ export const GUIDES: GuidePage[] = [
           "Convert the leftovers with a formula, for example =DATE(RIGHT(A2,4),MID(A2,4,2),LEFT(A2,2)) for text in DD/MM/YYYY form with two-digit days and months.",
           "Paste the results back as values and give the whole column one format, ideally yyyy-mm-dd.",
         ],
+      },
+      {
+        heading: "In Microsoft 365, turn off automatic conversions",
+        steps: [
+          "Go to File > Options > Data and find the Automatic Data Conversion section.",
+          "Untick the conversions you don’t want: removing leading zeros, keeping only the first 15 digits of long numbers, converting digits around the letter E to scientific notation, and converting continuous letters and numbers to a date.",
+          "Click OK and reopen the CSV. Codes like MAR1 and IDs like 00123 now stay as they are in the file.",
+        ],
+        note: "These settings apply to every file that copy of Excel opens, and older versions don’t have them. They don’t change how numeric dates such as 03/04/2024 are read, which still follows your regional settings, so use one of the methods above for those.",
       },
     ],
     toolFix: [
@@ -230,7 +240,7 @@ export const GUIDES: GuidePage[] = [
       },
     ],
     relatedTools: ["normalize-dates-csv", "csv-to-excel-cleaner", "remove-duplicates-csv"],
-    relatedGuides: ["excel-european-number-format", "duplicate-transactions-bank-csv"],
+    relatedGuides: ["excel-european-number-format", "duplicate-transactions-bank-csv", "csv-vs-xlsx"],
   },
   {
     slug: "duplicate-transactions-bank-csv",
@@ -312,7 +322,7 @@ export const GUIDES: GuidePage[] = [
       },
     ],
     relatedTools: ["remove-duplicates-csv", "merge-csv-files", "trim-whitespace-csv"],
-    relatedGuides: ["csv-dates-day-month-swapped", "vlookup-na-hidden-spaces"],
+    relatedGuides: ["stop-excel-changing-dates-in-csv", "vlookup-na-hidden-spaces", "excel-remove-duplicates-not-working"],
   },
   {
     slug: "excel-european-number-format",
@@ -399,7 +409,7 @@ export const GUIDES: GuidePage[] = [
       },
     ],
     relatedTools: ["convert-comma-decimal-csv", "normalize-dates-csv", "csv-to-excel-cleaner"],
-    relatedGuides: ["csv-dates-day-month-swapped", "csv-garbled-characters-excel"],
+    relatedGuides: ["stop-excel-changing-dates-in-csv", "fix-garbled-characters-in-csv"],
   },
   {
     slug: "vlookup-na-hidden-spaces",
@@ -476,7 +486,173 @@ INV-1003,Fabrikam Inc,89.90`,
       },
     ],
     relatedTools: ["trim-whitespace-csv", "remove-duplicates-csv", "remove-html-tags-csv"],
-    relatedGuides: ["duplicate-transactions-bank-csv", "csv-garbled-characters-excel"],
+    relatedGuides: ["duplicate-transactions-bank-csv", "fix-garbled-characters-in-csv", "excel-remove-duplicates-not-working"],
+  },
+  {
+    slug: "excel-remove-duplicates-not-working",
+    name: "Remove Duplicates not working",
+    metaTitle: "Excel Remove Duplicates Not Working? 4 Reasons and Fixes",
+    metaDescription:
+      "Rows that look identical but survive Excel’s Remove Duplicates usually differ by hidden spaces, formatting or the columns compared. How to find and fix it.",
+    h1: "Excel’s Remove Duplicates isn’t removing duplicates: why, and what to do",
+    published: "2026-10-21",
+    updated: "2026-10-22",
+    summary:
+      "You select the data, click Data > Remove Duplicates, and Excel reports that it found no duplicate values, or removed fewer than you can count with your own eyes. The rows really do look the same. In almost every case they aren’t the same to Excel: one has a character you can’t see, a value is stored or formatted differently, or the dialog is comparing more columns than you meant. This guide walks through the four usual causes, how to prove which one you have, and how to clean the file so duplicates match.",
+    cause: [
+      "Remove Duplicates compares cell contents character by character. “Acme Ltd” and “Acme Ltd ” with a trailing space are different strings, and so are two names where one has a double space in the middle. Exports from accounting and CRM systems are full of padded fields, and none of it shows in the grid, so the rows look identical while Excel sees two different customers.",
+      "Non-breaking spaces are the stubborn version of the same problem. They arrive when text is copied from a web page, a PDF or some banking portals, and they look exactly like normal spaces but are character 160 rather than 32. Excel’s TRIM function leaves them alone, which is why cleaning a column with TRIM and running Remove Duplicates again often changes nothing.",
+      "Formatting can split values that are really the same. Microsoft’s documentation says duplicates are judged on the value displayed in the cell, so the same date shown as 08/03/2024 in one row and 8 Mar 2024 in another counts as two values. Numbers can split too: 1200 stored as a number and “1200” stored as text, usually marked by a small green triangle in the corner of the cell, are not treated as the same.",
+      "Finally, check what the dialog is comparing. By default every column in the selection is ticked, so two rows for the same invoice with different import timestamps or row IDs are not duplicates by Excel’s definition. Untick everything except the columns that identify a record, and the result changes completely.",
+    ],
+    manualFix: [
+      {
+        heading: "Find out what differs",
+        steps: [
+          "Pick two rows that should be duplicates and compare a cell from each directly, for example =A2=A3. FALSE means the values differ even though they look alike.",
+          "Compare their lengths with =LEN(A2) and =LEN(A3). A longer value is carrying extra characters, usually spaces at the end.",
+          "Check the last character with =CODE(RIGHT(A2,1)): 32 is a normal space and 160 is a non-breaking space that TRIM won’t remove.",
+          "For numbers and dates, test the type with =ISNUMBER(A2). TRUE in one row and FALSE in the other means one of them is stored as text.",
+        ],
+      },
+      {
+        heading: "Clean the columns, then remove duplicates",
+        steps: [
+          'Add a helper column with =TRIM(SUBSTITUTE(A2,CHAR(160)," ")) to swap non-breaking spaces for normal ones and then strip and collapse the spaces, and fill it down.',
+          "Copy the helper column and use Paste Special > Values over the original column, then delete the helper. Repeat for each text column that identifies a record.",
+          "Fix numbers stored as text by selecting the column and choosing Convert to Number from the warning icon, and give date columns a single number format.",
+          "Select the data, choose Data > Remove Duplicates, tick only the columns that identify a record, and click OK. Excel keeps the first row of each group.",
+        ],
+        note: "Keep a copy of the sheet before you run Remove Duplicates. Excel tells you how many rows it removed but not which ones, so the copy is the only way to check its work.",
+      },
+      {
+        heading: "In Google Sheets",
+        steps: [
+          "Select the data and use Data > Data cleanup > Trim whitespace to strip spaces from the start and end of each cell.",
+          "Then use Data > Data cleanup > Remove duplicates, choose the columns to compare, and tick Data has header row if your first row holds column names.",
+          "Check a few of the remaining rows with =LEN() and =CODE() if duplicates still survive; a character Trim whitespace didn’t touch is the usual reason.",
+        ],
+      },
+    ],
+    toolFix: [
+      "SpreadsheetFix fixes the spacing before it compares anything. The Trim Whitespace rule removes whitespace from both ends of every text cell and collapses runs inside it to a single space, and it treats non-breaking spaces, tabs and line breaks as whitespace too. Remove Duplicates runs after it, so “Acme Ltd”, “Acme Ltd ” and “Acme  Ltd” have already become the same value by the time rows are compared.",
+      "By default a row is removed only when every cell matches an earlier row, and the first occurrence is kept. If records should be matched on a key, such as an email address or an invoice number, use the column picker on Remove Duplicates to compare only those columns. Unlike Excel, the preview lists every row that will be removed before you download anything, and the totals check shows how much each amount column lost, so a removal that takes out real money is easy to spot.",
+      "Trim Whitespace and Remove Duplicates are both free rules for files up to 5,000 rows, and the file is read in your browser rather than uploaded.",
+    ],
+    limits: [
+      "Matching is exact after spacing is fixed, and it is case-sensitive: “ACME Ltd” and “Acme Ltd” stay as two rows, and so do “Acme Ltd” and “Acme Limited”. Excel’s Remove Duplicates ignores capitalisation, so it may remove rows that SpreadsheetFix keeps.",
+      "Values are compared as they are written in the file, so 1200 and 1200.00 in the same column are different. Dates in mixed formats match only if Normalize Dates is switched on too, because it rewrites them to one format before duplicates are checked.",
+      "A file saved from Excel after a failed attempt may already have lost the evidence, for example leading zeros on IDs. Clean the original export where you can.",
+    ],
+    tool: "remove-duplicates-csv",
+    preset: { ruleIds: ["trimWhitespace", "deduplicateRows"] },
+    before: `customer,email,amount
+Acme Ltd,ap@acme.io,120.00
+"Acme Ltd ",ap@acme.io,120.00
+"Acme  Ltd",ap@acme.io,120.00
+Contoso GmbH,billing@contoso.de,89.50`,
+    after: `customer,email,amount
+Acme Ltd,ap@acme.io,120.00
+Contoso GmbH,billing@contoso.de,89.50`,
+    afterNote: "The second Acme row ends in a non-breaking space and the third has a double space. Once both are trimmed, all three rows match and two are removed.",
+    totals: { column: "amount", before: 449.5, removed: 240, after: 209.5 },
+    faqs: [
+      {
+        q: "Why is Excel not removing duplicates?",
+        a: "Because the rows aren’t identical to Excel. The usual culprits are trailing or non-breaking spaces, the same value formatted or stored differently, or extra columns ticked in the Remove Duplicates dialog that differ between the rows.",
+      },
+      {
+        q: "Why doesn’t TRIM make the duplicates match?",
+        a: "TRIM removes only the normal space character. Non-breaking spaces from web pages and PDFs survive it, so replace them first with SUBSTITUTE(A2,CHAR(160),\" \") and trim the result.",
+      },
+      {
+        q: "How do I remove duplicates based on one column?",
+        a: "In Excel’s Remove Duplicates dialog, untick every column except the one that identifies a record, such as email. In SpreadsheetFix, pick that column in the Remove Duplicates column picker.",
+      },
+      {
+        q: "Which row is kept when duplicates are removed?",
+        a: "Both Excel and SpreadsheetFix keep the first occurrence and remove the later ones, so sort the data first if you want a particular copy, such as the most recent, to survive.",
+      },
+    ],
+    relatedTools: ["remove-duplicates-csv", "trim-whitespace-csv", "normalize-dates-csv"],
+    relatedGuides: ["vlookup-na-hidden-spaces", "duplicate-transactions-bank-csv"],
+  },
+  {
+    slug: "csv-vs-xlsx",
+    name: "CSV vs XLSX",
+    metaTitle: "CSV vs XLSX: Differences and When to Use Each",
+    metaDescription:
+      "CSV is plain text that every system can read; XLSX keeps types, formulas and formatting. How to choose, and the problems each one causes.",
+    h1: "CSV vs XLSX: which format to use for exports and imports",
+    published: "2026-10-21",
+    updated: "2026-10-22",
+    summary:
+      "An import screen asks for a CSV, your colleague sends an XLSX, and the file that looked fine in one format arrives broken in the other: dates in the wrong order, codes without their leading zeros, accents turned into symbols, formulas gone. CSV and XLSX store very different things, and most of these problems come from what one of them leaves out. This guide explains the difference, when each format is the right choice, how to convert between them by hand without losing data, and where SpreadsheetFix fits.",
+    cause: [
+      "A CSV file is plain text: one line per row, with values separated by commas, or by semicolons in regions that use the comma as a decimal mark. It holds the values and nothing else. There are no column types, no formatting, no formulas, no second sheet and no record of the character encoding, so every program that opens it has to work out what the text means.",
+      "An XLSX file is a zipped package of XML documents. For each cell it stores a type and a value, so a date is a date and a code formatted as text stays text. It also keeps formulas, number formats, multiple sheets, charts and comments. That makes it the better container for a person working in Excel, and a heavier one for a system that only needs the data.",
+      "The classic CSV problems all come from that missing information. Excel guesses the type of every value on opening, so dates follow your regional settings, 00123 loses its zeros and a 16-digit account number is rounded. The encoding is guessed too, which is how é becomes Ã©. Converting the other way has its own losses: saving a workbook as CSV keeps only the active sheet and only the results of formulas, and the values are written as they are displayed.",
+    ],
+    manualFix: [
+      {
+        heading: "Saving an XLSX as CSV without losing data",
+        steps: [
+          "Check which sheet is active. A CSV holds one sheet, so save each sheet you need as its own file.",
+          "Format columns of codes, IDs and account numbers as Text before saving, so the values written to the file keep their leading zeros and every digit.",
+          "Use File > Save As and choose CSV UTF-8 (Comma delimited) rather than plain CSV, so accented names and currency symbols survive.",
+          "Open the result in a text editor and check a few rows: formulas should have become values, and dates should be in the format the importing system expects.",
+        ],
+      },
+      {
+        heading: "Opening a CSV as a workbook without conversions",
+        steps: [
+          "Don’t double-click the file. In a blank workbook, use Data > From Text/CSV and choose the file.",
+          "Set File Origin to 65001: Unicode (UTF-8) if the preview shows garbled characters, then click Transform Data.",
+          "Set code and ID columns to Text, and date columns to Date using the locale the file was written in, then Close & Load.",
+          "Save the workbook as .xlsx. From now on the types are stored in the file, so it opens the same way on any computer.",
+        ],
+        note: "Google Sheets imports CSV with File > Import, and its Locale setting under File > Settings decides how dates and decimals are read.",
+      },
+    ],
+    toolFix: [
+      "SpreadsheetFix accepts both formats. A CSV is decoded from its raw bytes, with the encoding detected rather than guessed from your computer’s settings, and every value is read as text, so leading zeros and long numbers arrive intact. For an XLSX it reads the first sheet, taking each cell as it is displayed in Excel; formulas come through as their results.",
+      "Cleaning then fixes the problems that bite in the next program: dates rewritten as YYYY-MM-DD so no regional setting can swap them, stray spaces, blank rows and columns, and garbled characters. On the free plan you download a CSV in UTF-8 with a byte order mark, which Excel opens with accents intact. Pro adds a native .xlsx download.",
+      "If the file is going to an import screen, download CSV. If it is going to a person who will work in Excel, the .xlsx download on Pro saves them the import wizard.",
+    ],
+    limits: [
+      "The .xlsx download writes every value as a text cell, exactly as it appears in the cleaned file. That keeps codes and account numbers safe, but amounts and dates are text too, so use Convert to Number or DATEVALUE in Excel before calculating with them.",
+      "Only the first sheet of an uploaded workbook is read, and formatting, formulas and comments aren’t carried over. Save other sheets as separate files first.",
+      "A CSV that Excel has already opened and saved may have lost leading zeros or digits for good. Start from the original export.",
+    ],
+    tool: "csv-to-excel-cleaner",
+    preset: { ruleIds: ["trimWhitespace", "normalizeDate"], options: { normalizeDate: { targetFormat: "YYYY-MM-DD", dateOrder: "auto" } } },
+    before: `account,opened,owner
+00123,03/04/2024,"Dana Lee "
+00456,15/04/2024,Omar Haddad`,
+    after: `account,opened,owner
+00123,2024-04-03,Dana Lee
+00456,2024-04-15,Omar Haddad`,
+    afterNote: "The account numbers keep their leading zeros because every value is read as text. 15/04/2024 shows the dates are day-first, so 03/04/2024 becomes 3 April.",
+    faqs: [
+      {
+        q: "Is CSV or XLSX better for importing data?",
+        a: "CSV, in most cases. Almost every import screen accepts it, it holds only the data, and you can inspect it in a text editor. Use XLSX only when the importer asks for it.",
+      },
+      {
+        q: "Why does my CSV lose leading zeros in Excel?",
+        a: "Excel reads 00123 as the number 123 when it opens a CSV. Import the file with Data > From Text/CSV and set that column to Text, or keep the file in XLSX with the column formatted as Text.",
+      },
+      {
+        q: "Does saving as CSV keep formulas?",
+        a: "No. A CSV stores the results of formulas as plain values, and only for the active sheet. Keep the XLSX as your working copy and export a CSV when you need one.",
+      },
+      {
+        q: "Can SpreadsheetFix convert CSV to XLSX?",
+        a: "Yes, on Pro: clean the CSV and download it as .xlsx. The free plan downloads cleaned CSV files for up to 5,000 rows.",
+      },
+    ],
+    relatedTools: ["csv-to-excel-cleaner", "fix-csv-encoding", "normalize-dates-csv"],
+    relatedGuides: ["stop-excel-changing-dates-in-csv", "fix-garbled-characters-in-csv"],
   },
 ];
 
