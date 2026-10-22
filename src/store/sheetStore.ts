@@ -11,7 +11,8 @@ import type { RuleConfig } from "@/types/rules";
 import { parseFile } from "@/lib/engine/parsers";
 import { generateHealthReport } from "@/lib/engine/healthReport";
 import { runEngine, undoRule, type EngineResult } from "@/lib/engine/ruleEngine";
-import { FREE_RULES } from "@/config/plans";
+import { FREE_RULES, getPlanLimits } from "@/config/plans";
+import type { PlanId, PlanLimits } from "@/types/billing";
 import { trackFileUpload, trackDemoLoaded, trackCleaningRun } from "@/lib/analytics";
 import { autoEnableRules, defaultRuleConfigs, type RulePreset } from "@/lib/engine/issueRules";
 
@@ -19,6 +20,16 @@ export const FREE_ROW_LIMIT = 5_000;
 
 
 export type { RulePreset } from "@/lib/engine/issueRules";
+
+/** What /api/entitlements says the visitor may do. Signed-out visitors get the Free plan. */
+export interface Entitlements {
+  signedIn: boolean;
+  plan: PlanId;
+  limits: PlanLimits;
+  team: { id: string; name: string; role: "admin" | "member" | null } | null;
+}
+
+const SIGNED_OUT: Entitlements = { signedIn: false, plan: "free", limits: getPlanLimits("free"), team: null };
 
 interface SheetState {
   // Stage
@@ -36,6 +47,7 @@ interface SheetState {
   // Cleaning config
   ruleConfigs: RuleConfig[];
   isPro: boolean;
+  entitlements: Entitlements;
   preset: RulePreset | null;
 
   // Engine results
@@ -56,6 +68,8 @@ interface SheetState {
   undoRule: (ruleId: string) => void;
   resetAll: () => void;
   setIsPro: (isPro: boolean) => void;
+  setEntitlements: (entitlements: Entitlements | null) => void;
+  setRuleConfigs: (ruleConfigs: RuleConfig[]) => void;
   setPreset: (preset: RulePreset | null) => void;
   loadDemoData: () => void;
   getDemoCSV: () => string;
@@ -82,6 +96,7 @@ export const useSheetStore = create<SheetState>((set, get) => ({
   totalRowCount: 0,
   ruleConfigs: defaultRuleConfigs(),
   isPro: false,
+  entitlements: SIGNED_OUT,
   preset: null,
   engineResult: null,
   cleanedRows: [],
@@ -218,6 +233,9 @@ export const useSheetStore = create<SheetState>((set, get) => ({
   },
 
   setIsPro: (isPro) => set({ isPro }),
+  setEntitlements: (entitlements) =>
+    set({ entitlements: entitlements ?? SIGNED_OUT, isPro: (entitlements?.plan ?? "free") !== "free" }),
+  setRuleConfigs: (ruleConfigs) => set({ ruleConfigs }),
   setPreset: (preset) => set({ preset }),
 
   loadDemoData: () => {

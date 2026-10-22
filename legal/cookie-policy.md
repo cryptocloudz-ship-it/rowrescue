@@ -60,6 +60,7 @@ In addition to cookies, the Service may use browser local storage or session sto
 |---|---|---|
 | User preferences | Storing your UI preferences (e.g., theme, column settings) | Persistent (until cleared) |
 | Application state | Maintaining application state during your session | Session |
+| Saved presets (Free plan) | Rule selections you save as presets in the cleaner. Never file contents | Persistent (until you delete them or clear storage) |
 
 These storage mechanisms operate entirely within your browser and the data is not transmitted to our servers.
 
