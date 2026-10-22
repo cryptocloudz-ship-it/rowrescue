@@ -32,6 +32,7 @@ export function SiteFooter() {
           <h2 className="text-[13px] font-medium text-ink-muted mb-3">SpreadsheetFix</h2>
           <ul className="space-y-2">
             <li><Link href="/tools" className="text-ink-body hover:text-ink">All tools</Link></li>
+            <li><Link href="/guides" className="text-ink-body hover:text-ink">Guides</Link></li>
             <li><Link href="/pricing" className="text-ink-body hover:text-ink">Pricing</Link></li>
             <li><Link href="/legal/terms-of-service" className="text-ink-body hover:text-ink">Terms</Link></li>
             <li><Link href="/legal/privacy-policy" className="text-ink-body hover:text-ink">Privacy</Link></li>
