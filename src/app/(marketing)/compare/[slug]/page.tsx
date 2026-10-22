@@ -159,7 +159,7 @@ export default async function ComparisonPage({ params }: Props) {
                 <ul className="mt-3 border-t border-rule">
                   {guides.map((g) => (
                     <li key={g.slug} className="border-b border-rule">
-                      <Link href={`/guides/${g.slug}`} className="block py-4 font-semibold hover:text-accent">{g.title}</Link>
+                      <Link href={`/guides/${g.slug}`} className="block py-4 font-semibold hover:text-accent">{g.h1}</Link>
                     </li>
                   ))}
                 </ul>

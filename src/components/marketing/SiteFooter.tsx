@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TOOLS } from "@/content/tools";
+import { TOOLS, toolNeedsPro } from "@/content/tools";
 import { COMPARISONS } from "@/content/comparisons";
 import { GUIDES } from "@/content/guides";
 import { SUPPORT_EMAIL } from "@/config/site";
@@ -26,6 +26,7 @@ export function SiteFooter() {
             {TOOLS.map((t) => (
               <li key={t.slug}>
                 <Link href={`/${t.slug}`} className={linkClass}>{t.name}</Link>
+                {toolNeedsPro(t) && <span className="ml-1.5 text-[11px] text-ink-muted">Pro</span>}
               </li>
             ))}
           </ul>
@@ -45,7 +46,7 @@ export function SiteFooter() {
           <ul className="space-y-2">
             {GUIDES.map((g) => (
               <li key={g.slug}>
-                <Link href={`/guides/${g.slug}`} className={linkClass}>{g.title}</Link>
+                <Link href={`/guides/${g.slug}`} className={linkClass}>{g.name}</Link>
               </li>
             ))}
           </ul>

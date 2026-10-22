@@ -5,8 +5,8 @@ import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { HomeHero } from "@/components/marketing/HomeHero";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TOOLS } from "@/content/tools";
-import { SITE_NAME, SITE_DESCRIPTION, SUPPORT_EMAIL, DEFAULT_OPEN_GRAPH, absoluteUrl } from "@/config/site";
-import { PLANS, FREE_RULES } from "@/config/plans";
+import { SITE_NAME, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH, LOGO_PATH, SUPPORT_EMAIL, absoluteUrl } from "@/config/site";
+import { PLANS, FREE_RULES, TEAM_MIN_SEATS, formatEuro, formatRows } from "@/config/plans";
 import { ALL_RULES, RULE_MAP } from "@/lib/engine/rules";
 import { TotalsCheck } from "@/components/ui/TotalsCheck";
 import { heroTotals } from "@/content/heroSample";
@@ -16,11 +16,14 @@ export const metadata: Metadata = {
   openGraph: { ...DEFAULT_OPEN_GRAPH, url: "/" },
 };
 
+const ORG_ID = absoluteUrl("/#organization");
+
 const STRUCTURED_DATA = [
   {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     name: SITE_NAME,
+    publisher: { "@id": ORG_ID },
     url: absoluteUrl("/"),
     description: SITE_DESCRIPTION,
     applicationCategory: "BusinessApplication",
@@ -31,17 +34,19 @@ const STRUCTURED_DATA = [
       {
         "@type": "Offer",
         name: "Pro",
-        price: "12",
+        price: String((PLANS.pro.priceMonthly ?? 0) / 100),
         priceCurrency: "EUR",
         priceSpecification: {
           "@type": "UnitPriceSpecification",
-          price: "12",
+          price: String((PLANS.pro.priceMonthly ?? 0) / 100),
           priceCurrency: "EUR",
           billingDuration: "P1M",
         },
       },
     ],
     featureList: [
+      "Runs in the browser; files are never uploaded",
+      "Totals check on amount columns before and after cleaning",
       "Remove duplicate rows",
       "Normalize mixed date formats",
       "Validate email addresses",
@@ -54,9 +59,10 @@ const STRUCTURED_DATA = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": ORG_ID,
     name: SITE_NAME,
     url: absoluteUrl("/"),
-    logo: absoluteUrl("/apple-icon.png"),
+    logo: absoluteUrl(LOGO_PATH),
     email: SUPPORT_EMAIL,
   },
   {
@@ -64,6 +70,7 @@ const STRUCTURED_DATA = [
     "@type": "WebSite",
     name: SITE_NAME,
     url: absoluteUrl("/"),
+    publisher: { "@id": ORG_ID },
   },
 ];
 
@@ -80,14 +87,6 @@ const RULE_EXAMPLES: { id: string; before: string; after: string }[] = [
 // Computed by the real engine at build time from the hero example file
 const HERO_TOTALS = heroTotals();
 
-function formatEuro(cents: number) {
-  return `€${(cents / 100).toLocaleString("en-GB", { maximumFractionDigits: 2 })}`;
-}
-
-function formatCount(n: number) {
-  return n.toLocaleString("en-GB");
-}
-
 const free = PLANS.free.limits;
 const pro = PLANS.pro;
 const team = PLANS.team;
@@ -98,7 +97,7 @@ const PRICING = [
     price: "€0",
     period: "",
     items: [
-      `Up to ${formatCount(free.maxRows)} rows`,
+      `Up to ${formatRows(free.maxRows)} rows`,
       `${FREE_RULES.length} of ${ALL_RULES.length} rules`,
       "CSV export",
       `${free.maxExportsPerDay} exports a day`,
@@ -111,7 +110,7 @@ const PRICING = [
     price: formatEuro(pro.priceMonthly ?? 0),
     period: `per month, or ${formatEuro(pro.priceYearly ?? 0)} a year`,
     items: [
-      `Up to ${formatCount(pro.limits.maxRows)} rows`,
+      `Up to ${formatRows(pro.limits.maxRows)} rows`,
       `All ${ALL_RULES.length} rules`,
       "CSV and Excel export",
       "Change log and PDF report",
@@ -123,7 +122,7 @@ const PRICING = [
     name: team.name,
     price: formatEuro(team.priceMonthly ?? 0),
     period: "per seat, per month",
-    items: ["Everything in Pro", "Shared presets", "Audit log", "Team billing"],
+    items: [`From ${TEAM_MIN_SEATS} seats`, "Everything in Pro", "Shared presets", "Audit log", "Team billing"],
     link: { href: "/pricing", label: "Choose Team" },
   },
 ];
@@ -144,15 +143,16 @@ export default function LandingPage() {
               <div className="border-t border-rule-strong pt-5">
                 <dt className="font-semibold">Your browser</dt>
                 <dd className="mt-2 text-ink-body leading-relaxed">
-                  Files are parsed and cleaned by JavaScript running in this tab. Their contents are never sent to our
-                  servers.
+                  Files are parsed and cleaned by JavaScript running in this tab, so you clean CSV and Excel files
+                  without uploading them. Their contents are never sent to our servers.
                 </dd>
               </div>
               <div className="border-t border-rule-strong pt-5">
                 <dt className="font-semibold">Our servers</dt>
                 <dd className="mt-2 text-ink-body leading-relaxed">
-                  We store your account email and billing details, nothing from your files. We are based in the EU, and
-                  GDPR applies.
+                  We store your account email, billing details and a daily export count, nothing from your files. We
+                  are based in the EU and GDPR applies. Because file contents never reach us, cleaning client or
+                  customer data here is GDPR-friendly: there is no upload for us to process or secure.
                 </dd>
               </div>
               <div className="border-t border-rule-strong pt-5">

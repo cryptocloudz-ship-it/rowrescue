@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Settings2, Lock, ChevronDown, Columns, X, ArrowRight, CheckCircle2 } from "lucide-react";
 import { useSheetStore } from "@/store/sheetStore";
 import { ALL_RULES } from "@/lib/engine/rules";
-import { FREE_RULES } from "@/config/plans";
+import { FREE_RULES, PRO_MAX_ROWS, PRO_PRICE_MONTHLY } from "@/config/plans";
 import type { RuleCategory, RuleDefinition } from "@/types/rules";
 import type { HealthReport } from "@/types/sheet";
 import { ISSUE_TO_RULE } from "@/lib/engine/issueRules";
@@ -174,7 +174,7 @@ function ProUpgradeModal({
             {[
               `All ${ALL_RULES.length} cleaning rules`,
               "Unlimited daily exports",
-              "Process up to 500,000 rows at once",
+              `Process up to ${PRO_MAX_ROWS} rows at once`,
               "Export to native Excel (.xlsx)",
               "No watermark on exports"
             ].map((feature, i) => (
@@ -285,7 +285,7 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
                   <Lock className="w-4 h-4" />
                   Unlock all Pro rules
                 </button>
-                <span className="text-sm text-ink-muted">Pro is €12 a month</span>
+                <span className="text-sm text-ink-muted">Pro is {PRO_PRICE_MONTHLY} a month</span>
               </div>
             </div>
           </div>
@@ -435,7 +435,7 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
               ? {
                   id: "all",
                   name: "All Pro Features",
-                  description: "Unlock every cleaning rule and process files of up to 500,000 rows at once.",
+                  description: `Unlock every cleaning rule and process files of up to ${PRO_MAX_ROWS} rows at once.`,
                   category: "row_cleaning", // unused
                   supportsColumnTargeting: false,
                 } as RuleDefinition

@@ -1,6 +1,7 @@
 import { ImageResponse } from "next/og";
-import { TOOLS, TOOL_MAP } from "@/content/tools";
+import { TOOLS, TOOL_MAP, toolNeedsPro } from "@/content/tools";
 import { OgCard, ogFonts } from "@/lib/og/OgCard";
+import { FREE_MAX_ROWS } from "@/config/plans";
 
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -14,7 +15,10 @@ export default async function Image({ params }: { params: Promise<{ tool: string
   const { tool: slug } = await params;
   const tool = TOOL_MAP.get(slug);
   return new ImageResponse(
-    <OgCard title={tool?.h1 ?? "Free CSV cleaning tools"} subtitle="Free for files up to 5,000 rows." />,
+    <OgCard
+      title={tool?.h1 ?? "Free CSV cleaning tools"}
+      subtitle={tool && toolNeedsPro(tool) ? "A Pro rule. Runs in your browser." : `Free for files up to ${FREE_MAX_ROWS} rows.`}
+    />,
     { ...size, fonts: await ogFonts() }
   );
 }

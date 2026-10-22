@@ -22,6 +22,7 @@ import { TotalsCheck } from "@/components/ui/TotalsCheck";
 import { WelcomeModal } from "@/components/ui/WelcomeModal";
 import { OnboardingHint } from "@/components/ui/OnboardingHint";
 import { HelpButton } from "@/components/ui/HelpButton";
+import { FREE_MAX_ROWS, PRO_MAX_ROWS, PRO_PRICE_MONTHLY } from "@/config/plans";
 
 const STAGES = [
   { id: "idle", label: "File" },
@@ -223,14 +224,14 @@ export default function CleanPage() {
                       Row Limit Reached: Cleaning first {parsedSheet.rowCount.toLocaleString()} rows
                     </h4>
                     <p className="text-sm text-accent mt-2 mb-4 leading-relaxed font-medium">
-                      Your file has {totalRowCount.toLocaleString()} rows, but the Free plan only processes up to 5,000 rows per file. Upgrade to Pro to clean the entire dataset at once (up to 500,000 rows).
+                      Your file has {totalRowCount.toLocaleString()} rows, but the Free plan only processes up to {FREE_MAX_ROWS} rows per file. Upgrade to Pro to clean the entire dataset at once (up to {PRO_MAX_ROWS} rows).
                     </p>
                     <Link
                       href="/pricing"
                       className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white text-sm font-semibold rounded-lg hover:bg-accent-strong transition-colors"
                     >
                       <Lock className="w-4 h-4" />
-                      Unlock Full Processing — €12/mo
+                      Unlock Full Processing — {PRO_PRICE_MONTHLY}/mo
                     </Link>
                   </div>
                 </div>
@@ -349,7 +350,7 @@ export default function CleanPage() {
                         className="flex-shrink-0 inline-flex items-center gap-2 px-5 py-2 bg-accent text-white text-sm font-semibold rounded-lg transition-all"
                       >
                         <Zap className="w-4 h-4" />
-                        Upgrade — €12/mo
+                        Upgrade — {PRO_PRICE_MONTHLY}/mo
                       </Link>
                     </div>
                   </div>

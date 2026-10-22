@@ -12,9 +12,9 @@ export function generateStaticParams() {
 
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const g = GUIDE_MAP.get(slug);
+  const guide = GUIDE_MAP.get(slug);
   return new ImageResponse(
-    <OgCard title={g?.title ?? "Spreadsheet cleaning guides"} subtitle="SpreadsheetFix guides" />,
+    <OgCard title={guide?.h1 ?? "CSV and Excel guides"} subtitle="A guide from SpreadsheetFix: the cause, the manual fix and the quick one." />,
     { ...size, fonts: await ogFonts() }
   );
 }

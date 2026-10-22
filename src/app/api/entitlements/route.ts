@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { users } from "@/db/drizzle";
 import { eq } from "drizzle-orm";
-import { getPlanLimits } from "@/config/plans";
+import { getPlanLimits, PRO_MAX_ROWS } from "@/config/plans";
 import { loadAccount } from "@/lib/teams/data";
 
 /**
@@ -72,7 +72,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   const { userId } = await auth();
   const body = await request.json();
-  const { fileName, rowCount, rulesApplied } = body;
+  const { rowCount, rulesApplied } = body;
 
   // Unauthenticated: enforce free limits without persistence
   if (!userId) {
@@ -80,7 +80,7 @@ export async function POST(request: NextRequest) {
     if (rowCount > limits.maxRows) {
       return NextResponse.json(
         {
-          error: `Row limit exceeded. Free plan allows ${limits.maxRows.toLocaleString()} rows. Upgrade to Pro for up to 500,000 rows.`,
+          error: `Row limit exceeded. Free plan allows ${limits.maxRows.toLocaleString()} rows. Upgrade to Pro for up to ${PRO_MAX_ROWS} rows.`,
           code: "ROW_LIMIT_EXCEEDED",
         },
         { status: 403 }
@@ -89,7 +89,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       allowed: true,
       exportsRemaining: limits.maxExportsPerDay,
-      fileName,
       rulesApplied,
     });
   }
@@ -140,7 +139,6 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     allowed: true,
     exportsRemaining: limits.maxExportsPerDay - (exportsToday + 1),
-    fileName,
     rulesApplied,
   });
 }

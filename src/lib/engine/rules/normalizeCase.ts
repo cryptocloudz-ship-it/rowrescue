@@ -3,7 +3,8 @@ import type { RuleOptions, NormalizeCaseOptions } from "@/types/rules";
 
 function toTitleCase(str: string): string {
   return str.replace(
-    /\w\S*/g,
+    // Unicode-aware so words starting with é, ö, etc. are capitalised too.
+    /[\p{L}\p{N}_]\S*/gu,
     (txt) => txt.charAt(0).toUpperCase() + txt.slice(1).toLowerCase()
   );
 }

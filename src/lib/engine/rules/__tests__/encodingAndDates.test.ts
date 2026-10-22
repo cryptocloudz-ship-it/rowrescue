@@ -62,6 +62,33 @@ describe("normalizeDate date order", () => {
     expect(result.rows[0]).toEqual({ us: "2024-03-04", eu: "2024-04-03" });
   });
 
+  it("reads two-digit years in a day-first column day-first", () => {
+    expect(detectDateOrder(["03/04/24", "25/12/24"])).toBe("DMY");
+    const result = normalizeDate([{ d: "03/04/24" }, { d: "25/12/24" }]);
+    expect(result.rows.map((r) => r.d)).toEqual(["2024-04-03", "2024-12-25"]);
+  });
+
+  it("reads two-digit years in a month-first column month-first", () => {
+    expect(detectDateOrder(["03/04/24", "12/25/24"])).toBe("MDY");
+    const result = normalizeDate([{ d: "03-04-24" }, { d: "12-25-24" }]);
+    expect(result.rows.map((r) => r.d)).toEqual(["2024-03-04", "2024-12-25"]);
+  });
+
+  it("reads two-digit years day-first when the column has no evidence", () => {
+    const result = normalizeDate([{ d: "03.04.24" }, { d: "05.06.24" }]);
+    expect(result.rows.map((r) => r.d)).toEqual(["2024-04-03", "2024-06-05"]);
+  });
+
+  it("puts two-digit years 00-29 in the 2000s and 30-99 in the 1900s", () => {
+    const result = normalizeDate([{ d: "15/01/29" }, { d: "15/01/30" }, { d: "15/01/99" }, { d: "15/01/00" }]);
+    expect(result.rows.map((r) => r.d)).toEqual(["2029-01-15", "1930-01-15", "1999-01-15", "2000-01-15"]);
+  });
+
+  it("uses two-digit-year dates as order evidence for four-digit ones", () => {
+    const result = normalizeDate([{ d: "03/04/2024" }, { d: "25/12/24" }]);
+    expect(result.rows.map((r) => r.d)).toEqual(["2024-04-03", "2024-12-25"]);
+  });
+
   it("honours an explicit order", () => {
     const result = normalizeDate([{ d: "03/04/2024" }], { targetFormat: "YYYY-MM-DD", dateOrder: "MDY" });
     expect(result.rows[0].d).toBe("2024-03-04");

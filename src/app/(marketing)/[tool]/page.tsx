@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ALL_RULES } from "@/lib/engine/rules";
-import { TOOLS, TOOL_MAP } from "@/content/tools";
-import { GUIDES } from "@/content/guides";
+import { TOOLS, TOOL_MAP, toolNeedsPro } from "@/content/tools";
+import { GUIDE_MAP } from "@/content/guides";
 import { COMPARISONS } from "@/content/comparisons";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
+import { PLANS, FREE_MAX_ROWS, PRO_MAX_ROWS } from "@/config/plans";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -46,7 +47,8 @@ export default async function ToolPage({ params }: Props) {
 
   const url = absoluteUrl(`/${tool.slug}`);
   const related = tool.related.map((s) => TOOL_MAP.get(s)).filter((t) => t !== undefined);
-  const guides = GUIDES.filter((g) => g.tool === tool.slug);
+  const needsPro = toolNeedsPro(tool);
+  const guides = (tool.guides ?? []).map((s) => GUIDE_MAP.get(s)).filter((g) => g !== undefined);
   const comparisons = COMPARISONS.filter((c) => c.tools.includes(tool.slug));
 
   return (
@@ -61,7 +63,23 @@ export default async function ToolPage({ params }: Props) {
             description: tool.metaDescription,
             applicationCategory: "BusinessApplication",
             operatingSystem: "Any (web browser)",
-            offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
+            // The per-tool OG image path carries a build hash (opengraph-image-<hash>), so use the stable site image
+            image: absoluteUrl("/og-image.png"),
+            // Pro-only pages advertise the Pro price, not a free offer the rule isn't part of
+            offers: needsPro
+              ? {
+                  "@type": "Offer",
+                  name: PLANS.pro.name,
+                  price: String((PLANS.pro.priceMonthly ?? 0) / 100),
+                  priceCurrency: "EUR",
+                  priceSpecification: {
+                    "@type": "UnitPriceSpecification",
+                    price: String((PLANS.pro.priceMonthly ?? 0) / 100),
+                    priceCurrency: "EUR",
+                    billingDuration: "P1M",
+                  },
+                }
+              : { "@type": "Offer", name: PLANS.free.name, price: "0", priceCurrency: "EUR" },
           },
           {
             "@context": "https://schema.org",
@@ -97,7 +115,11 @@ export default async function ToolPage({ params }: Props) {
           <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em] max-w-[820px]">{tool.h1}</h1>
           <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[680px]">{tool.intro}</p>
           <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm">
-            <div><dt className="text-ink-muted">Free up to</dt><dd className="mt-0.5 font-medium">5,000 rows</dd></div>
+            {needsPro ? (
+              <div><dt className="text-ink-muted">Plan</dt><dd className="mt-0.5 font-medium">Pro rule</dd></div>
+            ) : (
+              <div><dt className="text-ink-muted">Free up to</dt><dd className="mt-0.5 font-medium">{FREE_MAX_ROWS} rows</dd></div>
+            )}
             <div><dt className="text-ink-muted">Account</dt><dd className="mt-0.5 font-medium">Not required</dd></div>
             <div><dt className="text-ink-muted">Upload</dt><dd className="mt-0.5 font-medium">None</dd></div>
           </dl>
@@ -116,8 +138,11 @@ export default async function ToolPage({ params }: Props) {
                 <pre className="font-data text-xs sm:text-sm text-ink-body whitespace-pre overflow-x-auto leading-relaxed">{tool.before}</pre>
               </figure>
               <figure className="m-0 rounded-lg border border-rule bg-paper p-5">
-                <figcaption className="text-[13px] font-medium text-accent mb-3">After</figcaption>
+                <figcaption className="text-[13px] font-medium text-accent mb-3">
+                  {tool.afterView === "flagged" ? "Flagged for review" : "After"}
+                </figcaption>
                 <pre className="font-data text-xs sm:text-sm text-accent whitespace-pre overflow-x-auto leading-relaxed">{tool.after}</pre>
+                {tool.afterNote && <p className="mt-3 text-[13px] leading-relaxed text-ink-muted">{tool.afterNote}</p>}
               </figure>
             </div>
           </div>
@@ -164,7 +189,7 @@ export default async function ToolPage({ params }: Props) {
             <div className="rounded-lg border border-rule p-6">
               <h2 className="font-semibold">Larger files</h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-body">
-                Pro cleans up to 500,000 rows per file, adds all {ALL_RULES.length} rules and Excel export, and removes
+                Pro cleans up to {PRO_MAX_ROWS} rows per file, adds all {ALL_RULES.length} rules and Excel export, and removes
                 the watermark.
               </p>
               <Link
@@ -193,7 +218,9 @@ export default async function ToolPage({ params }: Props) {
                 <ul className="mt-3 border-t border-rule">
                   {guides.map((g) => (
                     <li key={g.slug} className="border-b border-rule">
-                      <Link href={`/guides/${g.slug}`} className="block py-4 font-semibold hover:text-accent">{g.title}</Link>
+                      <Link href={`/guides/${g.slug}`} className="group block py-4">
+                        <span className="font-semibold group-hover:text-accent">{g.h1}</span>
+                      </Link>
                     </li>
                   ))}
                 </ul>

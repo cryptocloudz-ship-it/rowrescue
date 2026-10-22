@@ -369,6 +369,12 @@ describe("normalizeNumbers", () => {
     const result = normalizeNumbers(rows);
     expect(result.rows[0].price).toBe("99");
   });
+
+  it("converts every European-format value, not just every other one", () => {
+    const rows = [{ price: "1.234,50", total: "2.469,00" }, { price: "3.100,00", total: "6.200,00" }];
+    const result = normalizeNumbers(rows);
+    expect(result.rows).toEqual([{ price: "1234.50", total: "2469.00" }, { price: "3100.00", total: "6200.00" }]);
+  });
 });
 
 // ─── normalizePhone ──────────────────────────────────────────────────────────
@@ -475,6 +481,12 @@ describe("normalizeCase", () => {
     const rows = [{ name: "alice" }];
     const result = normalizeCase(rows);
     expect(result.changes).toHaveLength(0);
+  });
+
+  it("title-cases words that start with an accented letter", () => {
+    const rows = [{ name: "émile ZOLA", city: "östersund" }];
+    const result = normalizeCase(rows, { caseType: "title" });
+    expect(result.rows[0]).toEqual({ name: "Émile Zola", city: "Östersund" });
   });
 });
 

@@ -53,6 +53,7 @@ export const PLANS: Record<string, PlanDefinition> = {
     description: "Shared cleaning for your organisation.",
     priceMonthly: 2900, // €29.00/seat
     priceYearly: 24900, // €249.00/seat
+    seats: { min: 2, max: 100 },
     stripePriceIdMonthly: process.env.NEXT_PUBLIC_STRIPE_TEAM_MONTHLY_PRICE_ID,
     stripePriceIdYearly: process.env.NEXT_PUBLIC_STRIPE_TEAM_YEARLY_PRICE_ID,
     limits: {
@@ -109,3 +110,24 @@ export const FREE_RULES = [
   "normalizeEmail",
   "validateEmail",
 ];
+
+/** Row counts as copy shows them ("5,000"). */
+export function formatRows(n: number): string {
+  return n.toLocaleString("en-GB");
+}
+
+/** A price in cents as copy shows it ("€12", "€99"). */
+export function formatEuro(cents: number | null): string {
+  const value = cents ?? 0;
+  const digits = value % 100 === 0 ? 0 : 2;
+  return `€${(value / 100).toLocaleString("en-GB", { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
+}
+
+// Plan figures for marketing and UI copy, so prices and limits are only set in PLANS
+export const FREE_MAX_ROWS = formatRows(PLANS.free.limits.maxRows);
+export const PRO_MAX_ROWS = formatRows(PLANS.pro.limits.maxRows);
+export const PRO_PRICE_MONTHLY = formatEuro(PLANS.pro.priceMonthly);
+export const PRO_PRICE_YEARLY = formatEuro(PLANS.pro.priceYearly);
+export const TEAM_PRICE_MONTHLY = formatEuro(PLANS.team.priceMonthly);
+export const TEAM_PRICE_YEARLY = formatEuro(PLANS.team.priceYearly);
+export const TEAM_MIN_SEATS = PLANS.team.seats!.min;

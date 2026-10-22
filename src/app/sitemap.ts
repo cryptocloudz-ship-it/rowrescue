@@ -1,28 +1,35 @@
 import type { MetadataRoute } from "next";
-import { TOOLS } from "@/content/tools";
+import { TOOLS, toolUpdated } from "@/content/tools";
+import { GUIDES, guidesUpdated } from "@/content/guides";
 import { COMPARISONS } from "@/content/comparisons";
-import { GUIDES } from "@/content/guides";
 import { absoluteUrl } from "@/config/site";
+
+// Dates of the last real content change, so lastModified stays stable across builds.
+// Bump the matching date when you change a page's copy. Google ignores changefreq and priority.
+const UPDATED = {
+  home: "2026-10-22",
+  tools: "2026-10-22",
+  compare: "2026-10-21",
+  pricing: "2026-10-19",
+  security: "2026-10-21",
+  contact: "2026-10-21",
+  legal: "2026-10-19",
+};
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    { url: absoluteUrl("/"), changeFrequency: "weekly", priority: 1 },
-    { url: absoluteUrl("/tools"), changeFrequency: "weekly", priority: 0.9 },
-    ...TOOLS.map((t) => ({ url: absoluteUrl(`/${t.slug}`), changeFrequency: "monthly" as const, priority: 0.9 })),
-    { url: absoluteUrl("/compare"), changeFrequency: "monthly", priority: 0.6 },
-    ...COMPARISONS.map((c) => ({ url: absoluteUrl(`/compare/${c.slug}`), changeFrequency: "monthly" as const, priority: 0.7 })),
-    { url: absoluteUrl("/guides"), changeFrequency: "weekly", priority: 0.6 },
-    ...GUIDES.map((g) => ({
-      url: absoluteUrl(`/guides/${g.slug}`),
-      lastModified: g.updated,
-      changeFrequency: "monthly" as const,
-      priority: 0.7,
-    })),
-    { url: absoluteUrl("/pricing"), changeFrequency: "monthly", priority: 0.8 },
-    { url: absoluteUrl("/security"), changeFrequency: "yearly", priority: 0.5 },
-    { url: absoluteUrl("/contact"), changeFrequency: "yearly", priority: 0.4 },
-    { url: absoluteUrl("/legal/terms-of-service"), changeFrequency: "yearly", priority: 0.3 },
-    { url: absoluteUrl("/legal/privacy-policy"), changeFrequency: "yearly", priority: 0.3 },
-    { url: absoluteUrl("/legal/cookie-policy"), changeFrequency: "yearly", priority: 0.3 },
+    { url: absoluteUrl("/"), lastModified: UPDATED.home },
+    { url: absoluteUrl("/tools"), lastModified: UPDATED.tools },
+    ...TOOLS.map((t) => ({ url: absoluteUrl(`/${t.slug}`), lastModified: toolUpdated(t) })),
+    { url: absoluteUrl("/guides"), lastModified: guidesUpdated() },
+    ...GUIDES.map((g) => ({ url: absoluteUrl(`/guides/${g.slug}`), lastModified: g.updated })),
+    { url: absoluteUrl("/compare"), lastModified: UPDATED.compare },
+    ...COMPARISONS.map((c) => ({ url: absoluteUrl(`/compare/${c.slug}`), lastModified: UPDATED.compare })),
+    { url: absoluteUrl("/pricing"), lastModified: UPDATED.pricing },
+    { url: absoluteUrl("/security"), lastModified: UPDATED.security },
+    { url: absoluteUrl("/contact"), lastModified: UPDATED.contact },
+    { url: absoluteUrl("/legal/terms-of-service"), lastModified: UPDATED.legal },
+    { url: absoluteUrl("/legal/privacy-policy"), lastModified: UPDATED.legal },
+    { url: absoluteUrl("/legal/cookie-policy"), lastModified: UPDATED.legal },
   ];
 }

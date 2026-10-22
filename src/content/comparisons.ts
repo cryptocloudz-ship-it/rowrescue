@@ -1,4 +1,6 @@
 import type { ToolFaq } from "./tools";
+import { FREE_MAX_ROWS, PRO_MAX_ROWS, PRO_PRICE_MONTHLY } from "@/config/plans";
+import { ALL_RULES } from "@/lib/engine/rules";
 
 export interface Comparison {
   slug: string;
@@ -31,12 +33,12 @@ export const COMPARISONS: Comparison[] = [
     rows: [
       { aspect: "Where it runs", us: "In your browser, nothing to install", them: "Desktop app, or Excel for the web" },
       { aspect: "Opening a CSV", us: "Values kept as text until a rule changes them", them: "Dates, long numbers and leading zeros converted on open, based on regional settings" },
-      { aspect: "Duplicates", us: "Whitespace normalised before matching; preview of every removed row", them: "Data › Remove Duplicates on exact values; no preview of what was removed" },
+      { aspect: "Duplicates", us: "Whitespace normalised before matching; preview of every removed row", them: "Data › Remove Duplicates; ignores case, but spaces and formatting make values differ; no list of what was removed" },
       { aspect: "Spaces", us: "Trims and collapses spaces, including non-breaking spaces", them: "TRIM removes regular spaces only, not non-breaking ones (CHAR(160))" },
       { aspect: "Mixed date formats", us: "Detects day-first or month-first per column and converts to one format", them: "Manual: Text to Columns, DATEVALUE, or Power Query" },
       { aspect: "Garbled characters (Ã©)", us: "Repaired automatically", them: "Re-import with the right file origin, or fix by hand" },
       { aspect: "Proof totals didn't change", us: "Totals check on amount columns", them: "Manual SUM before and after" },
-      { aspect: "Size", us: "5,000 rows free, 500,000 on Pro", them: "1,048,576 rows per sheet" },
+      { aspect: "Size", us: `${FREE_MAX_ROWS} rows free, ${PRO_MAX_ROWS} on Pro`, them: "1,048,576 rows per sheet" },
       { aspect: "Formulas, pivots, charts", us: "No", them: "Yes" },
     ],
     chooseThem: [
@@ -52,15 +54,15 @@ export const COMPARISONS: Comparison[] = [
     sections: [
       {
         heading: "Excel changes a CSV the moment you open it",
-        body: "When you double-click a CSV, Excel guesses each column's type. 03/04/2026 becomes a date in whichever order your regional settings use, 00123 becomes 123, and a 16-digit card or account reference loses its last digits to scientific notation. Recent Microsoft 365 versions let you turn some of these conversions off under File › Options › Data. Cleaning the CSV first, and normalising dates to YYYY-MM-DD, avoids the problem in every version.",
+        body: "When you double-click a CSV, Excel guesses each column's type. 03/04/2026 becomes a date in whichever order your regional settings use, 00123 becomes 123, and a 16-digit card or account reference is shown in scientific notation, with every digit after the fifteenth turned into a zero. Recent Microsoft 365 versions let you turn some of these conversions off under File › Options › Data. Cleaning the CSV first, and normalising dates to YYYY-MM-DD, avoids the problem in every version.",
       },
       {
         heading: "Why Remove Duplicates misses duplicates",
-        body: "Excel compares cell values exactly. “Acme Ltd” and “Acme Ltd ” (with a trailing space) are different to it, and TRIM won't remove the non-breaking spaces that come from web pages and PDFs. SpreadsheetFix normalises whitespace before comparing, so near-identical rows are matched, and it shows each removed row so you can check the result.",
+        body: "Excel ignores capitalisation but otherwise compares cells as they are displayed. “Acme Ltd” and “Acme Ltd ” (with a trailing space) are different to it, the same date in two formats counts twice, and TRIM won't remove the non-breaking spaces that come from web pages and PDFs. SpreadsheetFix trims and collapses whitespace before comparing, so rows that differ only by spacing are matched, and it shows each removed row so you can check the result.",
       },
       {
         heading: "Use both",
-        body: "The two tools do different jobs. Clean the export in SpreadsheetFix, then open the cleaned file in Excel for analysis. On Pro you can download a native .xlsx so Excel doesn't need to guess any types at all.",
+        body: "The two tools do different jobs. Clean the export in SpreadsheetFix, then open the cleaned file in Excel for analysis. On Pro you can download a native .xlsx in which every value is stored as text, exactly as cleaned, so Excel has nothing to guess.",
       },
     ],
     faqs: [
@@ -96,7 +98,7 @@ export const COMPARISONS: Comparison[] = [
       { aspect: "Mixed date formats", us: "Detects day/month order per column and converts", them: "Parsed on import using the spreadsheet's locale; mixed orders need formulas" },
       { aspect: "Garbled characters (Ã©)", us: "Repaired automatically", them: "Manual find and replace" },
       { aspect: "Email validation", us: "Flags malformed addresses", them: "Data validation rule or formula" },
-      { aspect: "Size", us: "5,000 rows free, 500,000 on Pro", them: "Up to 10 million cells per spreadsheet" },
+      { aspect: "Size", us: `${FREE_MAX_ROWS} rows free, ${PRO_MAX_ROWS} on Pro`, them: "Up to 10 million cells per spreadsheet" },
       { aspect: "Collaboration", us: "No shared editing", them: "Real-time shared editing" },
     ],
     chooseThem: [
@@ -116,7 +118,7 @@ export const COMPARISONS: Comparison[] = [
       },
       {
         heading: "Dates are read using the spreadsheet's locale",
-        body: "When you import, Sheets converts date-like text using the locale set in File › Settings. A US-locale sheet reads 03/04/2026 as 4 March; an Irish-locale sheet reads it as 3 April. If an export mixes both, some dates are silently wrong. SpreadsheetFix looks at each column to decide the order, and you can override it.",
+        body: "When you import, Sheets converts date-like text using the locale set in File › Settings. A US-locale sheet reads 03/04/2026 as 4 March; an Irish-locale sheet reads it as 3 April. If an export mixes both, some dates are silently wrong. SpreadsheetFix looks at each column to decide the order; a column with no date above the 12th is read day-first, so check the preview.",
       },
       {
         heading: "Clean first, then share",
@@ -126,7 +128,7 @@ export const COMPARISONS: Comparison[] = [
     faqs: [
       {
         q: "Does Google Sheets have a remove duplicates feature?",
-        a: "Yes, under Data › Data cleanup › Remove duplicates. It compares values exactly, so rows that differ only by spaces or capitalisation are kept unless you clean them first.",
+        a: "Yes, under Data › Data cleanup › Remove duplicates. Rows that differ only by extra spaces count as different, so run Data cleanup › Trim whitespace first, or clean the file here.",
       },
       {
         q: "Is it safe to put customer data in Google Sheets?",
@@ -151,10 +153,10 @@ export const COMPARISONS: Comparison[] = [
     rows: [
       { aspect: "Setup", us: "Open a web page", them: "Download and run the app (it opens in your browser, served from your computer)" },
       { aspect: "Where data is processed", us: "In your browser; never uploaded", them: "On your computer; never uploaded" },
-      { aspect: "Price", us: "Free up to 5,000 rows; Pro €12/month", them: "Free and open source" },
+      { aspect: "Price", us: `Free up to ${FREE_MAX_ROWS} rows; Pro ${PRO_PRICE_MONTHLY}/month`, them: "Free and open source" },
       { aspect: "Learning curve", us: "Pick rules, preview, download", them: "Facets, clustering and GREL expressions" },
-      { aspect: "Fuzzy duplicates (Jon / John)", us: "No; exact matching after normalising spaces and case", them: "Yes, with clustering" },
-      { aspect: "Custom transformations", us: "18 built-in rules", them: "Any transformation you can express in GREL, Python or Clojure" },
+      { aspect: "Fuzzy duplicates (Jon / John)", us: "No; exact matching after trimming spaces (emails are also lowercased)", them: "Yes, with clustering" },
+      { aspect: "Custom transformations", us: `${ALL_RULES.length} built-in rules`, them: "Any transformation you can express in GREL, Python or Clojure" },
       { aspect: "Mixed date formats", us: "Detects day/month order per column", them: "Possible with expressions" },
       { aspect: "Proof totals didn't change", us: "Totals check on amount columns", them: "Not built in" },
     ],
@@ -210,13 +212,13 @@ export const COMPARISONS: Comparison[] = [
       { aspect: "Trim", us: "Trims ends and collapses inner spaces", them: "Text.Trim trims ends only" },
       { aspect: "Duplicates", us: "Matched after normalising whitespace", them: "Remove Duplicates is exact and case-sensitive" },
       { aspect: "Mixed date formats in one column", us: "Detected per column", them: "One locale per column; mixed orders need custom steps" },
-      { aspect: "Encoding", us: "Detected from the file's bytes", them: "Set by hand with File Origin on import" },
-      { aspect: "Size", us: "500,000 rows on Pro", them: "Millions of rows" },
+      { aspect: "Encoding", us: "Detected from the file's bytes", them: "Guessed on import; corrected by hand with File Origin" },
+      { aspect: "Size", us: `${PRO_MAX_ROWS} rows on Pro`, them: "Millions of rows" },
     ],
     chooseThem: [
       "The same report is refreshed from new data every week or month.",
       "You need to join several tables or load into the Data Model.",
-      "The files are larger than 500,000 rows.",
+      `The files are larger than ${PRO_MAX_ROWS} rows.`,
     ],
     chooseUs: [
       "You need a clean file now, not a query to maintain.",
