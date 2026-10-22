@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { TOOLS, TOOL_MAP, toolNeedsPro } from "@/content/tools";
 import { GUIDE_MAP } from "@/content/guides";
+import { COMPARISONS } from "@/content/comparisons";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
 import { PLANS, FREE_MAX_ROWS, PRO_MAX_ROWS } from "@/config/plans";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
@@ -48,6 +49,7 @@ export default async function ToolPage({ params }: Props) {
   const related = tool.related.map((s) => TOOL_MAP.get(s)).filter((t) => t !== undefined);
   const needsPro = toolNeedsPro(tool);
   const guides = (tool.guides ?? []).map((s) => GUIDE_MAP.get(s)).filter((g) => g !== undefined);
+  const comparisons = COMPARISONS.filter((c) => c.tools.includes(tool.slug));
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink relative overflow-x-hidden">
@@ -218,6 +220,20 @@ export default async function ToolPage({ params }: Props) {
                     <li key={g.slug} className="border-b border-rule">
                       <Link href={`/guides/${g.slug}`} className="group block py-4">
                         <span className="font-semibold group-hover:text-accent">{g.h1}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            )}
+            {comparisons.length > 0 && (
+              <nav aria-label="Comparisons">
+                <h2 className="text-[13px] font-medium text-ink-muted">Compared with</h2>
+                <ul className="mt-3 border-t border-rule">
+                  {comparisons.map((c) => (
+                    <li key={c.slug} className="border-b border-rule">
+                      <Link href={`/compare/${c.slug}`} className="block py-4 font-semibold hover:text-accent">
+                        {SITE_NAME} vs {c.competitor}
                       </Link>
                     </li>
                   ))}

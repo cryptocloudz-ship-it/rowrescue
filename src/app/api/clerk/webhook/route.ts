@@ -4,6 +4,7 @@ import { WebhookEvent } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { users } from "@/db/drizzle";
 import { eq } from "drizzle-orm";
+import { deleteUserData } from "@/lib/teams/data";
 
 export async function POST(request: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
@@ -81,6 +82,8 @@ export async function POST(request: Request) {
     case "user.deleted": {
       const { id } = event.data;
       if (id) {
+        // Presets, invites, audit entries and any team they own reference the user row
+        await deleteUserData(id);
         await db.delete(users).where(eq(users.id, id));
       }
       break;

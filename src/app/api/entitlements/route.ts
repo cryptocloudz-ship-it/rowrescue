@@ -3,12 +3,13 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { users } from "@/db/drizzle";
 import { eq } from "drizzle-orm";
-import { getPlanLimits, effectivePlan, PRO_MAX_ROWS } from "@/config/plans";
+import { getPlanLimits, PRO_MAX_ROWS } from "@/config/plans";
+import { loadAccount } from "@/lib/teams/data";
 
 /**
  * GET /api/entitlements
  *
- * Returns the authenticated user's plan limits and usage.
+ * Returns the authenticated user's plan limits and usage. Team members get Team limits from their team.
  * Falls back to free tier for unauthenticated requests.
  */
 export async function GET() {
@@ -50,8 +51,7 @@ export async function GET() {
     exportsToday = 0;
   }
 
-  const plan = effectivePlan(user.plan, user.subscriptionStatus);
-  const limits = getPlanLimits(plan);
+  const { plan, limits, team, role } = await loadAccount(user);
 
   return NextResponse.json({
     plan,
@@ -59,6 +59,7 @@ export async function GET() {
     exportsToday,
     limits,
     periodEnd: user.currentPeriodEnd?.toISOString() ?? null,
+    team: team ? { id: team.id, name: team.name, role } : null,
   });
 }
 
@@ -93,8 +94,7 @@ export async function POST(request: NextRequest) {
   }
 
   const [user] = await db.select().from(users).where(eq(users.id, userId));
-  const plan = effectivePlan(user?.plan, user?.subscriptionStatus);
-  const limits = getPlanLimits(plan);
+  const { plan, limits } = user ? await loadAccount(user) : { plan: "free", limits: getPlanLimits("free") };
 
   // Enforce row limit
   if (rowCount > limits.maxRows) {

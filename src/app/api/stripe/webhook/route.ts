@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { users } from "@/db/drizzle";
 import { and, eq } from "drizzle-orm";
 import { planForPriceId } from "@/config/plans";
+import { provisionTeam, syncSeatCount } from "@/lib/teams/data";
 import { handleChargeRefunded, handleDisputeCreated, handleEarlyFraudWarning } from "@/lib/billing/riskEvents";
 import type Stripe from "stripe";
 
@@ -86,6 +87,9 @@ export async function POST(request: NextRequest) {
         })
         .where(eq(users.id, clerkUserId));
 
+      // Team checkout: the buyer gets a team sized to the seats they bought, and becomes its admin
+      if (plan === "team") await provisionTeam(clerkUserId, subscription.id, item?.quantity);
+
       console.log(
         `[Stripe] checkout.session.completed: user=${clerkUserId}, plan=${plan}`
       );
@@ -111,6 +115,9 @@ export async function POST(request: NextRequest) {
           updatedAt: new Date(),
         })
         .where(eq(users.stripeSubscriptionId, subscription.id));
+
+      // Seats added or removed in the Customer Portal
+      if (plan === "team") await syncSeatCount(subscription.id, updatedItem?.quantity);
 
       console.log(
         `[Stripe] subscription.updated: sub=${subscription.id}, status=${subscription.status}`
