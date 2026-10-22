@@ -244,7 +244,7 @@ export default function PricingPage() {
             />
             <FaqItem
               question="What happens to my presets if I downgrade?"
-              answer="Synced presets stay saved but become read-only. You can still use and export them. Presets stored in your browser are not affected."
+              answer="Synced presets stay saved but become read-only. You can still load them in the cleaner, or delete them. Presets stored in your browser are not affected."
             />
           </div>
         </div>

@@ -5,6 +5,8 @@ import { useSheetStore } from "@/store/sheetStore";
 import { FileUploader } from "@/components/upload/FileUploader";
 import { HealthReportPanel } from "@/components/health-report/HealthReport";
 import { RuleConfigurator } from "@/components/rules/RuleConfigurator";
+import { PresetsPanel } from "@/components/rules/PresetsPanel";
+import { EntitlementsSync } from "@/components/billing/EntitlementsSync";
 import { PreviewGrid } from "@/components/grid/PreviewGrid";
 import { ExportPanel } from "@/components/ui/ExportPanel";
 import { StatsBar } from "@/components/ui/StatsBar";
@@ -170,6 +172,7 @@ export default function CleanPage() {
       </div>
 
       <main id="main-content" className="max-w-[1200px] mx-auto px-6 py-8">
+        <EntitlementsSync />
         <WelcomeModal />
         
         {/* STAGE: Upload */}
@@ -233,6 +236,7 @@ export default function CleanPage() {
                 </div>
               </div>
             )}
+            <PresetsPanel />
             <RuleConfigurator onRunCleaning={runCleaning} />
           </div>
         )}

@@ -1,7 +1,8 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { getPlanLimits, effectivePlan } from "@/config/plans";
+import Link from "next/link";
 import { ensureUser } from "@/lib/billing/ensureUser";
+import { loadAccount } from "@/lib/teams/data";
 import { BillingActions } from "./BillingActions";
 
 export default async function BillingPage({
@@ -23,7 +24,9 @@ export default async function BillingPage({
 
   const params = await searchParams;
   const showSuccess = params.success === "true";
-  const limits = getPlanLimits(effectivePlan(user.plan, user.subscriptionStatus));
+  // Members of a team get its plan; the admin owns the subscription and sees its details here
+  const { plan, limits, team } = await loadAccount(user);
+  const viaTeam = team && team.ownerId !== user.id && plan === "team" ? team : null;
   const periodEnd = user.currentPeriodEnd
     ? new Date(user.currentPeriodEnd).toLocaleDateString("en-IE", {
         year: "numeric",
@@ -32,7 +35,11 @@ export default async function BillingPage({
       })
     : null;
 
-  const statusLabel = user.subscriptionStatus ? user.subscriptionStatus.replace("_", " ") : "Free account";
+  const statusLabel = viaTeam
+    ? "Team member"
+    : user.subscriptionStatus
+      ? user.subscriptionStatus.replace("_", " ")
+      : "Free account";
   const statusColour =
     user.subscriptionStatus === "active"
       ? "text-emerald-700"
@@ -51,7 +58,15 @@ export default async function BillingPage({
       {showSuccess && (
         <div role="status" className="mb-8 p-5 bg-emerald-50 border border-emerald-200 rounded-lg">
           <p className="font-semibold text-emerald-800">Subscription activated</p>
-          <p className="text-sm text-emerald-800 mt-1">Pro features are now available on this account.</p>
+          <p className="text-sm text-emerald-800 mt-1">
+            {user.plan === "team" ? (
+              <>
+                Your team is ready. <Link href="/team" className="underline">Invite people</Link> to fill your seats.
+              </>
+            ) : (
+              "Pro features are now available on this account."
+            )}
+          </p>
         </div>
       )}
 
@@ -62,7 +77,8 @@ export default async function BillingPage({
         <dl className="grid sm:grid-cols-3 divide-y sm:divide-y-0 sm:divide-x divide-rule">
           <div className="p-5">
             <dt className="text-[13px] text-ink-muted">Plan</dt>
-            <dd className="mt-1 text-xl font-semibold capitalize">{user.plan}</dd>
+            <dd className="mt-1 text-xl font-semibold capitalize">{plan}</dd>
+            {viaTeam && <p className="mt-1 text-sm text-ink-muted">Through {viaTeam.name}</p>}
           </div>
           <div className="p-5">
             <dt className="text-[13px] text-ink-muted">Status</dt>
@@ -92,7 +108,7 @@ export default async function BillingPage({
       </section>
 
       <div className="mt-10">
-        <BillingActions plan={user.plan} hasStripeCustomer={!!user.stripeCustomerId} />
+        <BillingActions plan={plan} hasStripeCustomer={!!user.stripeCustomerId} />
       </div>
     </div>
   );

@@ -38,7 +38,9 @@ SpreadsheetFix is designed as a privacy-first application. **All CSV file proces
 | **Account Information** | Email address, display name, hashed password (or OAuth provider ID) | Performance of contract (Art. 6(1)(b)) |
 | **Billing Metadata** | Stripe customer ID, subscription plan, billing cycle dates, invoice references, country of billing | Performance of contract (Art. 6(1)(b)) |
 | **Transactional Email Records** | Email delivery metadata (recipient address, send timestamp, delivery status) via Resend | Performance of contract (Art. 6(1)(b)) |
-| **Team Audit Log Metadata** (Team plans) | User ID, action type, timestamp, IP address (truncated) | Legitimate interest (Art. 6(1)(f)) — security and accountability |
+| **Saved Presets** (Pro and Team plans) | Preset name, selected cleaning rules and their settings (which may include column names you chose). Never row data or cell values | Performance of contract (Art. 6(1)(b)) |
+| **Team Membership** (Team plans) | Team name, member user IDs and roles, email addresses of pending invites | Performance of contract (Art. 6(1)(b)) |
+| **Team Audit Log Metadata** (Team plans) | User ID, action type (preset created, updated, deleted or shared; member invited, joined or left), preset name, member email, timestamp | Legitimate interest (Art. 6(1)(f)) — security and accountability |
 | **Analytics Data** (opt-in only) | Page views, feature usage events, session duration, anonymised device/browser type | Consent (Art. 6(1)(a)) |
 | **Technical Logs** | Server access logs (IP address, user agent, request path, timestamp) | Legitimate interest (Art. 6(1)(f)) — security and service operation |
 | **Cookie Data** | Session identifiers, authentication tokens | See our Cookie Policy |
