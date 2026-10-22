@@ -3,7 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { db } from "@/db";
 import { users } from "@/db/drizzle";
 import { eq } from "drizzle-orm";
-import { getPlanLimits, effectivePlan } from "@/config/plans";
+import { getPlanLimits, effectivePlan, PRO_MAX_ROWS } from "@/config/plans";
 
 /**
  * GET /api/entitlements
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest) {
     if (rowCount > limits.maxRows) {
       return NextResponse.json(
         {
-          error: `Row limit exceeded. Free plan allows ${limits.maxRows.toLocaleString()} rows. Upgrade to Pro for up to 500,000 rows.`,
+          error: `Row limit exceeded. Free plan allows ${limits.maxRows.toLocaleString()} rows. Upgrade to Pro for up to ${PRO_MAX_ROWS} rows.`,
           code: "ROW_LIMIT_EXCEEDED",
         },
         { status: 403 }

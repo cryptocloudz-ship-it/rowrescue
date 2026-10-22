@@ -9,6 +9,7 @@ import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { ToolLauncher } from "@/components/tools/ToolLauncher";
 import { Breadcrumbs, breadcrumbJsonLd } from "@/components/seo/Breadcrumbs";
+import { FREE_MAX_ROWS } from "@/config/plans";
 
 export const dynamicParams = false;
 
@@ -106,7 +107,7 @@ export default async function GuidePage({ params }: Props) {
           <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm">
             <div><dt className="text-ink-muted">Updated</dt><dd className="mt-0.5 font-medium"><time dateTime={guide.updated}>{formatDate(guide.updated)}</time></dd></div>
             <div><dt className="text-ink-muted">Applies to</dt><dd className="mt-0.5 font-medium">Excel, Google Sheets, CSV</dd></div>
-            <div><dt className="text-ink-muted">SpreadsheetFix rule</dt><dd className="mt-0.5 font-medium">{needsPro ? "Pro" : "Free up to 5,000 rows"}</dd></div>
+            <div><dt className="text-ink-muted">SpreadsheetFix rule</dt><dd className="mt-0.5 font-medium">{needsPro ? "Pro" : `Free up to ${FREE_MAX_ROWS} rows`}</dd></div>
           </dl>
         </section>
 

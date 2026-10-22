@@ -1,5 +1,5 @@
 import type { RulePreset } from "@/store/sheetStore";
-import { FREE_RULES } from "@/config/plans";
+import { FREE_RULES, FREE_MAX_ROWS } from "@/config/plans";
 import type { ToolFaq } from "./tools";
 
 /**
@@ -129,7 +129,7 @@ export const GUIDES: GuidePage[] = [
       },
       {
         q: "Is my file uploaded to repair it?",
-        a: "No. The bytes are decoded and repaired in your browser, and the file never reaches SpreadsheetFix’s servers. Fix Encoding is a free rule for files up to 5,000 rows.",
+        a: `No. The bytes are decoded and repaired in your browser, and the file never reaches SpreadsheetFix’s servers. Fix Encoding is a free rule for files up to ${FREE_MAX_ROWS} rows.`,
       },
     ],
     relatedTools: ["fix-csv-encoding", "csv-to-excel-cleaner", "remove-html-tags-csv"],
@@ -201,7 +201,7 @@ export const GUIDES: GuidePage[] = [
     toolFix: [
       "SpreadsheetFix reads the dates as text, exactly as the bank wrote them, before any spreadsheet has had a chance to convert them, and decides the order for each column from the evidence in that column. If any date has a first number above 12, such as 15/04/2024, the column must be day-first. If any has a second number above 12, such as 04/15/2024, it must be month-first. Every other date in the column is then read the same way, so 03/04/2024 next to 15/04/2024 becomes 2024-04-03.",
       "Each column is judged on its own, so a transaction date and a value date produced by different systems can follow different conventions in the same file. ISO dates such as 2024-04-16 and English month names such as 16 Apr 2024 or April 16, 2024 are recognised too. Everything is rewritten as YYYY-MM-DD, which sorts correctly even as text and can’t be misread by the next program that opens it. Cells that aren’t dates are left as they are.",
-      "Load the CSV straight from your bank, check the converted dates in the preview, and download. Normalize Dates is a free rule for files up to 5,000 rows, and the statement is read in your browser rather than uploaded.",
+      `Load the CSV straight from your bank, check the converted dates in the preview, and download. Normalize Dates is a free rule for files up to ${FREE_MAX_ROWS} rows, and the statement is read in your browser rather than uploaded.`,
     ],
     limits: [
       "If every date in a column has both numbers at 12 or below, as in an export covering only the first twelve days of a month, there is no evidence either way, and SpreadsheetFix reads the column day-first. For a US export, compare the first rows with the statement before you import.",
@@ -281,7 +281,7 @@ export const GUIDES: GuidePage[] = [
     toolFix: [
       "SpreadsheetFix’s Remove Duplicates rule keeps the first copy of each row and removes later ones. By default a row only counts as a duplicate when every cell matches, which is the cautious choice for bank exports: two coffees with different references or different times stay in the file. If your bank exports a reliable reference or transaction ID, you can use the column picker to compare only that column instead.",
       "Before you export, the preview lists every removed row, and the totals check sets out what happened to the money. For each amount column it shows the total before cleaning, the total of the rows each rule removed, and the total after, and checks that the total before, minus what was removed, equals the total after to the cent. If the removed amount doesn’t match a duplicate you can find on the statement, look again before you import.",
-      "Remove Duplicates is a free rule for files up to 5,000 rows, and the file is processed in your browser, so the statement never leaves your computer.",
+      `Remove Duplicates is a free rule for files up to ${FREE_MAX_ROWS} rows, and the file is processed in your browser, so the statement never leaves your computer.`,
     ],
     limits: [
       "Exact matching won’t catch a pending payment and its settled version if the description or date changed between them. Look for those by amount and review them by hand.",
@@ -405,7 +405,7 @@ export const GUIDES: GuidePage[] = [
       },
       {
         q: "Is Normalize Numbers free?",
-        a: "It is part of Pro. Free users can still fix encoding, dates, spacing and duplicates on files up to 5,000 rows.",
+        a: `It is part of Pro. Free users can still fix encoding, dates, spacing and duplicates on files up to ${FREE_MAX_ROWS} rows.`,
       },
     ],
     relatedTools: ["convert-comma-decimal-csv", "normalize-dates-csv", "csv-to-excel-cleaner"],
@@ -449,7 +449,7 @@ export const GUIDES: GuidePage[] = [
     toolFix: [
       "SpreadsheetFix’s Trim Whitespace rule does the formula work across every text cell in the file. It removes whitespace from both ends of each cell and collapses any run of whitespace inside it to a single space. That covers normal spaces, non-breaking spaces, tabs and line breaks, so a reference that ends in a non-breaking space comes out the same as one typed cleanly.",
       "Clean both files you are matching, the bank export and the invoice list, or the CRM export and the order sheet, and the lookups line up. Every changed cell is highlighted in the preview with its value before and after, so you can see which references were carrying hidden characters. If a column needs its spacing kept, such as a fixed-width code, use the column picker to leave it out.",
-      "Trim Whitespace is a free rule for files up to 5,000 rows, and it runs in your browser, so neither file is uploaded.",
+      `Trim Whitespace is a free rule for files up to ${FREE_MAX_ROWS} rows, and it runs in your browser, so neither file is uploaded.`,
     ],
     limits: [
       "Zero-width characters, such as the zero-width space some websites insert, don’t count as whitespace and aren’t removed. If LEN still reports extra characters after cleaning, find them with =UNICODE(MID(A2,n,1)) for each position n.",
@@ -537,7 +537,7 @@ INV-1003,Fabrikam Inc,89.90`,
     toolFix: [
       "SpreadsheetFix fixes the spacing before it compares anything. The Trim Whitespace rule removes whitespace from both ends of every text cell and collapses runs inside it to a single space, and it treats non-breaking spaces, tabs and line breaks as whitespace too. Remove Duplicates runs after it, so “Acme Ltd”, “Acme Ltd ” and “Acme  Ltd” have already become the same value by the time rows are compared.",
       "By default a row is removed only when every cell matches an earlier row, and the first occurrence is kept. If records should be matched on a key, such as an email address or an invoice number, use the column picker on Remove Duplicates to compare only those columns. Unlike Excel, the preview lists every row that will be removed before you download anything, and the totals check shows how much each amount column lost, so a removal that takes out real money is easy to spot.",
-      "Trim Whitespace and Remove Duplicates are both free rules for files up to 5,000 rows, and the file is read in your browser rather than uploaded.",
+      `Trim Whitespace and Remove Duplicates are both free rules for files up to ${FREE_MAX_ROWS} rows, and the file is read in your browser rather than uploaded.`,
     ],
     limits: [
       "Matching is exact after spacing is fixed, and it is case-sensitive: “ACME Ltd” and “Acme Ltd” stay as two rows, and so do “Acme Ltd” and “Acme Limited”. Excel’s Remove Duplicates ignores capitalisation, so it may remove rows that SpreadsheetFix keeps.",
@@ -648,7 +648,7 @@ Contoso GmbH,billing@contoso.de,89.50`,
       },
       {
         q: "Can SpreadsheetFix convert CSV to XLSX?",
-        a: "Yes, on Pro: clean the CSV and download it as .xlsx. The free plan downloads cleaned CSV files for up to 5,000 rows.",
+        a: `Yes, on Pro: clean the CSV and download it as .xlsx. The free plan downloads cleaned CSV files for up to ${FREE_MAX_ROWS} rows.`,
       },
     ],
     relatedTools: ["csv-to-excel-cleaner", "fix-csv-encoding", "normalize-dates-csv"],

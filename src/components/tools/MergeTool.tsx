@@ -10,6 +10,7 @@ import { mergeSheets, type MergeResult } from "@/lib/engine/merge";
 import { useSheetStore, FREE_ROW_LIMIT } from "@/store/sheetStore";
 import { EntitlementsSync } from "@/components/billing/EntitlementsSync";
 import type { ParsedSheet } from "@/types/sheet";
+import { PRO_MAX_ROWS } from "@/config/plans";
 
 const ACCEPT = ".csv,.tsv,.txt,.xlsx,.xls";
 
@@ -186,7 +187,7 @@ export function MergeTool() {
               <Link href="/pricing" className="underline font-semibold">
                 Upgrade to Pro
               </Link>{" "}
-              to merge up to 500,000 rows.
+              to merge up to {PRO_MAX_ROWS} rows.
             </p>
           )}
           <div className="mt-4 grid sm:grid-cols-2 gap-3">

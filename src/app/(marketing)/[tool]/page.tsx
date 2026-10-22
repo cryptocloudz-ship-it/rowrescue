@@ -5,7 +5,7 @@ import { ALL_RULES } from "@/lib/engine/rules";
 import { TOOLS, TOOL_MAP, toolNeedsPro } from "@/content/tools";
 import { GUIDE_MAP } from "@/content/guides";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
-import { PLANS } from "@/config/plans";
+import { PLANS, FREE_MAX_ROWS, PRO_MAX_ROWS } from "@/config/plans";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -116,7 +116,7 @@ export default async function ToolPage({ params }: Props) {
             {needsPro ? (
               <div><dt className="text-ink-muted">Plan</dt><dd className="mt-0.5 font-medium">Pro rule</dd></div>
             ) : (
-              <div><dt className="text-ink-muted">Free up to</dt><dd className="mt-0.5 font-medium">5,000 rows</dd></div>
+              <div><dt className="text-ink-muted">Free up to</dt><dd className="mt-0.5 font-medium">{FREE_MAX_ROWS} rows</dd></div>
             )}
             <div><dt className="text-ink-muted">Account</dt><dd className="mt-0.5 font-medium">Not required</dd></div>
             <div><dt className="text-ink-muted">Upload</dt><dd className="mt-0.5 font-medium">None</dd></div>
@@ -187,7 +187,7 @@ export default async function ToolPage({ params }: Props) {
             <div className="rounded-lg border border-rule p-6">
               <h2 className="font-semibold">Larger files</h2>
               <p className="mt-2 text-sm leading-relaxed text-ink-body">
-                Pro cleans up to 500,000 rows per file, adds all {ALL_RULES.length} rules and Excel export, and removes
+                Pro cleans up to {PRO_MAX_ROWS} rows per file, adds all {ALL_RULES.length} rules and Excel export, and removes
                 the watermark.
               </p>
               <Link

@@ -1,17 +1,9 @@
 import { TOOLS, toolNeedsPro } from "@/content/tools";
 import { GUIDES } from "@/content/guides";
 import { COMPARISONS } from "@/content/comparisons";
-import { PLANS, FREE_RULES } from "@/config/plans";
+import { PLANS, FREE_RULES, formatEuro as euro, formatRows as rows } from "@/config/plans";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { SITE_NAME, SUPPORT_EMAIL, absoluteUrl } from "@/config/site";
-
-function euro(cents: number | null) {
-  return `€${((cents ?? 0) / 100).toLocaleString("en-GB", { maximumFractionDigits: 2 })}`;
-}
-
-function rows(n: number) {
-  return n.toLocaleString("en-GB");
-}
 
 /** Plain-text site summary for LLMs, following the llms.txt convention (https://llmstxt.org). */
 export function buildLlmsTxt(): string {

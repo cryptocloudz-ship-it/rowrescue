@@ -5,6 +5,7 @@ import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { absoluteUrl, DEFAULT_OPEN_GRAPH } from "@/config/site";
+import { FREE_MAX_ROWS } from "@/config/plans";
 
 export const metadata: Metadata = {
   title: "Free CSV Cleaning Tools",
@@ -34,7 +35,7 @@ export default function ToolsIndex() {
         <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em]">Free CSV cleaning tools</h1>
         <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[640px]">
           Each tool runs in your browser, so you can clean a CSV or Excel file without uploading it: the contents never
-          reach our servers, which keeps client and bank data GDPR-friendly. Most are free for files up to 5,000 rows;
+          reach our servers, which keeps client and bank data GDPR-friendly. Most are free for files up to {FREE_MAX_ROWS} rows;
           the ones marked Pro use rules from the Pro plan.
         </p>
         <ul className="mt-12 grid md:grid-cols-2 gap-x-12 border-t border-rule">

@@ -1,4 +1,6 @@
 import type { ToolFaq } from "./tools";
+import { FREE_MAX_ROWS, PRO_MAX_ROWS, PRO_PRICE_MONTHLY } from "@/config/plans";
+import { ALL_RULES } from "@/lib/engine/rules";
 
 export interface Comparison {
   slug: string;
@@ -36,7 +38,7 @@ export const COMPARISONS: Comparison[] = [
       { aspect: "Mixed date formats", us: "Detects day-first or month-first per column and converts to one format", them: "Manual: Text to Columns, DATEVALUE, or Power Query" },
       { aspect: "Garbled characters (Ã©)", us: "Repaired automatically", them: "Re-import with the right file origin, or fix by hand" },
       { aspect: "Proof totals didn't change", us: "Totals check on amount columns", them: "Manual SUM before and after" },
-      { aspect: "Size", us: "5,000 rows free, 500,000 on Pro", them: "1,048,576 rows per sheet" },
+      { aspect: "Size", us: `${FREE_MAX_ROWS} rows free, ${PRO_MAX_ROWS} on Pro`, them: "1,048,576 rows per sheet" },
       { aspect: "Formulas, pivots, charts", us: "No", them: "Yes" },
     ],
     chooseThem: [
@@ -96,7 +98,7 @@ export const COMPARISONS: Comparison[] = [
       { aspect: "Mixed date formats", us: "Detects day/month order per column and converts", them: "Parsed on import using the spreadsheet's locale; mixed orders need formulas" },
       { aspect: "Garbled characters (Ã©)", us: "Repaired automatically", them: "Manual find and replace" },
       { aspect: "Email validation", us: "Flags malformed addresses", them: "Data validation rule or formula" },
-      { aspect: "Size", us: "5,000 rows free, 500,000 on Pro", them: "Up to 10 million cells per spreadsheet" },
+      { aspect: "Size", us: `${FREE_MAX_ROWS} rows free, ${PRO_MAX_ROWS} on Pro`, them: "Up to 10 million cells per spreadsheet" },
       { aspect: "Collaboration", us: "No shared editing", them: "Real-time shared editing" },
     ],
     chooseThem: [
@@ -151,10 +153,10 @@ export const COMPARISONS: Comparison[] = [
     rows: [
       { aspect: "Setup", us: "Open a web page", them: "Download and run the app (it opens in your browser, served from your computer)" },
       { aspect: "Where data is processed", us: "In your browser; never uploaded", them: "On your computer; never uploaded" },
-      { aspect: "Price", us: "Free up to 5,000 rows; Pro €12/month", them: "Free and open source" },
+      { aspect: "Price", us: `Free up to ${FREE_MAX_ROWS} rows; Pro ${PRO_PRICE_MONTHLY}/month`, them: "Free and open source" },
       { aspect: "Learning curve", us: "Pick rules, preview, download", them: "Facets, clustering and GREL expressions" },
       { aspect: "Fuzzy duplicates (Jon / John)", us: "No; exact matching after trimming spaces (emails are also lowercased)", them: "Yes, with clustering" },
-      { aspect: "Custom transformations", us: "18 built-in rules", them: "Any transformation you can express in GREL, Python or Clojure" },
+      { aspect: "Custom transformations", us: `${ALL_RULES.length} built-in rules`, them: "Any transformation you can express in GREL, Python or Clojure" },
       { aspect: "Mixed date formats", us: "Detects day/month order per column", them: "Possible with expressions" },
       { aspect: "Proof totals didn't change", us: "Totals check on amount columns", them: "Not built in" },
     ],
@@ -211,12 +213,12 @@ export const COMPARISONS: Comparison[] = [
       { aspect: "Duplicates", us: "Matched after normalising whitespace", them: "Remove Duplicates is exact and case-sensitive" },
       { aspect: "Mixed date formats in one column", us: "Detected per column", them: "One locale per column; mixed orders need custom steps" },
       { aspect: "Encoding", us: "Detected from the file's bytes", them: "Guessed on import; corrected by hand with File Origin" },
-      { aspect: "Size", us: "500,000 rows on Pro", them: "Millions of rows" },
+      { aspect: "Size", us: `${PRO_MAX_ROWS} rows on Pro`, them: "Millions of rows" },
     ],
     chooseThem: [
       "The same report is refreshed from new data every week or month.",
       "You need to join several tables or load into the Data Model.",
-      "The files are larger than 500,000 rows.",
+      `The files are larger than ${PRO_MAX_ROWS} rows.`,
     ],
     chooseUs: [
       "You need a clean file now, not a query to maintain.",

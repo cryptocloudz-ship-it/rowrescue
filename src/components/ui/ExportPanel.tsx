@@ -9,6 +9,7 @@ import { exportToXLSX } from "@/lib/engine/exporters/xlsxExporter";
 import { exportSummary } from "@/lib/engine/exporters/summaryExporter";
 import { trackExport } from "@/lib/analytics";
 import { reconcile } from "@/lib/engine/reconcile";
+import { PRO_PRICE_MONTHLY } from "@/config/plans";
 
 function downloadBlob(content: string | Uint8Array, filename: string, mime: string) {
   const blob = content instanceof Uint8Array
@@ -209,7 +210,7 @@ export function ExportPanel() {
                 className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent text-white text-sm font-semibold rounded-lg hover:bg-accent-strong transition-all"
               >
                 <Lock className="w-4 h-4" />
-                Upgrade to Pro — €12/mo
+                Upgrade to Pro — {PRO_PRICE_MONTHLY}/mo
               </Link>
             </div>
           </div>
@@ -371,7 +372,7 @@ export function ExportPanel() {
                   className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 text-ink text-sm font-semibold rounded-lg hover:bg-emerald-600 transition-colors"
                 >
                   <Sparkles className="w-4 h-4" />
-                  Remove limits — €12/mo
+                  Remove limits — {PRO_PRICE_MONTHLY}/mo
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <button

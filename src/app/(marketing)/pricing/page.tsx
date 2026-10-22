@@ -7,10 +7,14 @@ import { getUtmParams } from "@/lib/utm";
 import { trackCheckoutStarted } from "@/lib/analytics";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
+import { PLANS, FREE_MAX_ROWS, PRO_MAX_ROWS, PRO_PRICE_MONTHLY, PRO_PRICE_YEARLY, TEAM_PRICE_MONTHLY, TEAM_PRICE_YEARLY, formatEuro, formatRows } from "@/config/plans";
+
+// What a year of monthly Pro costs, minus the yearly price
+const PRO_YEARLY_SAVING = formatEuro((PLANS.pro.priceMonthly ?? 0) * 12 - (PLANS.pro.priceYearly ?? 0));
 
 const FEATURES = [
-  { name: "Exports per day", free: "5", pro: "Unlimited", team: "Unlimited" },
-  { name: "Max rows per file", free: "5,000", pro: "500,000", team: "500,000" },
+  { name: "Exports per day", free: String(PLANS.free.limits.maxExportsPerDay), pro: "Unlimited", team: "Unlimited" },
+  { name: "Max rows per file", free: FREE_MAX_ROWS, pro: PRO_MAX_ROWS, team: formatRows(PLANS.team.limits.maxRows) },
   { name: "Remove duplicates", free: true, pro: true, team: true },
   { name: "Remove empty rows/columns", free: true, pro: true, team: true },
   { name: "Trim whitespace", free: true, pro: true, team: true },
@@ -93,7 +97,7 @@ export default function PricingPage() {
           <div className="max-w-[640px]">
             <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em]">Pricing</h1>
             <p className="mt-5 text-lg leading-relaxed text-ink-body">
-              Clean files up to 5,000 rows free, without an account. Upgrade for larger files, every rule and Excel
+              Clean files up to {FREE_MAX_ROWS} rows free, without an account. Upgrade for larger files, every rule and Excel
               export.
             </p>
           </div>
@@ -145,12 +149,12 @@ export default function PricingPage() {
             <h2 className="font-semibold">Pro</h2>
             <p className="mt-1 text-sm text-ink-muted">Large files, all rules, Excel export.</p>
             <p className="mt-6 text-[40px] leading-none font-semibold tracking-[-0.02em]">
-              {yearly ? "€99" : "€12"}
+              {yearly ? PRO_PRICE_YEARLY : PRO_PRICE_MONTHLY}
               <span className="ml-2 text-base font-normal text-ink-muted">{yearly ? "per year" : "per month"}</span>
             </p>
             <p className="mt-2 min-h-10 text-sm text-ink-muted">
               {yearly ? (
-                "€8.25 a month, billed yearly. Saves €45."
+                `${formatEuro(Math.round((PLANS.pro.priceYearly ?? 0) / 12))} a month, billed yearly. Saves ${PRO_YEARLY_SAVING}.`
               ) : (
                 <>
                   Or{" "}
@@ -159,9 +163,9 @@ export default function PricingPage() {
                     onClick={() => setYearly(true)}
                     className="text-accent hover:text-accent-strong underline underline-offset-2"
                   >
-                    €99 a year
+                    {PRO_PRICE_YEARLY} a year
                   </button>
-                  , which saves €45.
+                  , which saves {PRO_YEARLY_SAVING}.
                 </>
               )}
             </p>
@@ -180,11 +184,11 @@ export default function PricingPage() {
             <h2 className="font-semibold">Team</h2>
             <p className="mt-1 text-sm text-ink-muted">Shared presets and an audit log.</p>
             <p className="mt-6 text-[40px] leading-none font-semibold tracking-[-0.02em]">
-              {yearly ? "€249" : "€29"}
+              {yearly ? TEAM_PRICE_YEARLY : TEAM_PRICE_MONTHLY}
               <span className="ml-2 text-base font-normal text-ink-muted">{yearly ? "per seat, per year" : "per seat, per month"}</span>
             </p>
             <p className="mt-2 min-h-10 text-sm text-ink-muted">
-              {yearly ? "€20.75 a month per seat, billed yearly." : "Minimum 2 seats."}
+              {yearly ? `${formatEuro(Math.round((PLANS.team.priceYearly ?? 0) / 12))} a month per seat, billed yearly.` : "Minimum 2 seats."}
             </p>
             <button
               type="button"
