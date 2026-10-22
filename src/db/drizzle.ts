@@ -48,6 +48,8 @@ export const teams = pgTable(
       .references(() => users.id),
     stripeSubscriptionId: text("stripe_subscription_id"),
     seatCount: integer("seat_count").notNull().default(1),
+    // When the owner's paid Team plan was first seen lapsed; null while it's active. Set by the retention cron.
+    planLapsedAt: timestamp("plan_lapsed_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
   },

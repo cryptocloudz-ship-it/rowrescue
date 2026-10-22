@@ -15,6 +15,13 @@
       "when": 1792645355533,
       "tag": "0001_team_invites",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792704065618,
+      "tag": "0002_team_plan_lapsed_at",
+      "breakpoints": true
     }
   ]
 }
