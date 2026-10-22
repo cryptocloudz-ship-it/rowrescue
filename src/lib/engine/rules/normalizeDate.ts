@@ -11,8 +11,16 @@ const DATE_PATTERNS: { regex: RegExp; parse: (m: RegExpMatchArray) => Date | nul
   { regex: /^(\d{1,2})\s+(\w+)\s+(\d{4})$/, parse: (m) => parseMonthName(m[2], +m[1], +m[3]) },
 ];
 
-// NN/NN/YYYY, NN-NN-YYYY, NN.NN.YYYY — day/month order is ambiguous and resolved per column
-const NUMERIC_DATE = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$/;
+// NN/NN/YYYY, NN-NN-YYYY, NN.NN.YYYY (or a 2-digit year) — day/month order is ambiguous and resolved per column
+const NUMERIC_DATE = /^(\d{1,2})[/.-](\d{1,2})[/.-](\d{2}|\d{4})$/;
+
+// Two-digit years follow Excel's pivot: 00-29 are 2000-2029, 30-99 are 1930-1999
+const CENTURY_PIVOT = 30;
+
+function fullYear(year: string): number {
+  if (year.length === 4) return +year;
+  return +year < CENTURY_PIVOT ? 2000 + +year : 1900 + +year;
+}
 
 type DateOrder = "DMY" | "MDY";
 
@@ -58,7 +66,7 @@ function tryParseDate(value: string, order: DateOrder = "DMY"): Date | null {
   const trimmed = value.trim();
   const numeric = trimmed.match(NUMERIC_DATE);
   if (numeric) {
-    const [a, b, year] = [+numeric[1], +numeric[2], +numeric[3]];
+    const [a, b, year] = [+numeric[1], +numeric[2], fullYear(numeric[3])];
     // Prefer the column's order, but accept the other when the preferred one is impossible (e.g. 01/15/2024 in a DMY column)
     return order === "DMY"
       ? safeDate(year, b, a) ?? safeDate(year, a, b)

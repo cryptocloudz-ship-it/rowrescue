@@ -195,7 +195,7 @@ export const GUIDES: GuidePage[] = [
     ],
     limits: [
       "If every date in a column has both numbers at 12 or below, as in an export covering only the first twelve days of a month, there is no evidence either way, and SpreadsheetFix reads the column day-first. For a US export, compare the first rows with the statement before you import.",
-      "Dates with two-digit years, such as 03/04/24, aren’t part of the per-column detection, so check them in the preview.",
+      "Two-digit years are read the way Excel reads them: 00 to 29 become 2000 to 2029, and 30 to 99 become 1930 to 1999. They follow the same per-column day/month detection as four-digit years, but a date before 1930 needs a four-digit year to come out right.",
       "A swap that Excel has already saved into the file can’t be undone from that file. Download the export again and clean the fresh copy.",
     ],
     tool: "normalize-dates-csv",
