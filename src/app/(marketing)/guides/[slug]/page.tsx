@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { GUIDES, GUIDE_MAP } from "@/content/guides";
 import { TOOL_MAP } from "@/content/tools";
+import { COMPARISONS } from "@/content/comparisons";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
@@ -56,6 +57,7 @@ export default async function GuidePage({ params }: Props) {
   ];
   const tool = TOOL_MAP.get(g.tool);
   const others = GUIDES.filter((o) => o.slug !== g.slug);
+  const comparisons = COMPARISONS.filter((c) => c.tools.includes(g.tool));
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink">
@@ -121,6 +123,20 @@ export default async function GuidePage({ params }: Props) {
               ))}
             </ul>
           </nav>
+          {comparisons.length > 0 && (
+            <nav aria-label="Comparisons">
+              <h2 className="text-[13px] font-medium text-ink-muted">Compare</h2>
+              <ul className="mt-3 border-t border-rule">
+                {comparisons.map((c) => (
+                  <li key={c.slug} className="border-b border-rule">
+                    <Link href={`/compare/${c.slug}`} className="block py-4 font-semibold hover:text-accent">
+                      {SITE_NAME} vs {c.competitor}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          )}
         </aside>
       </main>
 

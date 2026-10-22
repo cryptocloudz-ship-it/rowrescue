@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { TOOLS } from "@/content/tools";
 import { COMPARISONS } from "@/content/comparisons";
+import { GUIDES } from "@/content/guides";
 import { SUPPORT_EMAIL } from "@/config/site";
 import { BrandMark } from "./SiteHeader";
 
@@ -9,7 +10,7 @@ const linkClass = "text-ink-body hover:text-ink";
 export function SiteFooter() {
   return (
     <footer className="bg-surface border-t border-rule font-ui text-ink">
-      <div className="max-w-[1200px] mx-auto px-6 pt-14 pb-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 text-sm">
+      <div className="max-w-[1200px] mx-auto px-6 pt-14 pb-10 grid gap-10 sm:grid-cols-2 lg:grid-cols-5 text-sm">
         <div>
           <div className="flex items-center gap-2.5 font-semibold text-[15px] mb-3">
             <BrandMark />
@@ -35,6 +36,16 @@ export function SiteFooter() {
             {COMPARISONS.map((c) => (
               <li key={c.slug}>
                 <Link href={`/compare/${c.slug}`} className={linkClass}>vs {c.competitor}</Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <nav aria-label="Guides">
+          <h2 className="text-[13px] font-medium text-ink-muted mb-3">Guides</h2>
+          <ul className="space-y-2">
+            {GUIDES.map((g) => (
+              <li key={g.slug}>
+                <Link href={`/guides/${g.slug}`} className={linkClass}>{g.title}</Link>
               </li>
             ))}
           </ul>
