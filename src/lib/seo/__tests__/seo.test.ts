@@ -5,6 +5,7 @@ import { buildLlmsTxt } from "@/lib/seo/llmsTxt";
 import { TOOLS, toolUpdated } from "@/content/tools";
 import { GUIDES } from "@/content/guides";
 import { COMPARISONS } from "@/content/comparisons";
+import { HUBS, hubPath } from "@/content/hubs";
 import { SITE_URL, SITE_TITLE, SITE_DESCRIPTION, absoluteUrl } from "@/config/site";
 import { metadata as rootMeta } from "@/app/layout";
 import { metadata as homeMeta } from "@/app/page";
@@ -23,6 +24,7 @@ import { metadata as authMeta } from "@/app/(auth)/layout";
 import { generateMetadata as toolMeta } from "@/app/(marketing)/[tool]/page";
 import { generateMetadata as guideMeta } from "@/app/(marketing)/guides/[slug]/page";
 import { generateMetadata as comparisonMeta } from "@/app/(marketing)/compare/[slug]/page";
+import { generateMetadata as hubMeta } from "@/app/(marketing)/tools/[hub]/page";
 
 // next/font only works inside the Next compiler; the root layout calls it at import
 vi.mock("next/font/google", () => ({ IBM_Plex_Sans: () => ({ variable: "" }), IBM_Plex_Mono: () => ({ variable: "" }) }));
@@ -64,7 +66,10 @@ async function indexablePages(): Promise<Page[]> {
         [`/compare/${c.slug}`, await comparisonMeta({ params: Promise.resolve({ slug: c.slug }) })] as [string, Metadata]
     )
   );
-  return [...fixed, ...tools, ...guides, ...comparisons].map(([path, m]) => ({
+  const hubs = await Promise.all(
+    HUBS.map(async (h) => [hubPath(h), await hubMeta({ params: Promise.resolve({ hub: h.slug }) })] as [string, Metadata])
+  );
+  return [...fixed, ...tools, ...guides, ...comparisons, ...hubs].map(([path, m]) => ({
     path,
     title: titleOf(m),
     description: String(m.description ?? rootMeta.description),
@@ -122,6 +127,7 @@ describe("on-page SEO", () => {
     for (const t of TOOLS) expect(txt).toContain(absoluteUrl(`/${t.slug}`));
     for (const g of GUIDES) expect(txt).toContain(absoluteUrl(`/guides/${g.slug}`));
     for (const c of COMPARISONS) expect(txt).toContain(absoluteUrl(`/compare/${c.slug}`));
+    for (const h of HUBS) expect(txt).toContain(`(${absoluteUrl(hubPath(h))})`);
     for (const path of ["/compare", "/security", "/contact"]) expect(txt).toContain(`(${absoluteUrl(path)})`);
     expect(txt).toContain("client-side");
     expect(txt).not.toMatch(/undefined|NaN/);

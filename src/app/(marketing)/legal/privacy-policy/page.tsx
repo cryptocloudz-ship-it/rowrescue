@@ -1,5 +1,3 @@
-"use client";
-
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import Link from "next/link";
