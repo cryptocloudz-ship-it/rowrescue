@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { HUBS, hubMembers, hubForTool, hubForGuide, resolveHubMember, hubNameInline } from "../hubs";
 import { TOOLS } from "../tools";
 import { GUIDES } from "../guides";
+import { IMPORTS } from "../imports";
 
 // A hub has to say something its member pages don't, or it is a thin listing page.
 const MIN_WORDS = 250;
@@ -45,13 +46,16 @@ describe("hub pages", () => {
     }
   });
 
-  it("give every tool exactly one home hub and every guide a hub", () => {
+  it("give every tool exactly one home hub, and every guide and import page a hub", () => {
     for (const t of TOOLS) {
       const homes = HUBS.filter((h) => hubMembers(h).some((m) => m.type === "tool" && m.slug === t.slug && !m.crossListed));
       expect(homes.length, t.slug).toBe(1);
       expect(hubForTool(t.slug), t.slug).toBe(homes[0]);
     }
     for (const g of GUIDES) expect(hubForGuide(g.slug), g.slug).toBeDefined();
+    for (const p of IMPORTS) {
+      expect(HUBS.some((h) => hubMembers(h).some((m) => m.type === "import" && m.slug === p.slug)), p.slug).toBe(true);
+    }
   });
 
   it(`carry at least ${MIN_WORDS} words of their own copy`, () => {

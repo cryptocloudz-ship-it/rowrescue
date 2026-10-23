@@ -1,5 +1,6 @@
 import { TOOLS, toolNeedsPro } from "@/content/tools";
 import { GUIDES } from "@/content/guides";
+import { IMPORTS, importNeedsPro } from "@/content/imports";
 import { COMPARISONS } from "@/content/comparisons";
 import { HUBS, hubPath } from "@/content/hubs";
 import { PLANS, FREE_RULES, formatEuro as euro, formatRows as rows } from "@/config/plans";
@@ -14,6 +15,9 @@ export function buildLlmsTxt(): string {
   );
   const hubs = HUBS.map((h) => `- [${h.name}](${absoluteUrl(hubPath(h))}): ${h.metaDescription}`);
   const guides = GUIDES.map((g) => `- [${g.h1}](${absoluteUrl(`/guides/${g.slug}`)}): ${g.metaDescription}`);
+  const imports = IMPORTS.map(
+    (p) => `- [${p.h1}](${absoluteUrl(`/import/${p.slug}`)})${importNeedsPro(p) ? " (Pro)" : ""}: ${p.metaDescription}`
+  );
   const comparisons = COMPARISONS.map(
     (c) => `- [${SITE_NAME} vs ${c.competitor}](${absoluteUrl(`/compare/${c.slug}`)}): ${c.metaDescription}`
   );
@@ -49,6 +53,10 @@ export function buildLlmsTxt(): string {
     "",
     ...guides,
     "",
+    "## Import guides",
+    "",
+    ...imports,
+    "",
     "## Comparisons",
     "",
     ...comparisons,
@@ -58,6 +66,7 @@ export function buildLlmsTxt(): string {
     `- [Home](${absoluteUrl("/")}): what the cleaner fixes, where your data goes, and the totals check`,
     `- [All tools](${absoluteUrl("/tools")}): single-purpose cleaning tools`,
     `- [Guides](${absoluteUrl("/guides")}): causes and fixes for common CSV and Excel problems`,
+    `- [Import guides](${absoluteUrl("/import")}): bank CSV exports into Xero and QuickBooks Online, pair by pair`,
     `- [Compare](${absoluteUrl("/compare")}): ${SITE_NAME} next to Excel, Google Sheets, OpenRefine and Power Query`,
     `- [Security](${absoluteUrl("/security")}): how files are processed in the browser and what the server stores`,
     `- [Pricing](${absoluteUrl("/pricing")})`,

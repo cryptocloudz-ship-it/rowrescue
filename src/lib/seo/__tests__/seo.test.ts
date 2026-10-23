@@ -4,6 +4,7 @@ import sitemap from "@/app/sitemap";
 import { buildLlmsTxt } from "@/lib/seo/llmsTxt";
 import { TOOLS, toolUpdated } from "@/content/tools";
 import { GUIDES } from "@/content/guides";
+import { IMPORTS } from "@/content/imports";
 import { COMPARISONS } from "@/content/comparisons";
 import { HUBS, hubPath } from "@/content/hubs";
 import { SITE_URL, SITE_TITLE, SITE_DESCRIPTION, absoluteUrl } from "@/config/site";
@@ -11,6 +12,7 @@ import { metadata as rootMeta } from "@/app/layout";
 import { metadata as homeMeta } from "@/app/page";
 import { metadata as toolsMeta } from "@/app/(marketing)/tools/page";
 import { metadata as guidesMeta } from "@/app/(marketing)/guides/page";
+import { metadata as importsMeta } from "@/app/(marketing)/import/page";
 import { metadata as compareMeta } from "@/app/(marketing)/compare/page";
 import { metadata as securityMeta } from "@/app/(marketing)/security/page";
 import { metadata as contactMeta } from "@/app/(marketing)/contact/page";
@@ -23,6 +25,7 @@ import { metadata as appMeta } from "@/app/(app)/layout";
 import { metadata as authMeta } from "@/app/(auth)/layout";
 import { generateMetadata as toolMeta } from "@/app/(marketing)/[tool]/page";
 import { generateMetadata as guideMeta } from "@/app/(marketing)/guides/[slug]/page";
+import { generateMetadata as importMeta } from "@/app/(marketing)/import/[slug]/page";
 import { generateMetadata as comparisonMeta } from "@/app/(marketing)/compare/[slug]/page";
 import { generateMetadata as hubMeta } from "@/app/(marketing)/tools/[hub]/page";
 
@@ -44,6 +47,7 @@ async function indexablePages(): Promise<Page[]> {
     ["/", homeMeta],
     ["/tools", toolsMeta],
     ["/guides", guidesMeta],
+    ["/import", importsMeta],
     ["/compare", compareMeta],
     ["/pricing", pricingMeta],
     ["/security", securityMeta],
@@ -60,6 +64,11 @@ async function indexablePages(): Promise<Page[]> {
       async (g) => [`/guides/${g.slug}`, await guideMeta({ params: Promise.resolve({ slug: g.slug }) })] as [string, Metadata]
     )
   );
+  const imports = await Promise.all(
+    IMPORTS.map(
+      async (p) => [`/import/${p.slug}`, await importMeta({ params: Promise.resolve({ slug: p.slug }) })] as [string, Metadata]
+    )
+  );
   const comparisons = await Promise.all(
     COMPARISONS.map(
       async (c) =>
@@ -69,7 +78,7 @@ async function indexablePages(): Promise<Page[]> {
   const hubs = await Promise.all(
     HUBS.map(async (h) => [hubPath(h), await hubMeta({ params: Promise.resolve({ hub: h.slug }) })] as [string, Metadata])
   );
-  return [...fixed, ...tools, ...guides, ...comparisons, ...hubs].map(([path, m]) => ({
+  return [...fixed, ...tools, ...guides, ...imports, ...comparisons, ...hubs].map(([path, m]) => ({
     path,
     title: titleOf(m),
     description: String(m.description ?? rootMeta.description),
@@ -119,16 +128,20 @@ describe("on-page SEO", () => {
     for (const g of GUIDES) {
       expect(entries.find((e) => e.url === absoluteUrl(`/guides/${g.slug}`))?.lastModified).toBe(g.updated);
     }
+    for (const p of IMPORTS) {
+      expect(entries.find((e) => e.url === absoluteUrl(`/import/${p.slug}`))?.lastModified).toBe(p.updated);
+    }
   });
 
-  it("llms.txt links every tool, guide and comparison page and describes the privacy model", () => {
+  it("llms.txt links every tool, guide, import and comparison page and describes the privacy model", () => {
     const txt = buildLlmsTxt();
     expect(txt.startsWith("# SpreadsheetFix\n")).toBe(true);
     for (const t of TOOLS) expect(txt).toContain(absoluteUrl(`/${t.slug}`));
     for (const g of GUIDES) expect(txt).toContain(absoluteUrl(`/guides/${g.slug}`));
+    for (const p of IMPORTS) expect(txt).toContain(absoluteUrl(`/import/${p.slug}`));
     for (const c of COMPARISONS) expect(txt).toContain(absoluteUrl(`/compare/${c.slug}`));
     for (const h of HUBS) expect(txt).toContain(`(${absoluteUrl(hubPath(h))})`);
-    for (const path of ["/compare", "/security", "/contact"]) expect(txt).toContain(`(${absoluteUrl(path)})`);
+    for (const path of ["/import", "/compare", "/security", "/contact"]) expect(txt).toContain(`(${absoluteUrl(path)})`);
     expect(txt).toContain("client-side");
     expect(txt).not.toMatch(/undefined|NaN/);
   });

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { TOOLS, TOOL_MAP, toolNeedsPro } from "@/content/tools";
 import { GUIDE_MAP } from "@/content/guides";
+import { IMPORTS, BANKS, SOFTWARE } from "@/content/imports";
 import { COMPARISONS } from "@/content/comparisons";
 import { hubForTool, hubPath } from "@/content/hubs";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
@@ -59,6 +60,10 @@ export default async function ToolPage({ params }: Props) {
     ...(hub ? [{ name: hub.name, path: hubPath(hub) }] : []),
     { name: tool.name, path: `/${tool.slug}` },
   ];
+  // Only the generic accounting-import tools list the bank pairs, so pair pages get links without crowding other tools
+  const imports = ["clean-bank-statement-csv", "prepare-csv-for-accounting-import"].includes(tool.slug)
+    ? IMPORTS.filter((p) => p.relatedTools.includes(tool.slug))
+    : [];
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink relative overflow-x-hidden">
@@ -218,6 +223,23 @@ export default async function ToolPage({ params }: Props) {
                       </Link>
                     </li>
                   ))}
+                </ul>
+              </nav>
+            )}
+            {imports.length > 0 && (
+              <nav aria-label="Import guides">
+                <h2 className="text-[13px] font-medium text-ink-muted">Import guides</h2>
+                <ul className="mt-3 border-t border-rule">
+                  {imports.map((p) => (
+                    <li key={p.slug} className="border-b border-rule">
+                      <Link href={`/import/${p.slug}`} className="block py-4 font-semibold hover:text-accent">
+                        {BANKS[p.bank].name} to {SOFTWARE[p.software].name}
+                      </Link>
+                    </li>
+                  ))}
+                  <li className="border-b border-rule">
+                    <Link href="/import" className="block py-4 text-sm text-ink-muted hover:text-accent">All import guides</Link>
+                  </li>
                 </ul>
               </nav>
             )}
