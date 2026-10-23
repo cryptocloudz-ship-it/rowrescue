@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { fixEncoding, repairMojibake } from "../fixEncoding";
-import { normalizeDate, detectDateOrder } from "../normalizeDate";
+import { normalizeDate, detectDateOrder, DATE_FORMATS, DATE_ORDERS } from "../normalizeDate";
 import { decodeCsvBytes } from "../../parsers/csvParser";
 import { generateHealthReport } from "../../healthReport";
 
@@ -108,5 +108,23 @@ describe("normalizeDate leaves non-dates alone", () => {
       { targetFormat: "YYYY-MM-DD" }
     );
     expect(result.rows[0]).toEqual({ a: "2026-09-05", b: "2024-03-05", c: "2026-09-03", d: "2024-03-04" });
+  });
+});
+
+describe("normalizeDate options offered in the cleaner", () => {
+  it("writes each output format the way its example shows", () => {
+    for (const f of DATE_FORMATS) {
+      const result = normalizeDate([{ d: "2024-03-15" }], { targetFormat: f.value });
+      expect(result.rows[0].d, f.value).toBe(f.example);
+    }
+  });
+
+  it("reads 03/04/2024 according to each read order", () => {
+    const read = (dateOrder: string) =>
+      normalizeDate([{ d: "03/04/2024" }], { targetFormat: "YYYY-MM-DD", dateOrder }).rows[0].d;
+    expect(DATE_ORDERS.map((o) => o.value)).toEqual(["auto", "DMY", "MDY"]);
+    expect(read("DMY")).toBe("2024-04-03");
+    expect(read("MDY")).toBe("2024-03-04");
+    expect(read("auto")).toBe("2024-04-03");
   });
 });

@@ -240,11 +240,11 @@ export const IMPORTS: ImportPage[] = [
     toolFix: [
       "The date problem is the one most likely to stop the import, and it’s the one SpreadsheetFix fixes completely. Both timestamp columns are rewritten as DD/MM/YYYY, the first date format Xero lists, and the time of day is dropped. The Started Date of a card payment and its Completed Date are converted separately, so each keeps its own day.",
       "Because cleaning runs in your browser, the statement, with its payees and balances, is never uploaded. Before you download, the totals check adds up the Amount, Fee and Balance columns and confirms that they match the original to the cent, so you know that rewriting dates didn’t touch a figure.",
-      `Everything on this page uses free rules, so files up to ${FREE_MAX_ROWS} rows clean without an account. Filtering by State, adding fee rows and deleting the Balance column are left to you, because they are decisions about your books rather than formatting.`,
+      `Everything on this page uses free rules, so files up to ${FREE_MAX_ROWS} rows clean without an account. Filtering by State, adding fee rows and deleting the Balance column are left out of the preset, because they are decisions about your books rather than formatting. On Pro, the Filter Rows and Delete Columns rules can do the first and the last.`,
     ],
     limits: [
-      "SpreadsheetFix doesn’t remove columns that contain data, so the Balance column is still there in the download and has to be deleted by hand.",
-      "It doesn’t filter rows by State or turn the Fee column into separate rows, so check the State column and look for non-zero fees yourself.",
+      "This page’s preset keeps every column, so the Balance column is still in the download. On Pro, tick it in the Delete Columns rule before you download; otherwise delete it in your spreadsheet.",
+      "The free preset doesn’t filter rows by State. On Pro, Filter Rows can keep only rows where State equals COMPLETED. SpreadsheetFix doesn’t turn the Fee column into separate rows, so look for non-zero fees yourself.",
       "Xero remembers how you assigned the columns. If a later Revolut file has different columns, Xero asks you to assign them again, so compare the header row each time.",
     ],
     preset: { ruleIds: BASE_RULES, options: DMY },
@@ -333,7 +333,7 @@ ATM,Current,06/09/2026,06/09/2026,Cash at Lisbon ATM,-100.00,1.00,GBP,COMPLETED,
       "On both plans the statement is processed in your browser and never uploaded, and the totals check confirms that Amount, Fee and Balance add up to the same figures after cleaning. That is worth seeing before an upload you will then categorise and reconcile line by line.",
     ],
     limits: [
-      "SpreadsheetFix doesn’t delete columns that contain data, rows by State, or zero-value rows, so those edits happen in your spreadsheet after cleaning.",
+      "This page’s preset doesn’t delete columns or rows. On Pro, the Delete Columns rule removes the columns after Amount, and Filter Rows takes one condition per run: keep rows where State equals COMPLETED, or remove rows where Amount equals 0.00. Whatever is left happens in your spreadsheet after cleaning.",
       "Numbers and symbols inside descriptions are left as they are. Intuit asks for them to be removed, so use Find and Replace on the Description column before uploading.",
       "Revolut statements can be longer than the 1,000 lines QuickBooks takes per upload. Export shorter periods and upload them one at a time.",
     ],
@@ -361,7 +361,7 @@ CARD_PAYMENT,Current,12/08/2026,12/08/2026,Car hire temporary hold,0.00,0.00,GBP
 TRANSFER,Current,14/08/2026,14/08/2026,Payment from Harbour Design,900.00,0.00,GBP,COMPLETED,1712.40
 TRANSFER,Current,15/08/2026,15/08/2026,To Northgate Print,-145.00,0.00,GBP,COMPLETED,1567.40`,
     afterNote:
-      "The Pro result: Date, Description and Amount lead, ready for the columns after them to be deleted. The 0.00 hold row is still there to delete by hand.",
+      "The Pro result: Date, Description and Amount lead, ready for the columns after them to be deleted. The 0.00 hold row is still there, because this preset doesn’t filter rows.",
     totals: { column: "Amount", before: 722.82, removed: 0, after: 722.82 },
     faqs: [
       {
@@ -437,7 +437,7 @@ TRANSFER,Current,15/08/2026,15/08/2026,To Northgate Print,-145.00,0.00,GBP,COMPL
     ],
     limits: [
       "Which columns are removed depends on the file: a month with a currency conversion keeps the exchange columns. Xero asks you to assign columns again whenever the set changes, so expect that step to come back now and then.",
-      "SpreadsheetFix doesn’t split files by currency or delete the Running Balance column, which still contains data. Both are quick filters in a spreadsheet.",
+      "This page’s preset doesn’t delete the Running Balance column, which still contains data, or split the file by currency. On Pro, the Delete Columns rule drops Running Balance, and Filter Rows can keep one currency per run; otherwise both are quick edits in a spreadsheet.",
       "Fees are left exactly as Wise wrote them. If your file has a Total fees value but no matching charges row, add the fee yourself; the running balance tells you which case you have.",
     ],
     preset: { ruleIds: BASE_RULES, options: DMY },
@@ -527,7 +527,7 @@ TRANSFER-1033410,09/09/2026,300.00,EUR,Topped up balance,,4667.85,,,,0.00`,
       "Either way the statement is processed in your browser, never uploaded, and the totals check confirms that Amount, Running Balance and Total fees add up to the same figures after cleaning as before.",
     ],
     limits: [
-      "SpreadsheetFix doesn’t split a file by currency, delete columns that contain data, or remove numbers from descriptions, so those steps happen in your spreadsheet.",
+      "SpreadsheetFix doesn’t remove numbers from descriptions, and this page’s preset doesn’t split the file by currency or delete columns that contain data. On Pro, the Delete Columns rule removes the columns QuickBooks won’t take, and Filter Rows can keep one currency per run. Otherwise those steps happen in your spreadsheet.",
       "It doesn’t check the 350 KB and 1,000-line limits either. Count the rows after splitting by currency, and download a shorter period from Wise if a file is over.",
       "Fees stay as Wise exported them. Check whether each fee in the Total fees column also has its own row, so that it reaches QuickBooks exactly once.",
     ],
@@ -622,7 +622,7 @@ TRANSFER-2209930,18/09/2026,-4.10,GBP,Wise Charges for: TRANSFER-2209930,,4765.9
       "In both cases the export is processed in your browser and never uploaded, and the totals check confirms that the Amount column adds up to the same total after cleaning as before.",
     ],
     limits: [
-      "SpreadsheetFix can’t tell a Pot transfer from a real payment, and doesn’t delete columns that contain data. Both are edits for your spreadsheet after cleaning.",
+      "SpreadsheetFix can’t tell a Pot transfer from a real payment, so check those in your spreadsheet. This page’s preset doesn’t delete columns; on Pro, the Delete Columns rule removes the ones QuickBooks won’t take.",
       "The rename relies on your file having columns called Name and Description. If your export names them differently, the rename doesn’t apply and the columns are left as they are.",
       "QuickBooks takes up to 1,000 lines and 350 KB per upload. For a busy account, export a shorter date range from Monzo and upload each file in turn.",
     ],

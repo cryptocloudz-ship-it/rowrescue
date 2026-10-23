@@ -17,6 +17,8 @@ import { validateRequired } from "../validateRequired";
 import { validateRange } from "../validateRange";
 import { renameColumns } from "../renameColumns";
 import { reorderColumns } from "../reorderColumns";
+import { removeColumns } from "../removeColumns";
+import { filterRows, matchesCondition } from "../filterRows";
 
 // ─── trimWhitespace ──────────────────────────────────────────────────────────
 
@@ -677,5 +679,90 @@ describe("reorderColumns", () => {
     const result = reorderColumns(rows, { order: ["z", "a", "b"] });
     const keys = Object.keys(result.rows[0]);
     expect(keys).toEqual(["a", "b"]);
+  });
+});
+
+// ─── removeColumns ───────────────────────────────────────────────────────────
+
+describe("removeColumns", () => {
+  const rows = [
+    { date: "2026-09-01", ref: "TX-1", amount: "10.00", note: "coffee" },
+    { date: "2026-09-02", ref: "TX-2", amount: "20.00", note: "" },
+  ];
+
+  it("deletes the chosen columns even when they hold data", () => {
+    const result = removeColumns(rows, { columns: ["ref", "note"] });
+    expect(result.rows).toEqual([
+      { date: "2026-09-01", amount: "10.00" },
+      { date: "2026-09-02", amount: "20.00" },
+    ]);
+    expect(result.stats.rowsRemoved).toBe(0);
+  });
+
+  it("logs each deleted column once as a header-level removal", () => {
+    const result = removeColumns(rows, { columns: ["ref"] });
+    expect(result.changes).toHaveLength(1);
+    expect(result.changes[0]).toMatchObject({ rowIndex: -1, column: "ref", ruleId: "removeColumns", changeType: "removed" });
+  });
+
+  it("does nothing when no columns are chosen or they don't exist", () => {
+    expect(removeColumns(rows, {}).rows).toEqual(rows);
+    const missing = removeColumns(rows, { columns: ["nope"] });
+    expect(missing.rows).toEqual(rows);
+    expect(missing.changes).toHaveLength(0);
+  });
+});
+
+// ─── filterRows ──────────────────────────────────────────────────────────────
+
+describe("filterRows", () => {
+  const rows = [
+    { date: "2026-09-01", status: "Posted", payee: "Acme Supplies", amount: "€1,250.00" },
+    { date: "2026-09-02", status: "pending ", payee: "Northwind", amount: "-45.10" },
+    { date: "2026-09-03", status: "", payee: "Opening balance", amount: "" },
+    { date: "2026-09-04", status: "Posted", payee: "Blue Pine", amount: "(300.00)" },
+  ];
+
+  it("removes rows that equal a value, ignoring case and spaces", () => {
+    const result = filterRows(rows, { column: "status", operator: "equals", value: "Pending", mode: "remove" });
+    expect(result.rows.map((r) => r.payee)).toEqual(["Acme Supplies", "Opening balance", "Blue Pine"]);
+    expect(result.stats.rowsRemoved).toBe(1);
+  });
+
+  it("keeps only rows that contain a value", () => {
+    const result = filterRows(rows, { column: "payee", operator: "contains", value: "pine", mode: "keep" });
+    expect(result.rows.map((r) => r.payee)).toEqual(["Blue Pine"]);
+    expect(result.stats.rowsRemoved).toBe(3);
+  });
+
+  it("removes rows where a column is empty", () => {
+    const result = filterRows(rows, { column: "amount", operator: "empty", mode: "remove" });
+    expect(result.rows).toHaveLength(3);
+  });
+
+  it("compares numbers by reading amounts, including currency and brackets", () => {
+    const over = filterRows(rows, { column: "amount", operator: "gt", value: "100", mode: "keep" });
+    expect(over.rows.map((r) => r.payee)).toEqual(["Acme Supplies"]);
+    const under = filterRows(rows, { column: "amount", operator: "lt", value: "0", mode: "keep" });
+    expect(under.rows.map((r) => r.payee)).toEqual(["Northwind", "Blue Pine"]);
+  });
+
+  it("logs every cell of each removed row so nothing disappears silently", () => {
+    const result = filterRows(rows, { column: "status", operator: "equals", value: "posted", mode: "remove" });
+    expect(result.changes).toHaveLength(2 * 4);
+    expect(new Set(result.changes.map((c) => c.rowIndex))).toEqual(new Set([0, 3]));
+    expect(result.changes.every((c) => c.changeType === "removed" && c.ruleId === "filterRows")).toBe(true);
+  });
+
+  it("does nothing until the condition is complete", () => {
+    expect(filterRows(rows, {}).rows).toEqual(rows);
+    expect(filterRows(rows, { column: "status", operator: "equals", value: " " }).rows).toEqual(rows);
+    expect(filterRows(rows, { column: "status", operator: "gt" }).rows).toEqual(rows);
+  });
+
+  it("never matches a number comparison on text", () => {
+    expect(matchesCondition("n/a", "gt", "0")).toBe(false);
+    expect(matchesCondition("5", "gt", "abc")).toBe(false);
+    expect(matchesCondition(12, "gt", "10")).toBe(true);
   });
 });

@@ -143,7 +143,7 @@ export const GUIDES: GuidePage[] = [
       "Why Excel reads 03/04/2024 as 4 March, not 3 April, when it opens a CSV, how to import it with the right date order, and how to fix every date at once.",
     h1: "How to stop Excel changing dates in a CSV, and fix swapped days and months",
     published: "2026-10-21",
-    updated: "2026-10-22",
+    updated: "2026-10-23",
     summary:
       "You open a CSV in Excel and the dates are no longer what the file says. Your bank statement says the insurance went out on 3 April, but the spreadsheet says 4 March. A few rows down, 15/04/2024 sits on the left of its cell as text while the dates above it sit on the right. This is the most common date problem with bank exports: the file and your spreadsheet disagree about whether the day or the month comes first. Here is why it happens, how to fix it by hand in Excel and Google Sheets before an accounting import, and how SpreadsheetFix works out the order for each column.",
     cause: [
@@ -204,7 +204,7 @@ export const GUIDES: GuidePage[] = [
       `Load the CSV straight from your bank, check the converted dates in the preview, and download. Normalize Dates is a free rule for files up to ${FREE_MAX_ROWS} rows, and the statement is read in your browser rather than uploaded.`,
     ],
     limits: [
-      "If every date in a column has both numbers at 12 or below, as in an export covering only the first twelve days of a month, there is no evidence either way, and SpreadsheetFix reads the column day-first. For a US export, compare the first rows with the statement before you import.",
+      "If every date in a column has both numbers at 12 or below, as in an export covering only the first twelve days of a month, there is no evidence either way, and SpreadsheetFix reads the column day-first. For a US export, set the rule’s read order to month first before you clean.",
       "Two-digit years are read the way Excel reads them: 00 to 29 become 2000 to 2029, and 30 to 99 become 1930 to 1999. They follow the same per-column day/month detection as four-digit years, but a date before 1930 needs a four-digit year to come out right.",
       "A swap that Excel has already saved into the file can’t be undone from that file. Download the export again and clean the fresh copy.",
     ],

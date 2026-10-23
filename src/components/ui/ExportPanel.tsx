@@ -9,6 +9,7 @@ import { exportToXLSX } from "@/lib/engine/exporters/xlsxExporter";
 import { exportSummary } from "@/lib/engine/exporters/summaryExporter";
 import { trackExport } from "@/lib/analytics";
 import { reconcile } from "@/lib/engine/reconcile";
+import { ALL_RULES } from "@/lib/engine/rules";
 import { PRO_PRICE_MONTHLY } from "@/config/plans";
 
 function downloadBlob(content: string | Uint8Array, filename: string, mime: string) {
@@ -44,6 +45,7 @@ export function ExportPanel() {
   const [exportsRemaining, setExportsRemaining] = useState<number | null>(null);
   const [limitReached, setLimitReached] = useState(false);
   const [timeUntilReset, setTimeUntilReset] = useState("");
+  const [includeHeaders, setIncludeHeaders] = useState(true);
 
   useEffect(() => {
     if (isPro) return;
@@ -105,6 +107,7 @@ export function ExportPanel() {
       const allowed = await recordExport();
       if (!allowed) return;
       const csv = exportToCSV(cleanedRows, cleanedHeaders, {
+        includeHeaders,
         watermark: hasWatermark,
       });
       downloadBlob(csv, `${baseName}_cleaned.csv`, "text/csv;charset=utf-8");
@@ -120,7 +123,7 @@ export function ExportPanel() {
     if (!isPro) return;
     setDownloading("xlsx");
     try {
-      const xlsx = await exportToXLSX(cleanedRows, cleanedHeaders);
+      const xlsx = await exportToXLSX(cleanedRows, cleanedHeaders, { includeHeaders });
       downloadBlob(
         xlsx,
         `${baseName}_cleaned.xlsx`,
@@ -240,6 +243,21 @@ export function ExportPanel() {
           </div>
         </div>
       )}
+
+      <label className="flex items-start gap-3 px-2 text-sm text-ink-body cursor-pointer">
+        <input
+          type="checkbox"
+          checked={includeHeaders}
+          onChange={(e) => setIncludeHeaders(e.target.checked)}
+          className="mt-0.5 w-4 h-4 rounded border-rule bg-surface text-accent focus:ring-accent focus:ring-offset-white"
+        />
+        <span>
+          <span className="font-semibold text-ink">Include header row</span>
+          <span className="block text-ink-muted">
+            Untick for software that expects data from the first line, with no column names.
+          </span>
+        </span>
+      </label>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" role="group" aria-label="Export options">
         <button
@@ -364,7 +382,7 @@ export function ExportPanel() {
                 File exported with watermark
               </p>
               <p className="text-sm font-medium text-emerald-700 mt-1">
-                Upgrade to Pro to remove watermarks, unlock Excel export, and access all 17 cleaning rules.
+                Upgrade to Pro to remove watermarks, unlock Excel export, and access all {ALL_RULES.length} cleaning rules.
               </p>
               <div className="flex items-center gap-4 mt-4">
                 <Link

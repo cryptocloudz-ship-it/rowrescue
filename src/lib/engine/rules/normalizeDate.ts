@@ -1,6 +1,20 @@
 import type { Row, CleanResult, CellChange } from "@/types/sheet";
 import type { RuleOptions, NormalizeDateOptions } from "@/types/rules";
 
+/** Output formats the cleaner offers, with an example of each. */
+export const DATE_FORMATS = [
+  { value: "YYYY-MM-DD", example: "2024-03-15" },
+  { value: "DD/MM/YYYY", example: "15/03/2024" },
+  { value: "MM/DD/YYYY", example: "03/15/2024" },
+] as const;
+
+/** How ambiguous dates like 03/04/2024 can be read. */
+export const DATE_ORDERS = [
+  { value: "auto", label: "Detect per column" },
+  { value: "DMY", label: "Day first (03/04 = 3 April)" },
+  { value: "MDY", label: "Month first (03/04 = 4 March)" },
+] as const;
+
 // Common date patterns to detect and parse
 const DATE_PATTERNS: { regex: RegExp; parse: (m: RegExpMatchArray) => Date | null }[] = [
   // YYYY-MM-DD

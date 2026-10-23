@@ -9,6 +9,7 @@ import { FREE_RULES, PRO_MAX_ROWS, PRO_PRICE_MONTHLY } from "@/config/plans";
 import type { RuleCategory, RuleDefinition } from "@/types/rules";
 import type { HealthReport } from "@/types/sheet";
 import { ISSUE_TO_RULE } from "@/lib/engine/issueRules";
+import { RuleOptionsPanel, hasRuleOptions } from "./RuleOptions";
 
 const CATEGORY_LABELS: Record<RuleCategory, string> = {
   column_management: "Column Management",
@@ -312,6 +313,7 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
                   const isEnabled = config?.enabled ?? false;
                   const showColumnPicker =
                     isEnabled && rule.supportsColumnTargeting && headers.length > 0;
+                  const showOptions = isEnabled && hasRuleOptions(rule.id);
                   const issueCount = getIssueCountForRule(rule.id, healthReport);
                   const showUpgrade = upgradeRuleId === rule.id;
 
@@ -378,9 +380,10 @@ export function RuleConfigurator({ onRunCleaning }: RuleConfiguratorProps) {
                         // Modal is rendered outside
                         null
                       )}
-                      {showColumnPicker && (
-                        <div className="ml-9 mt-2 p-3 bg-surface rounded-lg border border-rule animate-in fade-in slide-in-from-top-2 duration-300">
-                          <ColumnPicker ruleId={rule.id} headers={headers} />
+                      {(showColumnPicker || showOptions) && (
+                        <div className="ml-9 mt-2 p-3 bg-surface rounded-lg border border-rule space-y-3 animate-in fade-in slide-in-from-top-2 duration-300">
+                          {showOptions && <RuleOptionsPanel ruleId={rule.id} headers={headers} />}
+                          {showColumnPicker && <ColumnPicker ruleId={rule.id} headers={headers} />}
                         </div>
                       )}
                     </div>
