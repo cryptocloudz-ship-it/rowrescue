@@ -1,26 +1,28 @@
 "use client";
 
 import Link from "next/link";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { useSessionHint } from "@/components/auth/clientAuth";
 
-// Client-side auth state keeps marketing pages statically renderable
+// Marketing pages don't load Clerk: the session cookie decides between "Sign in" and the dashboard link
 export function NavAuth() {
+  const signedIn = useSessionHint();
   return (
     <>
-      <SignedOut>
+      {signedIn ? (
+        <Link href="/dashboard" className="text-ink hover:text-accent py-3 hidden sm:inline">
+          Dashboard
+        </Link>
+      ) : (
         <Link href="/sign-in" className="text-ink hover:text-accent py-3 hidden sm:inline">
           Sign in
         </Link>
-      </SignedOut>
+      )}
       <Link
         href="/clean"
         className="inline-flex items-center min-h-10 px-3.5 whitespace-nowrap rounded-md border border-rule-strong bg-paper text-ink text-sm font-medium hover:border-ink-muted transition-colors"
       >
         Open the cleaner
       </Link>
-      <SignedIn>
-        <UserButton />
-      </SignedIn>
     </>
   );
 }

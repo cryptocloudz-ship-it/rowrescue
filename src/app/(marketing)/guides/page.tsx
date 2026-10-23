@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { GUIDES } from "@/content/guides";
+import { GUIDES, GUIDE_MAP } from "@/content/guides";
+import { HUBS, hubMembers, hubNameInline, hubPath } from "@/content/hubs";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -19,6 +20,13 @@ const crumbs = [
   { name: "Home", path: "/" },
   { name: "Guides", path: "/guides" },
 ];
+
+function hubGuides(hub: (typeof HUBS)[number]) {
+  return hubMembers(hub)
+    .filter((m) => m.type === "guide")
+    .map((m) => GUIDE_MAP.get(m.slug))
+    .filter((g) => g !== undefined);
+}
 
 export default function GuidesIndex() {
   return (
@@ -46,16 +54,26 @@ export default function GuidesIndex() {
           Each guide starts from what you see on screen, explains why it happens, and shows how to fix it by hand in Excel
           or Google Sheets. Where SpreadsheetFix can fix it for you, the guide says how, and what it won’t catch.
         </p>
-        <ul className="mt-12 grid md:grid-cols-2 gap-x-12 border-t border-rule">
-          {GUIDES.map((g) => (
-            <li key={g.slug} className="border-b border-rule">
-              <Link href={`/guides/${g.slug}`} className="group block py-6">
-                <h2 className="text-lg font-semibold group-hover:text-accent">{g.h1}</h2>
-                <p className="mt-1.5 text-ink-body leading-relaxed">{g.metaDescription}</p>
+        {HUBS.map((hub) => (
+          <section key={hub.slug} className="mt-14">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
+              <h2 className="text-[28px] leading-tight font-semibold tracking-[-0.015em]">{hub.name}</h2>
+              <Link href={hubPath(hub)} className="text-sm font-medium text-accent hover:text-accent-strong">
+                Tools for {hubNameInline(hub)}
               </Link>
-            </li>
-          ))}
-        </ul>
+            </div>
+            <ul className="mt-6 grid md:grid-cols-2 gap-x-12 border-t border-rule">
+              {hubGuides(hub).map((g) => (
+                <li key={g.slug} className="border-b border-rule">
+                  <Link href={`/guides/${g.slug}`} className="group block py-6">
+                    <h3 className="text-lg font-semibold group-hover:text-accent">{g.h1}</h3>
+                    <p className="mt-1.5 text-ink-body leading-relaxed">{g.metaDescription}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
       </main>
       <SiteFooter />
     </div>

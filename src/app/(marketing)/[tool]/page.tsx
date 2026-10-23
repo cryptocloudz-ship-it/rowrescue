@@ -5,11 +5,13 @@ import { ALL_RULES } from "@/lib/engine/rules";
 import { TOOLS, TOOL_MAP, toolNeedsPro } from "@/content/tools";
 import { GUIDE_MAP } from "@/content/guides";
 import { COMPARISONS } from "@/content/comparisons";
+import { hubForTool, hubPath } from "@/content/hubs";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
 import { PLANS, FREE_MAX_ROWS, PRO_MAX_ROWS } from "@/config/plans";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { Breadcrumbs, breadcrumbJsonLd } from "@/components/seo/Breadcrumbs";
 import { ToolLauncher } from "@/components/tools/ToolLauncher";
 import { MergeTool } from "@/components/tools/MergeTool";
 
@@ -50,6 +52,13 @@ export default async function ToolPage({ params }: Props) {
   const needsPro = toolNeedsPro(tool);
   const guides = (tool.guides ?? []).map((s) => GUIDE_MAP.get(s)).filter((g) => g !== undefined);
   const comparisons = COMPARISONS.filter((c) => c.tools.includes(tool.slug));
+  const hub = hubForTool(tool.slug);
+  const crumbs = [
+    { name: "Home", path: "/" },
+    { name: "Tools", path: "/tools" },
+    ...(hub ? [{ name: hub.name, path: hubPath(hub) }] : []),
+    { name: tool.name, path: `/${tool.slug}` },
+  ];
 
   return (
     <div className="min-h-screen bg-paper font-ui text-ink relative overflow-x-hidden">
@@ -90,28 +99,14 @@ export default async function ToolPage({ params }: Props) {
               acceptedAnswer: { "@type": "Answer", text: f.a },
             })),
           },
-          {
-            "@context": "https://schema.org",
-            "@type": "BreadcrumbList",
-            itemListElement: [
-              { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
-              { "@type": "ListItem", position: 2, name: "Tools", item: absoluteUrl("/tools") },
-              { "@type": "ListItem", position: 3, name: tool.name, item: url },
-            ],
-          },
+          breadcrumbJsonLd(crumbs),
         ]}
       />
       <SiteHeader />
 
       <main id="main-content">
         <section className="max-w-[1200px] mx-auto px-6 pt-14 pb-10">
-          <nav aria-label="Breadcrumb" className="text-sm text-ink-muted mb-6">
-            <Link href="/" className="hover:text-ink">Home</Link>
-            <span className="mx-2" aria-hidden="true">/</span>
-            <Link href="/tools" className="hover:text-ink">Tools</Link>
-            <span className="mx-2" aria-hidden="true">/</span>
-            <span aria-current="page">{tool.name}</span>
-          </nav>
+          <Breadcrumbs crumbs={crumbs} />
           <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em] max-w-[820px]">{tool.h1}</h1>
           <p className="mt-5 text-lg leading-relaxed text-ink-body max-w-[680px]">{tool.intro}</p>
           <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 text-sm">

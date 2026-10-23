@@ -8,7 +8,7 @@ import { parseFile } from "@/lib/engine/parsers";
 import { exportToCSV } from "@/lib/engine/exporters/csvExporter";
 import { mergeSheets, type MergeResult } from "@/lib/engine/merge";
 import { useSheetStore, FREE_ROW_LIMIT } from "@/store/sheetStore";
-import { EntitlementsSync } from "@/components/billing/EntitlementsSync";
+import { SignedInEntitlements } from "@/components/billing/SignedInEntitlements";
 import type { ParsedSheet } from "@/types/sheet";
 import { PRO_MAX_ROWS } from "@/config/plans";
 
@@ -66,7 +66,7 @@ export function MergeTool() {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <EntitlementsSync />
+      <SignedInEntitlements />
       <div
         role="button"
         tabIndex={0}

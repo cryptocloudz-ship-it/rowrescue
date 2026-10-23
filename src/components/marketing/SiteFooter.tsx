@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TOOLS, toolNeedsPro } from "@/content/tools";
+import { HUBS, hubPath } from "@/content/hubs";
 import { COMPARISONS } from "@/content/comparisons";
 import { GUIDES } from "@/content/guides";
 import { SUPPORT_EMAIL } from "@/config/site";
@@ -23,12 +23,12 @@ export function SiteFooter() {
         <nav aria-label="Cleaning tools">
           <h2 className="text-[13px] font-medium text-ink-muted mb-3">Clean</h2>
           <ul className="space-y-2">
-            {TOOLS.map((t) => (
-              <li key={t.slug}>
-                <Link href={`/${t.slug}`} className={linkClass}>{t.name}</Link>
-                {toolNeedsPro(t) && <span className="ml-1.5 text-[11px] text-ink-muted">Pro</span>}
+            {HUBS.map((h) => (
+              <li key={h.slug}>
+                <Link href={hubPath(h)} className={linkClass}>{h.name}</Link>
               </li>
             ))}
+            <li><Link href="/tools" className={linkClass}>All cleaning tools</Link></li>
           </ul>
         </nav>
         <nav aria-label="Comparisons">
@@ -55,8 +55,8 @@ export function SiteFooter() {
           <h2 className="text-[13px] font-medium text-ink-muted mb-3">Product</h2>
           <ul className="space-y-2">
             <li><Link href="/clean" className={linkClass}>Spreadsheet cleaner</Link></li>
-            <li><Link href="/tools" className={linkClass}>All tools</Link></li>
-            <li><Link href="/guides" className={linkClass}>Guides</Link></li>
+            <li><Link href="/guides" className={linkClass}>All guides</Link></li>
+            <li><Link href="/compare" className={linkClass}>All comparisons</Link></li>
             <li><Link href="/security" className={linkClass}>Security</Link></li>
             <li><Link href="/pricing" className={linkClass}>Pricing</Link></li>
             <li><Link href="/contact" className={linkClass}>Contact</Link></li>

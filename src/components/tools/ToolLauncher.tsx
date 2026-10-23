@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSheetStore, type RulePreset } from "@/store/sheetStore";
 import { FileUploader } from "@/components/upload/FileUploader";
-import { EntitlementsSync } from "@/components/billing/EntitlementsSync";
+import { SignedInEntitlements } from "@/components/billing/SignedInEntitlements";
 
 /** Uploader for a tool landing page: applies the tool's rule preset, then hands off to /clean once the file is parsed. */
 export function ToolLauncher({ preset }: { preset: RulePreset }) {
@@ -24,7 +24,7 @@ export function ToolLauncher({ preset }: { preset: RulePreset }) {
 
   return (
     <>
-      <EntitlementsSync />
+      <SignedInEntitlements />
       <FileUploader />
       {stage === "parsing" && (
         <p role="status" className="mt-4 text-center text-sm text-ink-muted">

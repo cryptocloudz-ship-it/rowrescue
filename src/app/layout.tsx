@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
 import { IBM_Plex_Sans, IBM_Plex_Mono } from "next/font/google";
 import { CookieConsent } from "@/components/ui/CookieConsent";
 import { UtmCapture } from "@/components/ui/UtmCapture";
@@ -42,26 +41,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider
-      // No usage telemetry to Clerk; it would also need a CSP exception
-      telemetry={false}
-      appearance={{
-        variables: { colorPrimary: "#1f3d99", colorText: "#0e1525", fontFamily: "var(--font-plex-sans), system-ui, sans-serif", borderRadius: "6px" },
-        // Email sign-in only: Google is enabled in Clerk production but has no OAuth credentials yet.
-        // Remove these two lines once custom Google credentials are added in Clerk.
-        elements: { socialButtonsRoot: { display: "none" }, dividerRow: { display: "none" } },
-      }}
-    >
-      <html lang="en">
-        <body
-          className={`${plexSans.variable} ${plexMono.variable} antialiased`}
-        >
-          {children}
-          <UtmCapture />
-          <CookieConsent />
-        </body>
-        {gaId && <ConsentedAnalytics gaId={gaId} />}
-      </html>
-    </ClerkProvider>
+    // Clerk is added per route (AuthProvider) so static marketing pages don't load it
+    <html lang="en">
+      <body
+        className={`${plexSans.variable} ${plexMono.variable} antialiased`}
+      >
+        {children}
+        <UtmCapture />
+        <CookieConsent />
+      </body>
+      {gaId && <ConsentedAnalytics gaId={gaId} />}
+    </html>
   );
 }

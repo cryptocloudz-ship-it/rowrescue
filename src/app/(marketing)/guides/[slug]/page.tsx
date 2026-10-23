@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { GUIDES, GUIDE_MAP, guideNeedsPro } from "@/content/guides";
 import { TOOL_MAP } from "@/content/tools";
 import { COMPARISONS } from "@/content/comparisons";
+import { hubForGuide, hubNameInline, hubPath } from "@/content/hubs";
 import { SITE_NAME, absoluteUrl } from "@/config/site";
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
@@ -62,6 +63,7 @@ export default async function GuidePage({ params }: Props) {
   const needsPro = guideNeedsPro(guide);
   const comparisons = COMPARISONS.filter((c) => c.tools.includes(guide.tool));
   const orgId = absoluteUrl("/#organization");
+  const hub = hubForGuide(guide.slug);
   const crumbs = [
     { name: "Home", path: "/" },
     { name: "Guides", path: "/guides" },
@@ -233,6 +235,14 @@ export default async function GuidePage({ params }: Props) {
                 ))}
               </ul>
             </nav>
+            {hub && (
+              <nav aria-label="Tool group">
+                <h2 className="text-[13px] font-medium text-ink-muted">More tools</h2>
+                <Link href={hubPath(hub)} className="mt-3 block border-y border-rule py-4 font-semibold hover:text-accent">
+                  All tools for {hubNameInline(hub)}
+                </Link>
+              </nav>
+            )}
             {comparisons.length > 0 && (
               <nav aria-label="Comparisons">
                 <h2 className="text-[13px] font-medium text-ink-muted">Compare</h2>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthProvider } from "@/components/auth/AuthProvider";
 import { DEFAULT_OPEN_GRAPH } from "@/config/site";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { FREE_MAX_ROWS, PRO_MAX_ROWS } from "@/config/plans";
@@ -16,6 +17,7 @@ export const metadata: Metadata = {
   },
 };
 
+// Clerk keeps the session token fresh, so checkout knows who is buying
 export default function PricingLayout({ children }: { children: React.ReactNode }) {
-  return children;
+  return <AuthProvider>{children}</AuthProvider>;
 }

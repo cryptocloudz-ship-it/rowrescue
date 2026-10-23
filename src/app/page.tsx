@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/marketing/SiteFooter";
 import { HomeHero } from "@/components/marketing/HomeHero";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { TOOLS } from "@/content/tools";
+import { HUBS, hubNameInline, hubPath } from "@/content/hubs";
 import { SITE_NAME, SITE_DESCRIPTION, DEFAULT_OPEN_GRAPH, LOGO_PATH, SUPPORT_EMAIL, absoluteUrl } from "@/config/site";
 import { PLANS, FREE_RULES, TEAM_MIN_SEATS, formatEuro, formatRows } from "@/config/plans";
 import { ALL_RULES, RULE_MAP } from "@/lib/engine/rules";
@@ -231,7 +232,18 @@ export default function LandingPage() {
         <section id="tools" className="border-t border-rule scroll-mt-16">
           <div className="max-w-[1200px] mx-auto px-6 py-20">
             <h2 className="text-[36px] leading-tight font-semibold tracking-[-0.02em]">Single-purpose tools</h2>
-            <p className="mt-4 text-lg leading-relaxed text-ink-body">For one specific fix.</p>
+            <p className="mt-4 text-lg leading-relaxed text-ink-body">
+              For one specific fix. Or browse them by job:{" "}
+              {HUBS.map((h, i) => (
+                <span key={h.slug}>
+                  {i > 0 && (i === HUBS.length - 1 ? " and " : ", ")}
+                  <Link href={hubPath(h)} className="text-accent hover:text-accent-strong underline underline-offset-2">
+                    {hubNameInline(h)}
+                  </Link>
+                </span>
+              ))}
+              .
+            </p>
             <ul className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 border-t border-rule">
               {TOOLS.map((t) => (
                 <li key={t.slug} className="border-b border-rule">

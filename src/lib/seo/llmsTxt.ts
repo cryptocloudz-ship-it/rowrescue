@@ -1,6 +1,7 @@
 import { TOOLS, toolNeedsPro } from "@/content/tools";
 import { GUIDES } from "@/content/guides";
 import { COMPARISONS } from "@/content/comparisons";
+import { HUBS, hubPath } from "@/content/hubs";
 import { PLANS, FREE_RULES, formatEuro as euro, formatRows as rows } from "@/config/plans";
 import { ALL_RULES } from "@/lib/engine/rules";
 import { SITE_NAME, SUPPORT_EMAIL, absoluteUrl } from "@/config/site";
@@ -11,6 +12,7 @@ export function buildLlmsTxt(): string {
   const tools = TOOLS.map(
     (t) => `- [${t.name}](${absoluteUrl(`/${t.slug}`)})${toolNeedsPro(t) ? " (Pro)" : ""}: ${t.metaDescription}`
   );
+  const hubs = HUBS.map((h) => `- [${h.name}](${absoluteUrl(hubPath(h))}): ${h.metaDescription}`);
   const guides = GUIDES.map((g) => `- [${g.h1}](${absoluteUrl(`/guides/${g.slug}`)}): ${g.metaDescription}`);
   const comparisons = COMPARISONS.map(
     (c) => `- [${SITE_NAME} vs ${c.competitor}](${absoluteUrl(`/compare/${c.slug}`)}): ${c.metaDescription}`
@@ -34,6 +36,10 @@ export function buildLlmsTxt(): string {
     `- ${pro.name}: ${euro(pro.priceMonthly)} per month or ${euro(pro.priceYearly)} a year. Up to ${rows(pro.limits.maxRows)} rows, all ${ALL_RULES.length} rules, CSV and Excel export, change log and PDF report, no watermark.`,
     `- ${team.name}: ${euro(team.priceMonthly)} per seat per month or ${euro(team.priceYearly)} per seat a year, from ${team.seats?.min} seats. Everything in Pro plus shared presets, an audit log and team billing.`,
     `- Full comparison: ${absoluteUrl("/pricing")}`,
+    "",
+    "## Tool groups",
+    "",
+    ...hubs,
     "",
     "## Tools",
     "",

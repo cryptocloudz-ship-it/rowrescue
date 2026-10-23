@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { TOOLS, toolUpdated } from "@/content/tools";
 import { GUIDES, guidesUpdated } from "@/content/guides";
 import { COMPARISONS } from "@/content/comparisons";
+import { HUBS, hubPath } from "@/content/hubs";
 import { absoluteUrl } from "@/config/site";
 
 // Dates of the last real content change, so lastModified stays stable across builds.
@@ -21,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/"), lastModified: UPDATED.home },
     { url: absoluteUrl("/tools"), lastModified: UPDATED.tools },
     ...TOOLS.map((t) => ({ url: absoluteUrl(`/${t.slug}`), lastModified: toolUpdated(t) })),
+    ...HUBS.map((h) => ({ url: absoluteUrl(hubPath(h)), lastModified: h.updated })),
     { url: absoluteUrl("/guides"), lastModified: guidesUpdated() },
     ...GUIDES.map((g) => ({ url: absoluteUrl(`/guides/${g.slug}`), lastModified: g.updated })),
     { url: absoluteUrl("/compare"), lastModified: UPDATED.compare },
