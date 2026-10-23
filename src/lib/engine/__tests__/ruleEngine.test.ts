@@ -63,3 +63,27 @@ describe("Delete Columns in the pipeline", () => {
     expect(result.cleanedRows).toEqual([{ amount: "5.00" }]);
   });
 });
+
+describe("Filter Rows in the pipeline", () => {
+  it("filters on trimmed values and counts the removed rows", () => {
+    const rows = [{ status: " Pending " }, { status: "Posted" }];
+    const result = runEngine(
+      rows,
+      configs({ trimWhitespace: {}, filterRows: { column: "status", operator: "equals", value: "pending", mode: "remove" } })
+    );
+    expect(result.cleanedRows).toEqual([{ status: "Posted" }]);
+    expect(result.stats.totalRowsRemoved).toBe(1);
+  });
+
+  it("filters by original column names even when headers are normalized", () => {
+    const rows = [{ Status: "Pending" }, { Status: "Posted" }];
+    const result = runEngine(
+      rows,
+      configs({
+        normalizeHeaders: { style: "lowercase_underscore" },
+        filterRows: { column: "Status", operator: "equals", value: "pending", mode: "remove" },
+      })
+    );
+    expect(result.cleanedRows).toEqual([{ status: "Posted" }]);
+  });
+});

@@ -2,9 +2,10 @@
 
 import { useSheetStore } from "@/store/sheetStore";
 import { DATE_FORMATS, DATE_ORDERS } from "@/lib/engine/rules/normalizeDate";
+import { FILTER_OPERATORS } from "@/lib/engine/rules/filterRows";
 
 /** Rules with settings beyond the column picker. */
-const RULES_WITH_OPTIONS = new Set(["normalizeDate", "removeColumns"]);
+const RULES_WITH_OPTIONS = new Set(["normalizeDate", "removeColumns", "filterRows"]);
 
 export function hasRuleOptions(ruleId: string): boolean {
   return RULES_WITH_OPTIONS.has(ruleId);
@@ -83,6 +84,74 @@ function DeleteColumnsOptions({ headers }: { headers: string[] }) {
   );
 }
 
+function FilterRowsOptions({ headers }: { headers: string[] }) {
+  const { options, update } = useRuleOptions("filterRows");
+  const mode = (options.mode as string | undefined) ?? "remove";
+  const column = (options.column as string | undefined) ?? "";
+  const operator = (options.operator as string | undefined) ?? "equals";
+  const value = (options.value as string | undefined) ?? "";
+  const needsValue = FILTER_OPERATORS.find((o) => o.value === operator)?.needsValue ?? true;
+  const numeric = operator === "gt" || operator === "lt";
+  const incomplete = !column || (needsValue && value.trim() === "");
+
+  return (
+    <div>
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <label className={labelClass}>
+          Rows
+          <select value={mode} onChange={(e) => update({ mode: e.target.value })} className={selectClass}>
+            <option value="remove">Remove rows</option>
+            <option value="keep">Keep only rows</option>
+          </select>
+        </label>
+        <label className={labelClass}>
+          where column
+          <select value={column} onChange={(e) => update({ column: e.target.value })} className={selectClass}>
+            <option value="" disabled>
+              Choose a column
+            </option>
+            {headers.map((h) => (
+              <option key={h} value={h}>
+                {h}
+              </option>
+            ))}
+          </select>
+        </label>
+        <label className={labelClass}>
+          condition
+          <select value={operator} onChange={(e) => update({ operator: e.target.value })} className={selectClass}>
+            {FILTER_OPERATORS.map((o) => (
+              <option key={o.value} value={o.value}>
+                {o.label}
+              </option>
+            ))}
+          </select>
+        </label>
+        {needsValue && (
+          <label className={labelClass}>
+            value
+            <input
+              type="text"
+              inputMode={numeric ? "decimal" : undefined}
+              value={value}
+              onChange={(e) => update({ value: e.target.value })}
+              placeholder={numeric ? "e.g. 0" : "e.g. Pending"}
+              className={selectClass}
+            />
+          </label>
+        )}
+      </div>
+      <p className="mt-2 text-xs text-ink-muted">
+        {incomplete
+          ? "Choose a column and a value to filter by. Until then this rule changes nothing."
+          : numeric
+            ? "Reads amounts like €1,234.56 or (50.00). Cells that aren't numbers never match. Removed rows are counted in the summary and change log."
+            : "Ignores upper/lower case and spaces at either end. Removed rows are counted in the summary and change log."}
+      </p>
+    </div>
+  );
+}
+
 /** Settings for one rule, shown under it while it's switched on. */
 export function RuleOptionsPanel({ ruleId, headers }: { ruleId: string; headers: string[] }) {
   switch (ruleId) {
@@ -90,6 +159,8 @@ export function RuleOptionsPanel({ ruleId, headers }: { ruleId: string; headers:
       return <DateOptions />;
     case "removeColumns":
       return <DeleteColumnsOptions headers={headers} />;
+    case "filterRows":
+      return <FilterRowsOptions headers={headers} />;
     default:
       return null;
   }

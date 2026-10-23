@@ -25,6 +25,17 @@ export interface RemoveColumnsOptions extends RuleOptions {
   columns?: string[];
 }
 
+export type FilterOperator = "equals" | "contains" | "empty" | "gt" | "lt";
+
+export interface FilterRowsOptions extends RuleOptions {
+  /** Column to test, by its name in the uploaded file. */
+  column?: string;
+  operator?: FilterOperator;
+  value?: string;
+  /** "keep" keeps only matching rows; "remove" drops them. Default: "remove". */
+  mode?: "keep" | "remove";
+}
+
 export interface DeduplicateRowsOptions extends RuleOptions {
   mode: "exact" | "by_columns";
   keyColumns?: string[];

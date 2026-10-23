@@ -6,6 +6,7 @@ import { reorderColumns } from "./reorderColumns";
 import { removeColumns } from "./removeColumns";
 import { deduplicateRows } from "./deduplicateRows";
 import { removeEmptyRows } from "./removeEmptyRows";
+import { filterRows } from "./filterRows";
 import { trimWhitespace } from "./trimWhitespace";
 import { fixEncoding } from "./fixEncoding";
 import { stripHtml } from "./stripHtml";
@@ -79,6 +80,14 @@ export const ALL_RULES: RuleDefinition[] = [
     category: "row_cleaning",
     isPro: false,
     execute: removeEmptyRows,
+  },
+  {
+    id: "filterRows",
+    name: "Filter Rows",
+    description: "Keep or remove rows where a column equals, contains, is empty, or is above or below a number.",
+    category: "row_cleaning",
+    isPro: true,
+    execute: filterRows,
   },
   {
     id: "trimWhitespace",
@@ -197,11 +206,12 @@ export const RULE_MAP = new Map(ALL_RULES.map((r) => [r.id, r]));
 
 /**
  * Execution order, independent of how rules are listed in the UI: transform values first,
- * then drop empty rows and duplicates (so "a@b.com " and "A@b.com" match), then validate.
+ * then filter rows on the cleaned values, drop empty rows and duplicates (so "a@b.com " and "A@b.com" match),
+ * then validate.
  * Column deletion runs after validation, so duplicates and checks still see the whole row, and header renames
  * run last because column pickers store the file's original header names.
  */
-const ROW_REMOVAL = ["removeEmptyRows", "deduplicateRows"];
+const ROW_REMOVAL = ["filterRows", "removeEmptyRows", "deduplicateRows"];
 const HEADER_RENAMES = ["normalizeHeaders", "renameColumns", "reorderColumns"];
 
 export function executionRank(ruleId: string): number {
@@ -220,6 +230,7 @@ export {
   reorderColumns,
   deduplicateRows,
   removeEmptyRows,
+  filterRows,
   trimWhitespace,
   fixEncoding,
   stripHtml,
