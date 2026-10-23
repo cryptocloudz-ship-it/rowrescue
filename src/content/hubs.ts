@@ -1,5 +1,6 @@
 import { TOOL_MAP, toolNeedsPro } from "./tools";
 import { GUIDE_MAP, guideNeedsPro } from "./guides";
+import { IMPORT_MAP, importNeedsPro } from "./imports";
 
 /**
  * Hub pages at /tools/<slug>: one page per job (bookkeeping, contact lists, file cleanup) that groups the tool pages
@@ -11,7 +12,8 @@ import { GUIDE_MAP, guideNeedsPro } from "./guides";
  */
 export type HubMember =
   | { type: "tool"; slug: string; note: string; crossListed?: boolean }
-  | { type: "guide"; slug: string; note: string };
+  | { type: "guide"; slug: string; note: string }
+  | { type: "import"; slug: string; note: string };
 
 export interface HubSection {
   heading: string;
@@ -118,8 +120,39 @@ export const HUBS: Hub[] = [
           },
         ],
       },
+      {
+        heading: "Import guides, bank by bank",
+        body: "One bank’s export into one accounting product: the columns each side uses, every mismatch between them, and the help pages and parsers behind each claim.",
+        members: [
+          {
+            type: "import",
+            slug: "revolut-to-xero",
+            note: "Revolut’s date-and-time stamps rewritten for Xero, and the Fee column and unfinished rows that still need a hand edit.",
+          },
+          {
+            type: "import",
+            slug: "revolut-to-quickbooks",
+            note: "Cutting Revolut’s ten columns down to the three QuickBooks Online uploads, and what to do with 0.00 card holds.",
+          },
+          {
+            type: "import",
+            slug: "wise-to-xero",
+            note: "One Xero bank account per Wise currency, the running balance taken out, and each fee counted once.",
+          },
+          {
+            type: "import",
+            slug: "wise-to-quickbooks",
+            note: "Wise’s Date, Description and Amount moved to the front, one currency per file, inside the QuickBooks upload limits.",
+          },
+          {
+            type: "import",
+            slug: "monzo-to-quickbooks",
+            note: "Monzo’s Name column as the QuickBooks description, and a decision about transfers to and from Pots.",
+          },
+        ],
+      },
     ],
-    updated: "2026-10-22",
+    updated: "2026-10-23",
   },
   {
     slug: "contact-lists-crm",
@@ -314,6 +347,10 @@ export function resolveHubMember(member: HubMember): ResolvedHubMember | undefin
     case "guide": {
       const guide = GUIDE_MAP.get(member.slug);
       return guide && { href: `/guides/${guide.slug}`, name: guide.h1, note: member.note, pro: guideNeedsPro(guide) };
+    }
+    case "import": {
+      const page = IMPORT_MAP.get(member.slug);
+      return page && { href: `/import/${page.slug}`, name: page.h1, note: member.note, pro: importNeedsPro(page) };
     }
   }
 }
