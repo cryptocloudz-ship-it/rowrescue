@@ -56,6 +56,7 @@ export function SiteFooter() {
           <ul className="space-y-2">
             <li><Link href="/clean" className={linkClass}>Spreadsheet cleaner</Link></li>
             <li><Link href="/guides" className={linkClass}>All guides</Link></li>
+            <li><Link href="/import" className={linkClass}>Import guides</Link></li>
             <li><Link href="/compare" className={linkClass}>All comparisons</Link></li>
             <li><Link href="/security" className={linkClass}>Security</Link></li>
             <li><Link href="/pricing" className={linkClass}>Pricing</Link></li>

@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { TOOLS, toolUpdated } from "@/content/tools";
 import { GUIDES, guidesUpdated } from "@/content/guides";
+import { IMPORTS, importsUpdated } from "@/content/imports";
 import { COMPARISONS } from "@/content/comparisons";
 import { HUBS, hubPath } from "@/content/hubs";
 import { absoluteUrl } from "@/config/site";
@@ -25,6 +26,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...HUBS.map((h) => ({ url: absoluteUrl(hubPath(h)), lastModified: h.updated })),
     { url: absoluteUrl("/guides"), lastModified: guidesUpdated() },
     ...GUIDES.map((g) => ({ url: absoluteUrl(`/guides/${g.slug}`), lastModified: g.updated })),
+    { url: absoluteUrl("/import"), lastModified: importsUpdated() },
+    ...IMPORTS.map((p) => ({ url: absoluteUrl(`/import/${p.slug}`), lastModified: p.updated })),
     { url: absoluteUrl("/compare"), lastModified: UPDATED.compare },
     ...COMPARISONS.map((c) => ({ url: absoluteUrl(`/compare/${c.slug}`), lastModified: UPDATED.compare })),
     { url: absoluteUrl("/pricing"), lastModified: UPDATED.pricing },
