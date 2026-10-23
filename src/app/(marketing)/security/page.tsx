@@ -39,7 +39,9 @@ const SECTIONS: { heading: string; body: React.ReactNode }[] = [
         When you download a cleaned file, the page tells our server its row count and which rules ran, so that plan
         limits can be applied. The file name stays in your browser, and the rules aren’t stored. If you’re signed in,
         we keep a count of today’s exports. For accounts we also store your email address and plan, and Stripe holds billing
-        details.
+        details. On Pro and Team, a preset you save is stored too: its name, rules and settings, including any column
+        names you picked. Team plans add the member list, the email addresses of pending invites and an audit log of
+        preset and membership changes.
       </>
     ),
   },
@@ -47,8 +49,9 @@ const SECTIONS: { heading: string; body: React.ReactNode }[] = [
     heading: "Third parties",
     body: (
       <>
-        Clerk handles sign-in, and may show a Cloudflare bot check when you sign up, and Stripe handles payments;
-        none of them receives anything from your files. Google Analytics
+        Clerk handles sign-in, and may show a Cloudflare bot check when you sign up, Stripe handles payments, and
+        Resend delivers team invite emails (the invitee’s address, the team name and the join link); none of them
+        receives anything from your files. Google Analytics
         loads only if you accept cookies, and records usage events such as file type, row count and number of changes,
         never cell contents or file names.
       </>

@@ -228,7 +228,7 @@ export function PricingContent() {
         <div className="mt-6 border-t border-rule">
           <FaqItem
             question="Is my data private?"
-            answer="Files are processed by JavaScript in your browser. Their contents are never uploaded. We store only your account email and billing details."
+            answer="Files are processed by JavaScript in your browser. Their contents are never uploaded. We store your account email, billing details and any presets you save, never the contents of your files."
           />
           <FaqItem
             question="Can I use SpreadsheetFix without an account?"

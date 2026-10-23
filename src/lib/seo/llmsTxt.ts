@@ -30,7 +30,7 @@ export function buildLlmsTxt(): string {
     "## Privacy model",
     "",
     "- Files are parsed and cleaned 100% client-side, by JavaScript in the browser tab. File contents are never uploaded to SpreadsheetFix servers.",
-    "- The servers store only account details (email, billing) and a daily export count used for plan limits.",
+    "- The servers store account details (email, plan; Stripe holds billing) and a daily export count used for plan limits. Saved presets (rules, settings and any column names picked) are stored on Pro and Team, and Team plans add the member list, pending invite emails and an audit log. No cell contents are stored.",
     "- The company is based in the EU and GDPR applies. Anyone can check the no-upload claim in the browser's DevTools Network tab while cleaning a file.",
     "- Every change is shown in a preview before export, and the original file is never modified.",
     "",
