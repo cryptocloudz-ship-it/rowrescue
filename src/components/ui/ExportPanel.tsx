@@ -9,6 +9,7 @@ import { exportToXLSX } from "@/lib/engine/exporters/xlsxExporter";
 import { exportSummary } from "@/lib/engine/exporters/summaryExporter";
 import { trackExport } from "@/lib/analytics";
 import { reconcile } from "@/lib/engine/reconcile";
+import { ALL_RULES } from "@/lib/engine/rules";
 import { PRO_PRICE_MONTHLY } from "@/config/plans";
 
 function downloadBlob(content: string | Uint8Array, filename: string, mime: string) {
@@ -364,7 +365,7 @@ export function ExportPanel() {
                 File exported with watermark
               </p>
               <p className="text-sm font-medium text-emerald-700 mt-1">
-                Upgrade to Pro to remove watermarks, unlock Excel export, and access all 17 cleaning rules.
+                Upgrade to Pro to remove watermarks, unlock Excel export, and access all {ALL_RULES.length} cleaning rules.
               </p>
               <div className="flex items-center gap-4 mt-4">
                 <Link

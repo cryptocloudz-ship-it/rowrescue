@@ -92,6 +92,12 @@ describe("reconcile", () => {
     expect(r.balanced).toBe(true);
   });
 
+  it("leaves a deleted amount column out of the check instead of reporting its total as lost", () => {
+    const r = check(rows, { removeColumns: { columns: ["amount"] } });
+    expect(r.columns).toHaveLength(0);
+    expect(r.balanced).toBe(true);
+  });
+
   it("flags a value that changed during cleaning, with the exact difference", () => {
     const original = [{ amount: "10.00" }, { amount: "20.00" }];
     const changed = [{ amount: "10.00" }, { amount: "20.01" }];

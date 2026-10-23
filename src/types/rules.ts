@@ -20,6 +20,11 @@ export interface RenameColumnsOptions extends RuleOptions {
   aliasMap: Record<string, string>;
 }
 
+export interface RemoveColumnsOptions extends RuleOptions {
+  /** Columns to delete, by their name in the uploaded file. */
+  columns?: string[];
+}
+
 export interface DeduplicateRowsOptions extends RuleOptions {
   mode: "exact" | "by_columns";
   keyColumns?: string[];

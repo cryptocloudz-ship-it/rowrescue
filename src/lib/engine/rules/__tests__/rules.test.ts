@@ -17,6 +17,7 @@ import { validateRequired } from "../validateRequired";
 import { validateRange } from "../validateRange";
 import { renameColumns } from "../renameColumns";
 import { reorderColumns } from "../reorderColumns";
+import { removeColumns } from "../removeColumns";
 
 // ─── trimWhitespace ──────────────────────────────────────────────────────────
 
@@ -677,5 +678,36 @@ describe("reorderColumns", () => {
     const result = reorderColumns(rows, { order: ["z", "a", "b"] });
     const keys = Object.keys(result.rows[0]);
     expect(keys).toEqual(["a", "b"]);
+  });
+});
+
+// ─── removeColumns ───────────────────────────────────────────────────────────
+
+describe("removeColumns", () => {
+  const rows = [
+    { date: "2026-09-01", ref: "TX-1", amount: "10.00", note: "coffee" },
+    { date: "2026-09-02", ref: "TX-2", amount: "20.00", note: "" },
+  ];
+
+  it("deletes the chosen columns even when they hold data", () => {
+    const result = removeColumns(rows, { columns: ["ref", "note"] });
+    expect(result.rows).toEqual([
+      { date: "2026-09-01", amount: "10.00" },
+      { date: "2026-09-02", amount: "20.00" },
+    ]);
+    expect(result.stats.rowsRemoved).toBe(0);
+  });
+
+  it("logs each deleted column once as a header-level removal", () => {
+    const result = removeColumns(rows, { columns: ["ref"] });
+    expect(result.changes).toHaveLength(1);
+    expect(result.changes[0]).toMatchObject({ rowIndex: -1, column: "ref", ruleId: "removeColumns", changeType: "removed" });
+  });
+
+  it("does nothing when no columns are chosen or they don't exist", () => {
+    expect(removeColumns(rows, {}).rows).toEqual(rows);
+    const missing = removeColumns(rows, { columns: ["nope"] });
+    expect(missing.rows).toEqual(rows);
+    expect(missing.changes).toHaveLength(0);
   });
 });

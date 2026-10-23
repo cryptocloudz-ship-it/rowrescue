@@ -3,6 +3,7 @@ import { normalizeHeaders } from "./normalizeHeaders";
 import { renameColumns } from "./renameColumns";
 import { removeEmptyColumns } from "./removeEmptyColumns";
 import { reorderColumns } from "./reorderColumns";
+import { removeColumns } from "./removeColumns";
 import { deduplicateRows } from "./deduplicateRows";
 import { removeEmptyRows } from "./removeEmptyRows";
 import { trimWhitespace } from "./trimWhitespace";
@@ -43,6 +44,14 @@ export const ALL_RULES: RuleDefinition[] = [
     category: "column_management",
     isPro: false,
     execute: removeEmptyColumns,
+  },
+  {
+    id: "removeColumns",
+    name: "Delete Columns",
+    description: "Delete the columns you choose, even ones that have data.",
+    category: "column_management",
+    isPro: true,
+    execute: removeColumns,
   },
   {
     id: "reorderColumns",
@@ -189,12 +198,14 @@ export const RULE_MAP = new Map(ALL_RULES.map((r) => [r.id, r]));
 /**
  * Execution order, independent of how rules are listed in the UI: transform values first,
  * then drop empty rows and duplicates (so "a@b.com " and "A@b.com" match), then validate.
- * Header renames run last because column pickers store the file's original header names.
+ * Column deletion runs after validation, so duplicates and checks still see the whole row, and header renames
+ * run last because column pickers store the file's original header names.
  */
 const ROW_REMOVAL = ["removeEmptyRows", "deduplicateRows"];
 const HEADER_RENAMES = ["normalizeHeaders", "renameColumns", "reorderColumns"];
 
 export function executionRank(ruleId: string): number {
+  if (ruleId === "removeColumns") return 2.5;
   if (HEADER_RENAMES.includes(ruleId)) return 3 + HEADER_RENAMES.indexOf(ruleId) / 10;
   if (RULE_MAP.get(ruleId)?.category === "validation") return 2;
   if (ROW_REMOVAL.includes(ruleId)) return 1 + ROW_REMOVAL.indexOf(ruleId) / 10;
@@ -205,6 +216,7 @@ export {
   normalizeHeaders,
   renameColumns,
   removeEmptyColumns,
+  removeColumns,
   reorderColumns,
   deduplicateRows,
   removeEmptyRows,
