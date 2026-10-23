@@ -151,7 +151,8 @@ export default function LandingPage() {
               <div className="border-t border-rule-strong pt-5">
                 <dt className="font-semibold">Our servers</dt>
                 <dd className="mt-2 text-ink-body leading-relaxed">
-                  We store your account email, billing details and a daily export count, nothing from your files. We
+                  We store your account email, billing details, a daily export count and any presets you save, never
+                  the contents of your files. We
                   are based in the EU and GDPR applies. Because file contents never reach us, cleaning client or
                   customer data here is GDPR-friendly: there is no upload for us to process or secure.
                 </dd>

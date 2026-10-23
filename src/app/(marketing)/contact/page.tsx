@@ -30,6 +30,7 @@ export default function ContactPage() {
             url: absoluteUrl("/contact"),
             mainEntity: {
               "@type": "Organization",
+              "@id": absoluteUrl("/#organization"),
               name: SITE_NAME,
               url: absoluteUrl("/"),
               email: SUPPORT_EMAIL,

@@ -9,12 +9,15 @@ import { absoluteUrl } from "@/config/site";
 // Dates of the last real content change, so lastModified stays stable across builds.
 // Bump the matching date when you change a page's copy. Google ignores changefreq and priority.
 const UPDATED = {
-  home: "2026-10-22",
-  tools: "2026-10-22",
-  compare: "2026-10-21",
-  pricing: "2026-10-19",
-  security: "2026-10-21",
-  contact: "2026-10-21",
+  home: "2026-10-23",
+  tools: "2026-10-23",
+  // The /guides index was regrouped by hub after the newest guide changed
+  guidesIndex: "2026-10-23",
+  compare: "2026-10-22",
+  pricing: "2026-10-23",
+  security: "2026-10-23",
+  contact: "2026-10-22",
+  privacy: "2026-10-22",
   legal: "2026-10-19",
 };
 
@@ -24,7 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/tools"), lastModified: UPDATED.tools },
     ...TOOLS.map((t) => ({ url: absoluteUrl(`/${t.slug}`), lastModified: toolUpdated(t) })),
     ...HUBS.map((h) => ({ url: absoluteUrl(hubPath(h)), lastModified: h.updated })),
-    { url: absoluteUrl("/guides"), lastModified: guidesUpdated() },
+    { url: absoluteUrl("/guides"), lastModified: [guidesUpdated(), UPDATED.guidesIndex].sort().at(-1)! },
     ...GUIDES.map((g) => ({ url: absoluteUrl(`/guides/${g.slug}`), lastModified: g.updated })),
     { url: absoluteUrl("/import"), lastModified: importsUpdated() },
     ...IMPORTS.map((p) => ({ url: absoluteUrl(`/import/${p.slug}`), lastModified: p.updated })),
@@ -34,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: absoluteUrl("/security"), lastModified: UPDATED.security },
     { url: absoluteUrl("/contact"), lastModified: UPDATED.contact },
     { url: absoluteUrl("/legal/terms-of-service"), lastModified: UPDATED.legal },
-    { url: absoluteUrl("/legal/privacy-policy"), lastModified: UPDATED.legal },
+    { url: absoluteUrl("/legal/privacy-policy"), lastModified: UPDATED.privacy },
     { url: absoluteUrl("/legal/cookie-policy"), lastModified: UPDATED.legal },
   ];
 }

@@ -11,6 +11,12 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      // The production build is also served on *.vercel.app aliases, where robots.txt allows crawling
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: ".*\\.vercel\\.app" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex" }],
+      },
       {
         source: "/(.*)",
         headers: [
