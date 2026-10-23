@@ -27,6 +27,7 @@ async function pageFor(path: string): Promise<[Page, Record<string, string>]> {
     "/": () => import("@/app/page"),
     "/tools": () => import("@/app/(marketing)/tools/page"),
     "/guides": () => import("@/app/(marketing)/guides/page"),
+    "/import": () => import("@/app/(marketing)/import/page"),
     "/compare": () => import("@/app/(marketing)/compare/page"),
     "/pricing": () => import("@/app/(marketing)/pricing/page"),
     "/security": () => import("@/app/(marketing)/security/page"),
@@ -39,6 +40,7 @@ async function pageFor(path: string): Promise<[Page, Record<string, string>]> {
   let m: RegExpMatchArray | null;
   if ((m = path.match(/^\/tools\/([^/]+)$/))) return [(await import("@/app/(marketing)/tools/[hub]/page")).default as Page, { hub: m[1] }];
   if ((m = path.match(/^\/guides\/([^/]+)$/))) return [(await import("@/app/(marketing)/guides/[slug]/page")).default as Page, { slug: m[1] }];
+  if ((m = path.match(/^\/import\/([^/]+)$/))) return [(await import("@/app/(marketing)/import/[slug]/page")).default as Page, { slug: m[1] }];
   if ((m = path.match(/^\/compare\/([^/]+)$/))) return [(await import("@/app/(marketing)/compare/[slug]/page")).default as Page, { slug: m[1] }];
   if ((m = path.match(/^\/([^/]+)$/))) return [(await import("@/app/(marketing)/[tool]/page")).default as Page, { tool: m[1] }];
   throw new Error(`no page module for ${path}`);
