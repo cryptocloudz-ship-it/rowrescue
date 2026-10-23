@@ -40,7 +40,7 @@ const SECTIONS: { heading: string; body: React.ReactNode }[] = [
         limits can be applied. The file name stays in your browser, and the rules aren’t stored. If you’re signed in,
         we keep a count of today’s exports. For accounts we also store your email address and plan, and Stripe holds billing
         details. On Pro and Team, a preset you save is stored too: its name, rules and settings, including any column
-        names you picked. Team plans add the member list, the email addresses of pending invites and an audit log of
+        names you picked and any value you typed into a Filter Rows condition. Team plans add the member list, the email addresses of pending invites and an audit log of
         preset and membership changes.
       </>
     ),

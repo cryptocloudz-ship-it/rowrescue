@@ -52,7 +52,7 @@ export const HUBS: Hub[] = [
     workflow: [
       "If the period spans several downloads, stack them into one file first, so overlapping days show up as repeated rows.",
       "Repair the text and the layout: broken characters in payee names, padded descriptions and the blank spacer rows some banks insert.",
-      "Rewrite every date in one unambiguous format (the accounting-import tool writes DD/MM/YYYY, the statement and date tools YYYY-MM-DD), and turn decimal-comma amounts into plain numbers.",
+      "Rewrite every date in one unambiguous format (YYYY-MM-DD by default, or DD/MM/YYYY or MM/DD/YYYY from the date rule’s settings), and turn decimal-comma amounts into plain numbers.",
       "Read the removed rows in the preview before you export: two identical card payments on the same day can both be real.",
     ],
     sections: [

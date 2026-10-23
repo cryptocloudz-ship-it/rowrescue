@@ -13,11 +13,11 @@ const UPDATED = {
   tools: "2026-10-23",
   // The /guides index was regrouped by hub after the newest guide changed
   guidesIndex: "2026-10-23",
-  compare: "2026-10-22",
+  compare: "2026-10-23",
   pricing: "2026-10-23",
   security: "2026-10-23",
   contact: "2026-10-22",
-  privacy: "2026-10-22",
+  privacy: "2026-10-23",
   legal: "2026-10-19",
 };
 

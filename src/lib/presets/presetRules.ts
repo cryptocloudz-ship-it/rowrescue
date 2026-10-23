@@ -4,8 +4,9 @@ import { FREE_RULES } from "@/config/plans";
 import { ALL_RULES } from "@/lib/engine/rules";
 
 /**
- * A saved preset is the enabled rules and their options, nothing else. Options can name columns the user picked,
- * but never hold row data, so a preset is safe to store server-side.
+ * A saved preset is the enabled rules and their options, nothing else. Options can name columns the user picked
+ * and hold a Filter Rows value the user typed, but never row data read from a file, so a preset is safe to store
+ * server-side.
  */
 
 const RULE_IDS = new Set(ALL_RULES.map((r) => r.id));
