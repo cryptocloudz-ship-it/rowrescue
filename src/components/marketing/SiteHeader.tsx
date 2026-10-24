@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { NavAuth } from "./NavAuth";
 
-// A selected cell with its fill handle; the outline breaks around the handle
+// A 2×2 grid of cells with the bottom-right one filled
 export function BrandMark({ className = "" }: { className?: string }) {
   return (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" className={`text-accent ${className}`}>
-      <path d="M16 11.3V3.8H3v11h9.5" stroke="currentColor" strokeWidth="1.8" />
-      <rect x="13.5" y="12.3" width="5" height="5" fill="currentColor" />
+      <rect x="3" y="3" width="6" height="6" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="11" y="3" width="6" height="6" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="3" y="11" width="6" height="6" stroke="currentColor" strokeWidth="1.6" />
+      <rect x="10.2" y="10.2" width="7.6" height="7.6" fill="currentColor" />
     </svg>
   );
 }

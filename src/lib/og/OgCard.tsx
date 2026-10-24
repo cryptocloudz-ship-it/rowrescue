@@ -42,8 +42,10 @@ export function OgCard({ title, subtitle }: { title: string; subtitle: string })
     >
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <svg width="40" height="40" viewBox="0 0 20 20" fill="none">
-          <path d="M16 11.3V3.8H3v11h9.5" stroke={ACCENT} strokeWidth="1.8" />
-          <rect x="13.5" y="12.3" width="5" height="5" fill={ACCENT} />
+          <rect x="3" y="3" width="6" height="6" stroke={ACCENT} strokeWidth="1.6" />
+          <rect x="11" y="3" width="6" height="6" stroke={ACCENT} strokeWidth="1.6" />
+          <rect x="3" y="11" width="6" height="6" stroke={ACCENT} strokeWidth="1.6" />
+          <rect x="10.2" y="10.2" width="7.6" height="7.6" fill={ACCENT} />
         </svg>
         <span style={{ fontSize: "32px", fontWeight: 600, color: INK }}>SpreadsheetFix</span>
       </div>
