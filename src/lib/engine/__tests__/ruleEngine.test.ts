@@ -43,3 +43,47 @@ describe("runEngine execution order", () => {
     expect(result.cleanedRows).toHaveLength(2);
   });
 });
+
+describe("Delete Columns in the pipeline", () => {
+  it("deletes columns after de-duplicating, so rows that differ in a deleted column are both kept", () => {
+    const rows = [
+      { email: "a@x.io", id: "1" },
+      { email: "a@x.io", id: "2" },
+    ];
+    const result = runEngine(rows, configs({ deduplicateRows: {}, removeColumns: { columns: ["id"] } }));
+    expect(result.cleanedRows).toEqual([{ email: "a@x.io" }, { email: "a@x.io" }]);
+  });
+
+  it("uses the file's original column names when headers are normalized too", () => {
+    const rows = [{ "Account No": "123", Amount: "5.00" }];
+    const result = runEngine(
+      rows,
+      configs({ normalizeHeaders: { style: "lowercase_underscore" }, removeColumns: { columns: ["Account No"] } })
+    );
+    expect(result.cleanedRows).toEqual([{ amount: "5.00" }]);
+  });
+});
+
+describe("Filter Rows in the pipeline", () => {
+  it("filters on trimmed values and counts the removed rows", () => {
+    const rows = [{ status: " Pending " }, { status: "Posted" }];
+    const result = runEngine(
+      rows,
+      configs({ trimWhitespace: {}, filterRows: { column: "status", operator: "equals", value: "pending", mode: "remove" } })
+    );
+    expect(result.cleanedRows).toEqual([{ status: "Posted" }]);
+    expect(result.stats.totalRowsRemoved).toBe(1);
+  });
+
+  it("filters by original column names even when headers are normalized", () => {
+    const rows = [{ Status: "Pending" }, { Status: "Posted" }];
+    const result = runEngine(
+      rows,
+      configs({
+        normalizeHeaders: { style: "lowercase_underscore" },
+        filterRows: { column: "Status", operator: "equals", value: "pending", mode: "remove" },
+      })
+    );
+    expect(result.cleanedRows).toEqual([{ status: "Posted" }]);
+  });
+});

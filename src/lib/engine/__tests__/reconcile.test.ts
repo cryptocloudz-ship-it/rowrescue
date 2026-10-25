@@ -92,6 +92,20 @@ describe("reconcile", () => {
     expect(r.balanced).toBe(true);
   });
 
+  it("lists rows removed by Filter Rows and still balances", () => {
+    const r = check(rows, { filterRows: { column: "vendor", operator: "contains", value: "northwind", mode: "remove" } });
+    expect(r.columns[0].removed).toEqual([
+      { ruleId: "filterRows", ruleName: "Filter Rows", kind: "removed", rows: 2, total: 624 },
+    ]);
+    expect(r.balanced).toBe(true);
+  });
+
+  it("leaves a deleted amount column out of the check instead of reporting its total as lost", () => {
+    const r = check(rows, { removeColumns: { columns: ["amount"] } });
+    expect(r.columns).toHaveLength(0);
+    expect(r.balanced).toBe(true);
+  });
+
   it("flags a value that changed during cleaning, with the exact difference", () => {
     const original = [{ amount: "10.00" }, { amount: "20.00" }];
     const changed = [{ amount: "10.00" }, { amount: "20.01" }];

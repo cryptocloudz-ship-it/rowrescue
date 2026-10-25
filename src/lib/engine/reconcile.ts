@@ -72,7 +72,11 @@ export function reconcile(
   snapshots: RuleSnapshot[],
   headers: string[]
 ): Reconciliation {
-  const amountColumns = detectAmountColumns(originalRows, headers);
+  // A column the user chose to delete has no total after cleaning, and that's not a change in the numbers
+  const deleted = new Set(
+    snapshots.filter((snap) => snap.ruleId === "removeColumns").flatMap((snap) => snap.changes.map((c) => c.column))
+  );
+  const amountColumns = detectAmountColumns(originalRows, headers).filter((c) => !deleted.has(c));
 
   // Rows each rule dropped, found by identity: removal rules pass kept rows through unchanged
   let traceable = true;
