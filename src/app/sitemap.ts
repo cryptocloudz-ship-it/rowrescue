@@ -17,7 +17,7 @@ const UPDATED = {
   pricing: "2026-10-23",
   security: "2026-10-23",
   contact: "2026-10-22",
-  privacy: "2026-10-23",
+  privacy: "2026-10-25",
   legal: "2026-10-19",
 };
 
