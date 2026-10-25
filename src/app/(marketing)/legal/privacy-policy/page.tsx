@@ -11,7 +11,7 @@ export default function PrivacyPolicyPage() {
 
       <main id="main-content" className="max-w-3xl mx-auto px-6 py-16 lg:py-20">
         <h1 className="text-[36px] sm:text-[46px] leading-[1.08] font-semibold tracking-[-0.03em] mb-2">Privacy Policy</h1>
-        <p className="text-sm font-medium text-ink-muted mb-12">Last Updated: October 2026</p>
+        <p className="text-sm font-medium text-ink-muted mb-12">Last Updated: 25 October 2026</p>
 
         <section className="mb-10 text-ink-body">
           <h2 className="text-2xl font-semibold text-ink mb-4">1. Our Core Promise: 100% Client-Side Processing</h2>
@@ -35,14 +35,32 @@ export default function PrivacyPolicyPage() {
         </section>
 
         <section className="mb-10 text-ink-body">
-          <h2 className="text-2xl font-semibold text-ink mb-4">3. Data Security</h2>
+          <h2 className="text-2xl font-semibold text-ink mb-4">3. Service Providers</h2>
+          <p className="leading-relaxed mb-4">
+            We use a small number of providers to run SpreadsheetFix. None of them receive the contents of your files.
+          </p>
+          <ul className="list-disc pl-6 space-y-2 mb-4">
+            <li><strong>Clerk:</strong> sign-in and account management (your email address, name and profile image).</li>
+            <li><strong>Stripe:</strong> payments and subscriptions (billing details; we never see full card numbers).</li>
+            <li><strong>Vercel:</strong> hosting (standard request data such as IP address and browser type, in server logs).</li>
+            <li><strong>Neon:</strong> our database (the account, subscription, preset and team data described above).</li>
+            <li><strong>Resend:</strong> sends team invite emails (the invitee&apos;s email address, the team name and the join link).</li>
+            <li><strong>Google Analytics:</strong> usage analytics, only if you accept analytics cookies (pages visited and counts such as rows cleaned, never file contents).</li>
+          </ul>
+          <p className="leading-relaxed mb-4">
+            Some of these providers process data outside the EEA. Where they do, they rely on safeguards such as Standard Contractual Clauses.
+          </p>
+        </section>
+
+        <section className="mb-10 text-ink-body">
+          <h2 className="text-2xl font-semibold text-ink mb-4">4. Data Security</h2>
           <p className="leading-relaxed mb-4">
             We prioritize the security of the minimal data we do store. All backend communications for authentication and billing use TLS encryption. Our databases are strictly access-controlled and regularly audited.
           </p>
         </section>
 
         <section className="mb-10 text-ink-body">
-          <h2 className="text-2xl font-semibold text-ink mb-4">4. Your Rights (GDPR)</h2>
+          <h2 className="text-2xl font-semibold text-ink mb-4">5. Your Rights (GDPR)</h2>
           <p className="leading-relaxed mb-4">
             If you are a resident of the European Economic Area (EEA), you have certain data protection rights. You may request to access, correct, delete, or restrict the use of your Personal Data. To exercise these rights, email us at{" "}
             <a href={`mailto:${SUPPORT_EMAIL}`} className="text-accent hover:underline">{SUPPORT_EMAIL}</a>.
@@ -50,7 +68,7 @@ export default function PrivacyPolicyPage() {
         </section>
 
         <section className="mb-10 text-ink-body">
-          <h2 className="text-2xl font-semibold text-ink mb-4">5. Contact Us</h2>
+          <h2 className="text-2xl font-semibold text-ink mb-4">6. Contact Us</h2>
           <p className="leading-relaxed mb-4">
             For any questions about this Privacy Policy or your data, contact us at{" "}
             <a href={`mailto:${SUPPORT_EMAIL}`} className="text-accent hover:underline">{SUPPORT_EMAIL}</a>.
