@@ -3,11 +3,15 @@ import { GUIDE_REDIRECTS } from "./src/config/redirects";
 
 const nextConfig: NextConfig = {
   async redirects() {
-    return Object.entries(GUIDE_REDIRECTS).map(([from, to]) => ({
-      source: `/guides/${from}`,
-      destination: `/guides/${to}`,
-      permanent: true,
-    }));
+    return [
+      // Google crawled /home (never a real route); send it to the homepage instead of a 404
+      { source: "/home", destination: "/", permanent: true },
+      ...Object.entries(GUIDE_REDIRECTS).map(([from, to]) => ({
+        source: `/guides/${from}`,
+        destination: `/guides/${to}`,
+        permanent: true,
+      })),
+    ];
   },
   async headers() {
     return [
