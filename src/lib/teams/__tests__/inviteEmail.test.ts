@@ -31,7 +31,7 @@ afterEach(() => {
 
 describe("inviteEmailContent", () => {
   it("contains the team name and join link, with the name escaped in HTML", () => {
-    const { subject, text, html } = inviteEmailContent(invite);
+    const { text, html } = inviteEmailContent(invite);
     expect(text).toContain('"Acme <Ops>"');
     expect(text).toContain(invite.joinUrl);
     expect(html).toContain("Acme &#60;Ops&#62;");

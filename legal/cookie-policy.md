@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-This Cookie Policy explains how [Company Name] ("Company", "we", "us", or "our") uses cookies and similar technologies on the SpreadsheetFix web application ("Service"). It should be read alongside our Privacy Policy.
+This Cookie Policy explains how William Kelly, a sole trader based in Ireland trading as SpreadsheetFix ("we", "us", or "our"), uses cookies and similar technologies on the SpreadsheetFix web application ("Service"). It should be read alongside our Privacy Policy.
 
 ## 2. What Are Cookies?
 
@@ -110,9 +110,10 @@ We may update this Cookie Policy from time to time to reflect changes in the coo
 
 If you have questions about our use of cookies, please contact:
 
-**[Company Name]**
-[Address]
-[City, County, Eircode]
+**William Kelly, trading as SpreadsheetFix**
+1a Foxfield Saint John
+Raheny
+Dublin 5
 Ireland
 
-Email: [privacy email]
+Email: support@spreadsheetfix.com

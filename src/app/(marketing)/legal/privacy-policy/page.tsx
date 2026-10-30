@@ -1,7 +1,7 @@
 import { SiteHeader } from "@/components/marketing/SiteHeader";
 import { SiteFooter } from "@/components/marketing/SiteFooter";
 import Link from "next/link";
-import { SUPPORT_EMAIL } from "@/config/site";
+import { OPERATOR_ADDRESS, OPERATOR_NAME, SUPPORT_EMAIL } from "@/config/site";
 
 export default function PrivacyPolicyPage() {
   return (
@@ -70,9 +70,18 @@ export default function PrivacyPolicyPage() {
         <section className="mb-10 text-ink-body">
           <h2 className="text-2xl font-semibold text-ink mb-4">6. Contact Us</h2>
           <p className="leading-relaxed mb-4">
+            SpreadsheetFix is run by William Kelly, a sole trader based in Ireland, who is the data controller for the personal data described in this policy.
+          </p>
+          <p className="leading-relaxed mb-4">
             For any questions about this Privacy Policy or your data, contact us at{" "}
             <a href={`mailto:${SUPPORT_EMAIL}`} className="text-accent hover:underline">{SUPPORT_EMAIL}</a>.
           </p>
+          <address className="not-italic leading-relaxed">
+            <strong className="text-ink">{OPERATOR_NAME}</strong>
+            {OPERATOR_ADDRESS.map((line) => (
+              <span key={line} className="block">{line}</span>
+            ))}
+          </address>
         </section>
 
         <div className="border-t border-rule pt-8 mt-12">
