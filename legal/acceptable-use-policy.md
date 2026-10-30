@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-This Acceptable Use Policy ("AUP") governs your use of the SpreadsheetFix web application ("Service"), operated by [Company Name] ("Company", "we", "us", or "our"). This AUP is incorporated into and forms part of the SpreadsheetFix Terms of Service.
+This Acceptable Use Policy ("AUP") governs your use of the SpreadsheetFix web application ("Service"), operated by William Kelly, a sole trader based in Ireland trading as SpreadsheetFix ("we", "us", or "our"). This AUP is incorporated into and forms part of the SpreadsheetFix Terms of Service.
 
 By using the Service, you agree to comply with this AUP. Violation of this AUP may result in suspension or termination of your account.
 
@@ -108,9 +108,10 @@ We may update this AUP from time to time. Material changes will be communicated 
 
 If you have questions about this Acceptable Use Policy, please contact:
 
-**[Company Name]**
-[Address]
-[City, County, Eircode]
+**William Kelly, trading as SpreadsheetFix**
+1a Foxfield Saint John
+Raheny
+Dublin 5
 Ireland
 
-Email: [contact email]
+Email: support@spreadsheetfix.com

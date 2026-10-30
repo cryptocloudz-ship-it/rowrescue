@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-[Company Name] ("Company", "we", "us", or "our"), a company registered in Ireland, operates the SpreadsheetFix web application ("Service"). This Privacy Policy explains how we collect, use, disclose, and safeguard your personal data when you use the Service.
+William Kelly, a sole trader based in Ireland trading as SpreadsheetFix ("we", "us", or "our"), operates the SpreadsheetFix web application ("Service"). This Privacy Policy explains how we collect, use, disclose, and safeguard your personal data when you use the Service.
 
 We are committed to protecting your privacy and processing your personal data in accordance with the General Data Protection Regulation (EU) 2016/679 ("GDPR"), the Data Protection Acts 1988–2018 (Ireland), and other applicable data protection legislation.
 
@@ -18,12 +18,13 @@ We are committed to protecting your privacy and processing your personal data in
 
 The data controller for the purposes of this Privacy Policy is:
 
-**[Company Name]**
-[Address]
-[City, County, Eircode]
+**William Kelly, trading as SpreadsheetFix**
+1a Foxfield Saint John
+Raheny
+Dublin 5
 Ireland
 
-Email: [privacy email]
+Email: support@spreadsheetfix.com
 
 ## 3. Our Privacy-First Architecture
 
@@ -107,7 +108,7 @@ As a data subject, you have the following rights:
 | **Objection** (Art. 21) | Object to processing based on legitimate interest, including for direct marketing purposes. |
 | **Withdraw Consent** (Art. 7(3)) | Withdraw consent for analytics at any time without affecting the lawfulness of processing prior to withdrawal. |
 
-To exercise any of these rights, please contact us at [privacy email]. We will respond within 30 days, as required by the GDPR. We may request verification of your identity before fulfilling your request.
+To exercise any of these rights, please contact us at support@spreadsheetfix.com. We will respond within 30 days, as required by the GDPR. We may request verification of your identity before fulfilling your request.
 
 ## 9. Data Portability
 
@@ -155,9 +156,10 @@ You may also lodge a complaint with the supervisory authority in your EU/EEA Mem
 
 For any questions about this Privacy Policy or our data practices, please contact:
 
-**[Company Name]**
-[Address]
-[City, County, Eircode]
+**William Kelly, trading as SpreadsheetFix**
+1a Foxfield Saint John
+Raheny
+Dublin 5
 Ireland
 
-Email: [privacy email]
+Email: support@spreadsheetfix.com

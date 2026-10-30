@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-This Data Processing Addendum ("DPA") forms part of the agreement between the customer subscribing to a SpreadsheetFix Team plan ("Controller", "Customer", "you") and [Company Name], a company registered in Ireland ("Processor", "we", "us", or "our"), collectively the "Parties".
+This Data Processing Addendum ("DPA") forms part of the agreement between the customer subscribing to a SpreadsheetFix Team plan ("Controller", "Customer", "you") and William Kelly, a sole trader based in Ireland trading as SpreadsheetFix ("Processor", "we", "us", or "our"), collectively the "Parties".
 
 This DPA applies to the extent that the Processor processes personal data on behalf of the Controller in connection with the provision of the SpreadsheetFix Service, and such processing is subject to the General Data Protection Regulation (EU) 2016/679 ("GDPR") or other applicable European data protection legislation.
 
@@ -188,9 +188,10 @@ This DPA shall be governed by and construed in accordance with the laws of Irela
 
 For questions regarding this DPA, please contact:
 
-**[Company Name]**
-[Address]
-[City, County, Eircode]
+**William Kelly, trading as SpreadsheetFix**
+1a Foxfield Saint John
+Raheny
+Dublin 5
 Ireland
 
-Email: [privacy email]
+Email: support@spreadsheetfix.com

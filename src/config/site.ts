@@ -2,6 +2,9 @@
 export const SITE_URL = "https://spreadsheetfix.com";
 export const SITE_NAME = "SpreadsheetFix";
 export const SUPPORT_EMAIL = "support@spreadsheetfix.com";
+/** Who runs the service (a sole trader): named on the legal pages as data controller and contracting party. */
+export const OPERATOR_NAME = "William Kelly, trading as SpreadsheetFix";
+export const OPERATOR_ADDRESS = ["1a Foxfield Saint John", "Raheny", "Dublin 5", "Ireland"];
 /** Homepage title: keyword first, brand comes from og:site_name and the WebSite JSON-LD. Keep ≤60 chars. */
 export const SITE_TITLE = "CSV Cleaner for Bank & Transaction Exports — Free & Private";
 /** Keep ≤160 chars */

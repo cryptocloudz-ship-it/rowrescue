@@ -10,7 +10,7 @@
 
 ## 1. Introduction
 
-These Terms of Service ("Terms") govern your access to and use of the SpreadsheetFix web application ("Service"), operated by [Company Name], a company registered in Ireland ("Company", "we", "us", or "our").
+These Terms of Service ("Terms") govern your access to and use of the SpreadsheetFix web application ("Service"), operated by William Kelly, a sole trader based in Ireland trading as SpreadsheetFix ("we", "us", or "our").
 
 By accessing or using the Service, you agree to be bound by these Terms. If you do not agree, you must not use the Service.
 
@@ -77,7 +77,7 @@ Your use of the Service is subject to the SpreadsheetFix Acceptable Use Policy, 
 
 ### 7.1 Our Intellectual Property
 
-The Service, including its design, code, features, documentation, and branding, is the property of [Company Name] and is protected by intellectual property laws. Nothing in these Terms grants you any right to use our trademarks, logos, or brand features without prior written consent.
+The Service, including its design, code, features, documentation, and branding, is the property of William Kelly (trading as SpreadsheetFix) and is protected by intellectual property laws. Nothing in these Terms grants you any right to use our trademarks, logos, or brand features without prior written consent.
 
 ### 7.2 Your Data
 
@@ -111,7 +111,7 @@ We do not warrant that the Service will be uninterrupted, error-free, secure, or
 
 ### 11.1 Exclusion of Damages
 
-TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL [COMPANY NAME], ITS DIRECTORS, EMPLOYEES, PARTNERS, AGENTS, OR AFFILIATES BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, USE, OR GOODWILL, ARISING OUT OF OR IN CONNECTION WITH YOUR USE OF THE SERVICE.
+TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL WILLIAM KELLY (TRADING AS SPREADSHEETFIX) OR ANY EMPLOYEES, CONTRACTORS, AGENTS, OR AFFILIATES BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF PROFITS, DATA, USE, OR GOODWILL, ARISING OUT OF OR IN CONNECTION WITH YOUR USE OF THE SERVICE.
 
 ### 11.2 Liability Cap
 
@@ -127,7 +127,7 @@ Nothing in these Terms excludes or limits liability that cannot be excluded or l
 
 ## 12. Indemnification
 
-You agree to indemnify and hold harmless [Company Name] and its officers, directors, employees, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable legal fees) arising out of or in connection with (a) your use of the Service, (b) your violation of these Terms, or (c) your violation of any rights of a third party, including intellectual property or privacy rights.
+You agree to indemnify and hold harmless William Kelly (trading as SpreadsheetFix) and any employees, contractors, and agents from and against any claims, liabilities, damages, losses, and expenses (including reasonable legal fees) arising out of or in connection with (a) your use of the Service, (b) your violation of these Terms, or (c) your violation of any rights of a third party, including intellectual property or privacy rights.
 
 ## 13. Modifications to the Terms
 
@@ -153,15 +153,16 @@ If any provision of these Terms is found to be unenforceable or invalid, that pr
 
 ## 16. Entire Agreement
 
-These Terms, together with the Privacy Policy, Cookie Policy, Acceptable Use Policy, and (where applicable) the Data Processing Addendum, constitute the entire agreement between you and [Company Name] regarding the Service.
+These Terms, together with the Privacy Policy, Cookie Policy, Acceptable Use Policy, and (where applicable) the Data Processing Addendum, constitute the entire agreement between you and William Kelly (trading as SpreadsheetFix) regarding the Service.
 
 ## 17. Contact
 
 If you have any questions about these Terms, please contact us at:
 
-**[Company Name]**
-[Address]
-[City, County, Eircode]
+**William Kelly, trading as SpreadsheetFix**
+1a Foxfield Saint John
+Raheny
+Dublin 5
 Ireland
 
-Email: [contact email]
+Email: support@spreadsheetfix.com
