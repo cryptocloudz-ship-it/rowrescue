@@ -35,7 +35,7 @@ beforeEach(() => {
   vi.stubEnv("INVITE_EMAIL_FROM", "invites@spreadsheetfix.com");
   vi.spyOn(console, "error").mockImplementation(() => {});
   mocks.send.mockReset().mockResolvedValue({ data: { id: "email_1" }, error: null });
-  mocks.currentAccount.mockResolvedValue({ user: { id: "owner" }, team: { id: "t1", name: "Acme" }, role: "admin" });
+  mocks.currentAccount.mockResolvedValue({ user: { id: "owner", name: "Olive Kelly", email: "olive@acme.test" }, team: { id: "t1", name: "Acme" }, role: "admin" });
   mocks.createInvite.mockReset().mockResolvedValue({ id: "inv1", email: "sam@acme.test", token: "tok/en" });
 });
 
@@ -45,7 +45,7 @@ afterEach(() => {
 });
 
 describe("POST /api/team/invites", () => {
-  it("creates the invite and emails the team name and join link", async () => {
+  it("creates the invite and emails who sent it, the team name and join link", async () => {
     const res = await invite("sam@acme.test");
     expect(res.status).toBe(200);
     expect(await res.json()).toEqual({ invite: { id: "inv1", email: "sam@acme.test", token: "tok/en" }, emailed: true });
@@ -53,7 +53,8 @@ describe("POST /api/team/invites", () => {
     expect(mocks.send).toHaveBeenCalledTimes(1);
     const sent = mocks.send.mock.calls[0][0];
     expect(sent).toMatchObject({ from: "invites@spreadsheetfix.com", to: "sam@acme.test" });
-    expect(sent.subject).toContain("Acme");
+    expect(sent.subject).toBe("Olive Kelly invited you to join Acme on SpreadsheetFix");
+    expect(sent.text).toContain("Olive Kelly (olive@acme.test)");
     expect(sent.text).toContain("https://spreadsheetfix.com/team/join?token=tok%2Fen");
   });
 

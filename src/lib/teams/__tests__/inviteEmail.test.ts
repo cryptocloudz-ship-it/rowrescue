@@ -9,7 +9,13 @@ vi.mock("resend", () => ({
 
 const { inviteEmailContent, sendInviteEmail } = await import("../inviteEmail");
 
-const invite = { to: "sam@acme.test", teamName: "Acme <Ops>", joinUrl: "https://spreadsheetfix.com/team/join?token=abc" };
+const invite = {
+  to: "sam@acme.test",
+  teamName: "Acme <Ops>",
+  joinUrl: "https://spreadsheetfix.com/team/join?token=abc",
+  inviterName: "Olive & Co",
+  inviterEmail: "olive@acme.test",
+};
 
 beforeEach(() => {
   send.mockReset().mockResolvedValue({ data: { id: "email_1" }, error: null });
@@ -26,12 +32,35 @@ afterEach(() => {
 describe("inviteEmailContent", () => {
   it("contains the team name and join link, with the name escaped in HTML", () => {
     const { subject, text, html } = inviteEmailContent(invite);
-    expect(subject).toBe("You're invited to join Acme <Ops> on SpreadsheetFix");
     expect(text).toContain('"Acme <Ops>"');
     expect(text).toContain(invite.joinUrl);
     expect(html).toContain("Acme &#60;Ops&#62;");
     expect(html).not.toContain("<Ops>");
     expect(html).toContain('href="https://spreadsheetfix.com/team/join?token=abc"');
+  });
+
+  it("names who sent the invite and shows the join URL as text", () => {
+    const { subject, text, html } = inviteEmailContent(invite);
+    expect(subject).toBe("Olive & Co invited you to join Acme <Ops> on SpreadsheetFix");
+    expect(text).toContain("Olive & Co (olive@acme.test) invited you");
+    expect(html).toContain("Olive &#38; Co (olive@acme.test)");
+    expect(html).toContain(">https://spreadsheetfix.com/team/join?token=abc</a>");
+  });
+
+  it("falls back to the inviter's email when they have no name", () => {
+    const { subject, text } = inviteEmailContent({ ...invite, inviterName: "  " });
+    expect(subject).toBe("olive@acme.test invited you to join Acme <Ops> on SpreadsheetFix");
+    expect(text).toContain("olive@acme.test invited you");
+    expect(text).not.toContain("(olive@acme.test)");
+  });
+
+  it("adds the postal address to the footer only once it's configured", () => {
+    vi.stubEnv("BUSINESS_POSTAL_ADDRESS", "");
+    expect(inviteEmailContent(invite).text).not.toContain("Dublin");
+    vi.stubEnv("BUSINESS_POSTAL_ADDRESS", "1 Main St, Dublin <D01>");
+    const { text, html } = inviteEmailContent(invite);
+    expect(text).toContain("1 Main St, Dublin <D01>");
+    expect(html).toContain("1 Main St, Dublin &#60;D01&#62;");
   });
 });
 

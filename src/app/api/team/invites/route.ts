@@ -14,7 +14,13 @@ export async function POST(request: NextRequest) {
     const { email } = await parseBody(request, z.object({ email: inviteEmailSchema }));
     const invite = await createInvite(account, email);
     const joinUrl = `${request.nextUrl.origin}/team/join?token=${encodeURIComponent(invite.token)}`;
-    const emailed = await sendInviteEmail({ to: invite.email, teamName: account.team!.name, joinUrl });
+    const emailed = await sendInviteEmail({
+      to: invite.email,
+      teamName: account.team!.name,
+      joinUrl,
+      inviterName: account.user.name,
+      inviterEmail: account.user.email,
+    });
     return { invite: { id: invite.id, email: invite.email, token: invite.token }, emailed };
   });
 }
